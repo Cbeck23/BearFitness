@@ -1,16 +1,25 @@
 package org.example.users;
 
+import org.example.users.ILoginable;
 
-public interface User {
-    String getUsername();
+public abstract class User implements ILoginable {
+    protected String username;
+    protected String password;
+    protected String email;
 
-    void setUsername(String username);
+    public User(String username, String password, String email) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+    }
 
-    String getEmail();
+    public void setUsername(String username) { this.username = username; }
+    public void setPassword(String password) { this.password = password; }
+    public void setEmail(String email) { this.email = email; }
 
-    void setEmail(String email);
+    @Override
+    public void login() {} //FIXME
 
-    String getPassword();
-
-    void setPassword(String password);
+    @Override
+    public void logout() {} // FIXME
 }
