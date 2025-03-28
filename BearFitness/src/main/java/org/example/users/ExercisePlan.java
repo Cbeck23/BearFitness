@@ -1,6 +1,6 @@
 package org.example.users;
 
-import java.util.list;
+import java.util.List;
 
 public class ExercisePlan {
   private String planName;
@@ -14,7 +14,7 @@ public ExercisePlan(String planName, List<String> requiredEquipment, String recc
                     int averageSessionLength, String suggestedFrequency) {
   this.planName = planName;
   this.requiredEquipment = requiredEquipment;
-  this.reccomendedFitnessLevel = reccomendedFitnessLevel;
+  this.recommendedFitnessLevel = reccomendedFitnessLevel;
   this.averageSessionLength = averageSessionLength;
   this.suggestedFrequency = suggestedFrequency;
 }
