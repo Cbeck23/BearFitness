@@ -1,0 +1,44 @@
+public class Session {
+    private int lengthInMinutes;
+    private int numParticipants;
+    private String activityType;
+
+    public Session(int lengthInMinutes, int numParticipants, String activityType) {
+        this.lengthInMinutes = lengthInMinutes;
+        this.numParticipants = numParticipants;
+        this.activityType = activityType;
+    }
+
+    public int getLengthInMinutes() {
+        return lengthInMinutes;
+    }
+
+    public int getNumParticipants() {
+        return numParticipants;
+    }
+
+    public String getActivityType() {
+        return activityType;
+    }
+
+    public void setLengthInMinutes(int lengthInMinutes) {
+        this.lengthInMinutes = lengthInMinutes;
+    }
+
+    public void setNumParticipants(int numParticipants) {
+        this.numParticipants = numParticipants;
+    }
+
+    public void setActivityType(String activityType) {
+        this.activityType = activityType;
+    }
+
+    @Override
+    public String toString() {
+        return "Session{" +
+                "Length :" + lengthInMinutes +
+                ", Participants :" + numParticipants +
+                ", Activity :'" + activityType + '\'' +
+                '}';
+    }
+}
