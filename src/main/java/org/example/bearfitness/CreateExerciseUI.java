@@ -23,7 +23,7 @@ public class CreateExerciseUI extends JFrame {
   public CreateExerciseUI() {
     setTitle("Create Exercise");
     setSize(600, 500);
-    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
     setLayout(new BorderLayout());
 
     //Top panel for basic plan info
