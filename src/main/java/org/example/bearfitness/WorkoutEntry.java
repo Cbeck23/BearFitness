@@ -3,6 +3,7 @@ package org.example.bearfitness;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
 
+import java.util.Date;
 import java.util.Objects;
 
 @Embeddable
@@ -34,6 +35,7 @@ public class WorkoutEntry {
     }
     private ExerciseType exerciseType = ExerciseType.OTHER;
     private String description = "";
+    private Date date = new Date();
 
     public WorkoutEntry() {}
 
