@@ -31,9 +31,9 @@ public class DBService {
             if (user.getPassword().equals(password)) {
                 return user;
             }
-        } else {
-            return null; //FIXME
         }
+
+        return null;
 
     }
 }
