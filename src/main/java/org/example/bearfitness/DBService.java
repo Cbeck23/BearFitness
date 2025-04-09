@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Optional;
 
 @Configuration
@@ -17,9 +18,15 @@ public class DBService {
     public CommandLineRunner testDatabase(BearDB db) {
         return args -> {
             // Save a user
+            Date testDate = new Date();
+            int calories = 100;
+            int sleep = 8;
             User user = new User("test", "test", "test", UserType.ADMIN);
+            user.logCalories(testDate, calories);
+            user.logSleep(testDate, sleep);
+            user.workoutEntryCreated(10, WorkoutEntry.ExerciseType.RUN, calories, sleep);
+            user.setGoals(new UserGoals(195, 5 ));
             db.save(user);
-
         };
     }
 
@@ -32,7 +39,6 @@ public class DBService {
                 return user;
             }
         }
-
         return null;
 
     }

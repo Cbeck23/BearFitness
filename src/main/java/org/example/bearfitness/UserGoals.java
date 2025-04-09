@@ -13,6 +13,11 @@ public class UserGoals {
 
     public UserGoals() {}
 
+    public UserGoals(Integer goalWeight, Integer weeklyActivities) {
+        this.goalWeight = goalWeight;
+        this.weeklyActivities = weeklyActivities;
+    }
+
     public Integer getGoalWeight() { return goalWeight; }
 
     public void setGoalWeight(Integer goalWeight) { this.goalWeight = goalWeight; }

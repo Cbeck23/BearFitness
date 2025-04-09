@@ -67,6 +67,10 @@ public class User {
         this.password = password;
         this.email = email;
         this.userType = userType;
+        this.userStats = new UserStats();
+        this.goals = new UserGoals();
+        this.entryList = new ArrayList();
+        this.subscribedPlans = new ArrayList();
     }
 
     // === Getters and Setters ===
