@@ -28,6 +28,8 @@ public class TrainerUI extends JFrame {
     frame.add(center, BorderLayout.NORTH);
     //frame.setContentPane(center);
 
+
+    // FIX: MAKE OWN CLASS TO LOAD TRAINEE INFORMATION ??
     DefaultTableModel trainees = new DefaultTableModel();
     trainees.addColumn("Name");
     trainees.addColumn("Age");
@@ -35,6 +37,8 @@ public class TrainerUI extends JFrame {
     JScrollPane scrollPane = new JScrollPane(table);
 
     JPanel formatter = new JPanel(new GridLayout(1,2));
+
+    // FIX: ADD CALENDAR TO TRAINER PAGE INCLUDING WORKOUTS THEY HAVE
     formatter.add(new JTextField("Calendar"));
     formatter.add(scrollPane);
 
