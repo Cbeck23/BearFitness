@@ -3,7 +3,7 @@ package org.example.bearfitness;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-
+/*
 public class LoginUI extends JFrame {
     private JTextField usernameField;
     private JPasswordField passwordField;
@@ -69,3 +69,4 @@ public class LoginUI extends JFrame {
         SwingUtilities.invokeLater(() -> new LoginUI().setVisible(true));
     }
 }
+*/
