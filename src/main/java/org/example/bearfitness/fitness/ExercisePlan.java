@@ -1,4 +1,4 @@
-package org.example.bearfitness;
+package org.example.bearfitness.fitness;
 
 import jakarta.persistence.*;
 import java.util.*;

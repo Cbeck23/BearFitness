@@ -1,4 +1,4 @@
-package org.example.bearfitness;
+package org.example.bearfitness.fitness;
 
 import java.time.DayOfWeek;
 import java.util.ArrayList;

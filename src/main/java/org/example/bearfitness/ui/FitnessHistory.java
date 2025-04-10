@@ -1,8 +1,7 @@
-package org.example.bearfitness;
+package org.example.bearfitness.ui;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 
 
 public class FitnessHistory extends JFrame {

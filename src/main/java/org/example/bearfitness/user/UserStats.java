@@ -1,4 +1,4 @@
-package org.example.bearfitness;
+package org.example.bearfitness.user;
 
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embeddable;

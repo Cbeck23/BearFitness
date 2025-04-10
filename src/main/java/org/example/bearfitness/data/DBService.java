@@ -1,10 +1,13 @@
-package org.example.bearfitness;
+package org.example.bearfitness.data;
 
+import org.example.bearfitness.user.User;
+import org.example.bearfitness.user.UserGoals;
+import org.example.bearfitness.user.UserType;
+import org.example.bearfitness.fitness.WorkoutEntry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Optional;

@@ -1,6 +1,9 @@
-package org.example.bearfitness;
+package org.example.bearfitness.user;
 
 import jakarta.persistence.*;
+import org.example.bearfitness.fitness.ExercisePlan;
+import org.example.bearfitness.fitness.WorkoutEntry;
+
 import java.util.*;
 
 /**

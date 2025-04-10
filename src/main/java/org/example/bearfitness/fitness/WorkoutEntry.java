@@ -1,7 +1,6 @@
-package org.example.bearfitness;
+package org.example.bearfitness.fitness;
 
 import jakarta.persistence.Embeddable;
-import jakarta.persistence.Embedded;
 
 import java.util.Date;
 import java.util.Objects;
