@@ -10,7 +10,7 @@ public class SignUpUI extends JFrame {
   private JPasswordField confirmPasswordField;
   private JTextField emailField;
   private JComboBox<UserType> userTypeCombo;
-  private JButton signUpButon;
+  private JButton signUpButton;
   private JButton cancelButton;
 
   public SignUpUI() {
@@ -36,7 +36,7 @@ public class SignUpUI extends JFrame {
     inputPanel.add(passwordField);
 
     inputPanel.add(new JLabel("Confirm Password:"));
-    confirmPasswordField = new JPaswordField();
+    confirmPasswordField = new JPasswordField();
     inputPanel.add(confirmPasswordField);
 
     inputPanel.add(new JLabel("User Type:"));
