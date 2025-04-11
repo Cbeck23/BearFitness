@@ -52,7 +52,7 @@ public class LoginUI extends JFrame {
             JOptionPane.showMessageDialog(this, "Login successful!");
             this.dispose();
             //FIX ME
-            new TrainerUI().setVisible(true); //trainer ui for now, later switch to basic ui/whatever ui for user type
+            new TrainerUI(dbService).setVisible(true); //trainer ui for now, later switch to basic ui/whatever ui for user type
         } else {
             JOptionPane.showMessageDialog(this, "Invalid username or password.", "Login Failed", JOptionPane.ERROR_MESSAGE);
         }

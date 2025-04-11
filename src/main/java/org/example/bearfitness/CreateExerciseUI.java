@@ -11,19 +11,22 @@ import java.util.Map;
 public class CreateExerciseUI extends JFrame {
   private JTextField planNameField;
   private JTextField equipmentField;
-  private JTextField fitnessLevelField;
+  private JComboBox fitnessLevelCombo;
   private JTextField sessionLengthField;
   private JTextField frequencyField;
   private JButton addExerciseButton;
   private JButton savePlanButton;
   private JTextArea planOutput;
 
+  private static DBService dbService;
+
   private Map<Integer, WorkoutEntry> exercises = new HashMap<>();
 
-  public CreateExerciseUI() {
+  public CreateExerciseUI(DBService dbService) {
+    this.dbService = dbService;
     setTitle("Create Exercise");
     setSize(600, 500);
-    setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+    setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     setLayout(new BorderLayout());
 
     //Top panel for basic plan info
@@ -37,9 +40,9 @@ public class CreateExerciseUI extends JFrame {
     equipmentField = new JTextField();
     inputPanel.add(equipmentField);
 
-    inputPanel.add(new JLabel("Reccomended Fitness Level:"));
-    fitnessLevelField = new JTextField();
-    inputPanel.add(fitnessLevelField);
+    inputPanel.add(new JLabel("Recommended Fitness Level:"));
+    fitnessLevelCombo = new JComboBox<>(FitnessLevel.values());
+    inputPanel.add(fitnessLevelCombo);
 
     inputPanel.add(new JLabel("Avg Session Length (min):"));
     sessionLengthField = new JTextField();
@@ -98,29 +101,65 @@ public class CreateExerciseUI extends JFrame {
 
       exercises.put(day, entry);
       JOptionPane.showMessageDialog(this, "Exercise added for day " + day);
+      displayCurrentExercises();
 
     } catch (NumberFormatException ex) {
       JOptionPane.showMessageDialog(this, "Invalid input format.");
       }
   }
 
+  private void displayCurrentExercises() {
+    StringBuilder builder = new StringBuilder("Current Exercises:\n");
+    exercises.keySet().stream()
+            .sorted()
+            .forEach(day -> {
+              WorkoutEntry entry = exercises.get(day);
+              builder.append("Day ").append(day).append(": ")
+                      .append(entry.getExerciseType()).append(" - ")
+                      .append(entry.getDuration()).append(" min - ")
+                      .append(entry.getDescription()).append("\n");
+            });
+
+    planOutput.setText(builder.toString());
+  }
+
   private void savePlan(ActionEvent e) {
     try {
       String name = planNameField.getText();
-      String fitness = fitnessLevelField.getText();
+      FitnessLevel fitness = (FitnessLevel) fitnessLevelCombo.getSelectedItem();
       int sessionLength = Integer.parseInt(sessionLengthField.getText());
       int frequency = Integer.parseInt(frequencyField.getText());
       List<String> equipment = Arrays.asList(equipmentField.getText().split("\\s*,\\s*"));
 
-      ExercisePlan plan = new ExercisePlan(name, equipment, fitness, sessionLength, frequency, exercises);
-      planOutput.setText(plan.toString());
+      ExercisePlan plan = new ExercisePlan(name, equipment, fitness.getName(), sessionLength, frequency, exercises);
+      //planOutput.setText(plan.toString());
+      dbService.createExercisePlan(plan);
+
+      StringBuilder builder = new StringBuilder();
+
+      // Show current exercises (sorted)
+      exercises.keySet().stream()
+              .sorted()
+              .forEach(day -> {
+                WorkoutEntry entry = exercises.get(day);
+                builder.append("Day ").append(day).append(": ")
+                        .append(entry.getExerciseType()).append(" - ")
+                        .append(entry.getDuration()).append(" min - ")
+                        .append(entry.getDescription()).append("\n");
+              });
+
+      // Add plan summary at the end
+      builder.append("\n--- Full Plan Summary ---\n")
+              .append(plan.toString());
+
+      planOutput.setText(builder.toString());
 
     } catch(NumberFormatException ex) {
       JOptionPane.showMessageDialog(this, "Please enter valid numbers for session length and frequency.");
     }
   }
   
-  public static void main(String[] args) {
-    SwingUtilities.invokeLater(() -> new CreateExerciseUI().setVisible(true));
-  }
+//  public static void main(String[] args) {
+//    SwingUtilities.invokeLater(() -> new CreateExerciseUI().setVisible(true));
+//  }
 }
