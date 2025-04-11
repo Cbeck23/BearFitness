@@ -14,6 +14,7 @@ public class DBService {
     @Autowired
     private BearDB db;
 
+
     @Bean
     public CommandLineRunner testDatabase(BearDB db) {
         return args -> {
@@ -40,6 +41,11 @@ public class DBService {
             }
         }
         return null;
+    }
 
+
+    public User createUser(String username, String password, String email, UserType userType) {
+        User newUser = new User(username, password, email, userType);
+        return db.save(newUser);
     }
 }

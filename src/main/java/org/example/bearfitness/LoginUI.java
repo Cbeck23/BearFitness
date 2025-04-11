@@ -10,8 +10,12 @@ public class LoginUI extends JFrame {
     private JButton loginButton;
     private JButton signUpButton;
 
+    private static DBService dbService;
 
-    public LoginUI() {
+
+    public LoginUI(DBService dbService) {
+        this.dbService = dbService;
+        System.out.println("Initializing LoginUI");
         setTitle("Create Exercise");
         setSize(400, 200);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -44,11 +48,11 @@ public class LoginUI extends JFrame {
         String username = usernameField.getText();
         String password = new String(passwordField.getPassword());
 
-        if (authenticateUser(username, password)) {
+        if (dbService.authenticateUser(username, password) != null) {
             JOptionPane.showMessageDialog(this, "Login successful!");
-            // Redirect to another UI
-            this.dispose(); // Close the login window
-            new OverallUI().setVisible(true);
+            this.dispose();
+            //FIX ME
+            new TrainerUI().setVisible(true); //trainer ui for now, later switch to basic ui/whatever ui for user type
         } else {
             JOptionPane.showMessageDialog(this, "Invalid username or password.", "Login Failed", JOptionPane.ERROR_MESSAGE);
         }
@@ -58,14 +62,16 @@ public class LoginUI extends JFrame {
         //Redirect to create user UI
         JOptionPane.showMessageDialog(this, "Redirecting to Create User Page...");
         this.dispose();
-        new SignUpUI().setVisible(true); //Placeholder class
+        new SignUpUI(dbService).setVisible(true);
     }
 
-    private boolean authenticateUser(String username, String password) {
-        return userDatabase.containsKey(username) && userDatabase.get(username).equals(password);
-    }
+//    private boolean authenticateUser(String username, String password) {
+//        if(authenticateUser(username,password) != null){
+//            return true;
+//        };
+//    }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new LoginUI().setVisible(true));
-    }
+//    public static void main(String[] args) {
+//        SwingUtilities.invokeLater(() -> new LoginUI(dbService).setVisible(true));
+//    }
 }
