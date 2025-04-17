@@ -1,4 +1,4 @@
-package org.example.bearfitness;
+package org.example.bearfitness.user;
 
 /**
  * Factory class to create User instances.

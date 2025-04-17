@@ -1,5 +1,7 @@
 package org.example.bearfitness;
 
+import org.example.bearfitness.data.DBService;
+import org.example.bearfitness.ui.LoginUI;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;

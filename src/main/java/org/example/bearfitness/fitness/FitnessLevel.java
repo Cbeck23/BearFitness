@@ -1,4 +1,4 @@
-package org.example.bearfitness;
+package org.example.bearfitness.fitness;
 
 public enum FitnessLevel {
     LEVEL_1(1, "Beginner"),

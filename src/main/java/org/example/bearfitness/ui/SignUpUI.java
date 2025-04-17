@@ -1,4 +1,9 @@
-package org.example.bearfitness;
+package org.example.bearfitness.ui;
+
+import org.example.bearfitness.user.User;
+import org.example.bearfitness.data.DBService;
+import org.example.bearfitness.user.UserCreator;
+import org.example.bearfitness.user.UserType;
 
 import javax.swing.*;
 import java.awt.*;

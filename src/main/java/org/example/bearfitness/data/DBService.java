@@ -1,12 +1,11 @@
-package org.example.bearfitness;
+package org.example.bearfitness.data;
 
+import org.example.bearfitness.fitness.ExercisePlan;
+import org.example.bearfitness.user.User;
+import org.example.bearfitness.user.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -38,7 +37,7 @@ public class DBService {
         return db.save(newUser);
     }
 
-    public  ExercisePlan createExercisePlan(ExercisePlan exercisePlan) {
+    public ExercisePlan createExercisePlan(ExercisePlan exercisePlan) {
         ExercisePlan newPlan = new ExercisePlan(exercisePlan);
         return ExercisePlanRepository.save(exercisePlan);
     }

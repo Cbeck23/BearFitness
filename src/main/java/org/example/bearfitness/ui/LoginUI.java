@@ -1,4 +1,6 @@
-package org.example.bearfitness;
+package org.example.bearfitness.ui;
+
+import org.example.bearfitness.data.DBService;
 
 import javax.swing.*;
 import java.awt.*;
