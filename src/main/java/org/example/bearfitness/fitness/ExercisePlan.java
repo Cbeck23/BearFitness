@@ -36,6 +36,15 @@ public class ExercisePlan {
     this.exercises = exercises != null ? exercises : new HashMap<>();
   }
 
+  public ExercisePlan(ExercisePlan exercisePlan) {
+    this.planName = exercisePlan.getPlanName();
+    this.requiredEquipment = exercisePlan.getRequiredEquipment();
+    this.recommendedFitnessLevel = exercisePlan.getRecommendedFitnessLevel();
+    this.averageSessionLength = exercisePlan.getAverageSessionLength();
+    this.frequencyPerWeek = exercisePlan.getFrequencyPerWeek();
+    this.exercises = exercisePlan.getExercises();
+  }
+
   public Long getId() { return id; }
 
   public String getPlanName() { return planName; }
@@ -70,13 +79,24 @@ public class ExercisePlan {
 
   @Override
   public String toString() {
-    return "ExercisePlan{" +
-            "planName='" + planName + '\'' +
-            ", requiredEquipment=" + requiredEquipment +
-            ", recommendedFitnessLevel='" + recommendedFitnessLevel + '\'' +
-            ", averageSessionLength=" + averageSessionLength +
-            ", frequencyPerWeek=" + frequencyPerWeek +
-            ", exercises=" + exercises +
-            '}';
+    StringBuilder builder = new StringBuilder();
+    builder.append("Plan Name: ").append(planName).append("\n")
+            .append("Required Equipment: ").append(requiredEquipment).append("\n")
+            .append("Recommended Fitness Level: ").append(recommendedFitnessLevel).append("\n")
+            .append("Average Session Length: ").append(averageSessionLength).append(" minutes\n")
+            .append("Frequency per Week: ").append(frequencyPerWeek).append(" days\n")
+            .append("Exercises:\n");
+
+    exercises.keySet().stream()
+            .sorted()
+            .forEach(day -> {
+              WorkoutEntry entry = exercises.get(day);
+              builder.append("  Day ").append(day).append(": ")
+                      .append(entry.getExerciseType()).append(" - ")
+                      .append(entry.getDuration()).append(" min - ")
+                      .append(entry.getDescription()).append("\n");
+            });
+
+    return builder.toString();
   }
 }

@@ -1,7 +1,10 @@
 package org.example.bearfitness.ui;
 
+import org.example.bearfitness.data.DBService;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 
 public class LoginUI extends JFrame {
     private JTextField usernameField;
@@ -9,7 +12,12 @@ public class LoginUI extends JFrame {
     private JButton loginButton;
     private JButton signUpButton;
 
-    public LoginUI() {
+    private static DBService dbService;
+
+
+    public LoginUI(DBService dbService) {
+        this.dbService = dbService;
+        System.out.println("Initializing LoginUI");
         setTitle("Create Exercise");
         setSize(400, 200);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -34,36 +42,38 @@ public class LoginUI extends JFrame {
 
         add(inputPanel, BorderLayout.CENTER);
         
-//        loginButton.addActionListener(this::userLogin);
-//        signUpButton.addActionListener(this::userSignUp);
+        loginButton.addActionListener(this::userLogin);
+        signUpButton.addActionListener(this::userSignUp);
     }
-//
-//    private void userLogin(ActionEvent e) {
-//        String username = usernameField.getText();
-//        String password = new String(passwordField.getPassword());
-//
-//        if (authenticateUser(username, password)) {
-//            JOptionPane.showMessageDialog(this, "Login successful!");
-//            // Redirect to another UI
-//            this.dispose(); // Close the login window
-//            new OverallUI().setVisible(true);
-//        } else {
-//            JOptionPane.showMessageDialog(this, "Invalid username or password.", "Login Failed", JOptionPane.ERROR_MESSAGE);
-//        }
-//    }
-//
-//    private void userSignUp(ActionEvent e) {
-//        //Redirect to create user UI
-//        JOptionPane.showMessageDialog(this, "Redirecting to Create User Page...");
-//        this.dispose();
-//        new SignUpUI().setVisible(true); //Placeholder class
-//    }
-//
+
+    private void userLogin(ActionEvent e) {
+        String username = usernameField.getText();
+        String password = new String(passwordField.getPassword());
+
+        if (dbService.authenticateUser(username, password) != null) {
+            JOptionPane.showMessageDialog(this, "Login successful!");
+            this.dispose();
+            //FIX ME
+            new TrainerUI(dbService).setVisible(true); //trainer ui for now, later switch to basic ui/whatever ui for user type
+        } else {
+            JOptionPane.showMessageDialog(this, "Invalid username or password.", "Login Failed", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void userSignUp(ActionEvent e) {
+        //Redirect to create user UI
+        JOptionPane.showMessageDialog(this, "Redirecting to Create User Page...");
+        this.dispose();
+        new SignUpUI(dbService).setVisible(true);
+    }
+
 //    private boolean authenticateUser(String username, String password) {
-//        return userDatabase.containsKey(username) && userDatabase.get(username).equals(password);
+//        if(authenticateUser(username,password) != null){
+//            return true;
+//        };
 //    }
-//
+
 //    public static void main(String[] args) {
-//        SwingUtilities.invokeLater(() -> new LoginUI().setVisible(true));
+//        SwingUtilities.invokeLater(() -> new LoginUI(dbService).setVisible(true));
 //    }
 }
