@@ -20,26 +20,6 @@ public class DBService {
     private ExercisePlanRepository ExercisePlanRepository;
 
 
-    @Bean
-    public CommandLineRunner testDatabase(BearDB db) {
-        return args -> {
-            // Save a user
-            Date testDate = new Date();
-            int calories = 100;
-            int sleep = 8;
-            User user = new User("test", "test", "test", UserType.ADMIN);
-            user.logCalories(testDate, calories);
-            user.logSleep(testDate, sleep);
-            user.workoutEntryCreated(10, WorkoutEntry.ExerciseType.RUN, calories, sleep);
-            user.setGoals(new UserGoals(195, 5 ));
-            db.save(user);
-
-            // Save an exercise plan
-            ExercisePlan plan = new ExercisePlan(/*plan details*/);
-            ExercisePlanRepository.save(plan);
-        };
-    }
-
     public User authenticateUser(String username, String password) {
         Optional<User> optionalUser = db.findByUsername(username);
         if (optionalUser.isPresent()) {
