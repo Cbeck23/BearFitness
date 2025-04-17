@@ -1,6 +1,7 @@
 package org.example.bearfitness.ui;
 
 import org.example.bearfitness.data.DBService;
+import org.example.bearfitness.trainerJuice.Music;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -25,7 +26,9 @@ public class TrainerUI extends JFrame {
     JPanel buttons = new JPanel(new GridLayout(1,3,20,20));
     buttons.add(new JButton("Workout"));
     buttons.add(exerciseCreation);
-    buttons.add(new JButton("Settings"));
+    JButton settings = new JButton("Settings");
+    settings.addActionListener(this::Settings);
+    buttons.add(settings);
 
     JPanel center = new JPanel(new FlowLayout(FlowLayout.CENTER));
     center.add(buttons);
@@ -78,6 +81,11 @@ public class TrainerUI extends JFrame {
     });
 
     planUI.setVisible(true);
+  }
+
+  private void Settings(ActionEvent e){
+    TrainerSettings settings = new TrainerSettings();
+    settings.setVisible(true);
   }
 
   public void refreshPlansDisplay() {
