@@ -1,4 +1,4 @@
-package org.example.bearfitness.ui;
+package org.example.bearfitness.UI;
 
 import org.example.bearfitness.user.User;
 import org.example.bearfitness.data.DBService;
