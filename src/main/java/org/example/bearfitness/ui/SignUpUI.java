@@ -4,32 +4,28 @@ import org.example.bearfitness.user.User;
 import org.example.bearfitness.data.DBService;
 import org.example.bearfitness.user.UserCreator;
 import org.example.bearfitness.user.UserType;
+import org.example.bearfitness.ui.ScreenManager;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
-public class SignUpUI extends JFrame {
+public class SignUpUI extends JPanel {
+    private DBService dbService;
+    private ScreenManager screenManager;
     private JTextField usernameField;
     private JPasswordField passwordField;
     private JPasswordField confirmPasswordField;
     private JTextField emailField;
     private JComboBox<UserType> userTypeCombo;
-    private JButton signUpButton;
-    private JButton cancelButton;
 
-    private DBService dbService;
-
-    public SignUpUI(DBService dbService) {
+    public SignUpUI(DBService dbService, ScreenManager screenManager) {
         this.dbService = dbService;
-        setTitle("Sign Up");
-        setSize(400, 300);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new BorderLayout());
+        this.screenManager = screenManager;
+        setLayout(new GridBagLayout());
 
-        //Input Panel
         JPanel inputPanel = new JPanel(new GridLayout(6, 2, 10, 10));
-        inputPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        inputPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         inputPanel.add(new JLabel("Username:"));
         usernameField = new JTextField();
@@ -51,66 +47,45 @@ public class SignUpUI extends JFrame {
         userTypeCombo = new JComboBox<>(UserType.values());
         inputPanel.add(userTypeCombo);
 
-        add(inputPanel, BorderLayout.CENTER);
-
-        //Button Panel
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        signUpButton = new JButton("Sign Up");
-        cancelButton = new JButton("Cancel");
+        JButton signUpButton = new JButton("Sign Up");
+        JButton cancelButton = new JButton("Cancel");
         buttonPanel.add(signUpButton);
         buttonPanel.add(cancelButton);
-        add(buttonPanel, BorderLayout.SOUTH);
 
-        //Action listeners for buttons
-        signUpButton.addActionListener(this::handleSignUp);
-        cancelButton.addActionListener(e -> {
-            this.dispose();
-            new LoginUI(dbService).setVisible(true);
-        });
+        signUpButton.addActionListener(e -> handleSignUp());
+        cancelButton.addActionListener(e -> screenManager.showScreen(ScreenManager.Screen.LOGIN));
+
+        JPanel container = new JPanel(new BorderLayout());
+        container.add(inputPanel, BorderLayout.CENTER);
+        container.add(buttonPanel, BorderLayout.SOUTH);
+
+        add(container);
     }
 
-    private void handleSignUp(ActionEvent e) {
+    private void handleSignUp() {
         String username = usernameField.getText().trim();
         String email = emailField.getText().trim();
         String password = new String(passwordField.getPassword());
         String confirmPassword = new String(confirmPasswordField.getPassword());
         UserType userType = (UserType) userTypeCombo.getSelectedItem();
 
-        //Check that all fields are filled
-        if(username.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+        if (username.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please fill in all fields.", "Incomplete", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        //Check that password and confirmed password match
-        if(!password.equals(confirmPassword)) {
+        if (!password.equals(confirmPassword)) {
             JOptionPane.showMessageDialog(this, "Passwords do not match.", "Mismatch", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        //Create a new user using the UserCreator factory method
-        User newUser;
         try {
-            newUser = UserCreator.createUser(userType, username, password, email);
-        } catch(IllegalArgumentException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        //I don't think this is needed anymore? ^
-
-        try {
+            dbService.createUser(username, password, email, userType);
             JOptionPane.showMessageDialog(this, "Account created successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-            dbService.createUser(username, password, email,userType);
-
-            //Redirect the user to the login UI
-            this.dispose();
-            new LoginUI(dbService).setVisible(true);
-        } catch(Exception ex) {
+            screenManager.showScreen(ScreenManager.Screen.LOGIN);
+        } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Failed to create an account: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-//    //Main method for standalone testing
-//    public static void main(String[] args) {
-//        SwingUtilities.invokeLater(() -> new SignUpUI().setVisible(true));
-//    }
 }

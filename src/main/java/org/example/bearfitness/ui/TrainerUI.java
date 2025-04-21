@@ -1,6 +1,8 @@
 package org.example.bearfitness.ui;
 
 import org.example.bearfitness.data.DBService;
+import org.example.bearfitness.user.*;
+import org.example.bearfitness.ui.ScreenManager;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -8,91 +10,70 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 
 
-public class TrainerUI extends JFrame {
-  private JFrame frame;
-  private static DBService dbService;
+class TrainerUI extends JPanel {
+  private DBService dbService;
+  private ScreenManager screenManager;
+  private User user;
   private JTextArea plansDisplay;
 
-  public TrainerUI(DBService dbService) {
+  public TrainerUI(DBService dbService, ScreenManager screenManager, User user) {
     this.dbService = dbService;
-    frame = new JFrame("BearFitness Trainer");
-    frame.setLayout(new BorderLayout());
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    this.screenManager = screenManager;
+    this.user = user;
+
+    setLayout(new BorderLayout());
+
     JButton exerciseCreation = new JButton("Create an Exercise Plan");
-    exerciseCreation.addActionListener(this::createPlan);
+    exerciseCreation.addActionListener(e -> openExerciseCreator());
 
-    //top buttons for app flow
-    JPanel buttons = new JPanel(new GridLayout(1,3,20,20));
-    buttons.add(new JButton("Workout"));
-    buttons.add(exerciseCreation);
-    buttons.add(new JButton("Settings"));
+    JPanel topButtons = new JPanel(new GridLayout(1, 3, 20, 20));
+    topButtons.add(new JButton("Workout"));
+    topButtons.add(exerciseCreation);
+    topButtons.add(new JButton("Settings"));
 
-    JPanel center = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    center.add(buttons);
-    frame.add(center, BorderLayout.NORTH);
-    //frame.setContentPane(center);
+    JPanel topWrapper = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    topWrapper.add(topButtons);
+    add(topWrapper, BorderLayout.NORTH);
 
-
-    // FIX: MAKE OWN CLASS TO LOAD TRAINEE INFORMATION ??
-    DefaultTableModel trainees = new DefaultTableModel();
-    trainees.addColumn("Name");
-    trainees.addColumn("Age");
-    JTable table = new JTable(trainees);
+    JTable table = new JTable(new String[][]{}, new String[]{"Name", "Age"});
     JScrollPane scrollPane = new JScrollPane(table);
 
-    JPanel formatter = new JPanel(new GridLayout(1,2));
-
-    // FIX: ADD CALENDAR TO TRAINER PAGE INCLUDING WORKOUTS THEY HAVE
+    JPanel formatter = new JPanel(new GridLayout(1, 2));
     formatter.add(new JTextField("Calendar"));
     formatter.add(scrollPane);
-
-    frame.add(formatter, BorderLayout.CENTER);
-
-    JPanel rightPanel = new JPanel(new BorderLayout());
-    rightPanel.setBorder(BorderFactory.createTitledBorder("Your Plans"));
+    add(formatter, BorderLayout.CENTER);
 
     plansDisplay = new JTextArea(15, 30);
     plansDisplay.setEditable(false);
     refreshPlansDisplay();
-    JScrollPane planScroll = new JScrollPane(plansDisplay);
 
-    rightPanel.add(planScroll, BorderLayout.CENTER);
-    frame.add(rightPanel, BorderLayout.EAST);
-
-    frame.pack();
-
-    frame.setLocationRelativeTo(null);
-    frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-    frame.setVisible(true);
-
+    JPanel rightPanel = new JPanel(new BorderLayout());
+    rightPanel.setBorder(BorderFactory.createTitledBorder("Your Plans"));
+    rightPanel.add(new JScrollPane(plansDisplay), BorderLayout.CENTER);
+    add(rightPanel, BorderLayout.EAST);
   }
 
-  private void createPlan(ActionEvent e){
-    CreateExerciseUI planUI = new CreateExerciseUI(dbService);
-
-    planUI.addWindowListener(new java.awt.event.WindowAdapter() {
-      @Override
-      public void windowClosed(java.awt.event.WindowEvent windowEvent) {
-        refreshPlansDisplay(); // Refresh plan list when the window closes
-      }
-    });
-
-    planUI.setVisible(true);
+  private void openExerciseCreator() {
+    CreateExerciseUI createPanel = new CreateExerciseUI(dbService);
+    JDialog dialog = new JDialog((JFrame) SwingUtilities.getWindowAncestor(this), "Create Exercise Plan", true);
+    dialog.setContentPane(createPanel);
+    dialog.pack();
+    dialog.setLocationRelativeTo(this);
+    dialog.setVisible(true);
+    refreshPlansDisplay();
   }
 
-  public void refreshPlansDisplay() {
+  private void refreshPlansDisplay() {
     if (plansDisplay == null) return;
-
     try {
       java.util.List<String> planNames = dbService.getAllPlans();
       StringBuilder builder = new StringBuilder();
       for (String name : planNames) {
-        builder.append("- ").append(name).append("\n");
+        builder.append("- ").append(name).append(" ");
       }
       plansDisplay.setText(builder.toString());
     } catch (Exception ex) {
       plansDisplay.setText("Failed to load plans.");
-      ex.printStackTrace();
     }
   }
 
