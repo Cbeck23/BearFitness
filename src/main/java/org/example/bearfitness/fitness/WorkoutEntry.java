@@ -42,7 +42,13 @@ public class WorkoutEntry {
 //    private int caloriesBurned = 0;
 //    int stepCount = 0;
 
+    public Date getDate() {
+        return date;
+    }
 
+    public void setDate(Date date) {
+        this.date = date;
+    }
 
 
     public WorkoutEntry(int duration, ExerciseType exerciseType, int caloriesBurned, int stepCount) {
@@ -62,6 +68,9 @@ public class WorkoutEntry {
 
     public ExerciseType getExerciseType() {
         return exerciseType;
+    }
+    public String getExerciseTypeValue() {
+        return String.valueOf(exerciseType.ordinal());
     }
 
     public void setExerciseType(ExerciseType exerciseType) {

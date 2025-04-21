@@ -1,6 +1,6 @@
-package org.example.bearfitness.ui;
+package org.example.bearfitness.UI;
 
-import org.example.bearfitness.ui.*;
+import org.example.bearfitness.UI.*;
 import org.example.bearfitness.data.DBService;
 import org.example.bearfitness.user.User;
 import org.example.bearfitness.user.UserType;
@@ -14,7 +14,11 @@ public class ScreenManager extends JFrame {
         SIGNUP,
         TRAINER,
         USER,
-        ADMIN
+        ADMIN,
+        USER_HOME,
+        WORKOUT_HISTORY,
+        ADD_WORKOUT,
+        SETTINGS
     }
 
     private final CardLayout layout;
@@ -53,6 +57,13 @@ public class ScreenManager extends JFrame {
             }
             case BASIC -> {
                 //cards.add(new UserUI(dbService, this, user), Screen.USER.name());
+                UserUI userHome = new UserUI(dbService, this, user);
+                WorkoutHistoryUI workoutHistory = new WorkoutHistoryUI(dbService, this, user);
+
+                cards.add(userHome, Screen.USER_HOME.name());
+                cards.add(workoutHistory, Screen.WORKOUT_HISTORY.name());
+
+                layout.show(cards, Screen.USER_HOME.name());
                 layout.show(cards, Screen.USER.name());
             }
             case ADMIN -> {

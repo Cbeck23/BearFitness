@@ -1,7 +1,7 @@
 package org.example.bearfitness.UI;
 
 import org.example.bearfitness.data.DBService;
-import org.example.bearfitness.ui.ScreenManager;
+import org.example.bearfitness.UI.ScreenManager;
 
 import javax.swing.*;
 import java.awt.*;

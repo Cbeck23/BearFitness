@@ -1,6 +1,7 @@
 package org.example.bearfitness.data;
 
 import org.example.bearfitness.fitness.ExercisePlan;
+import org.example.bearfitness.fitness.WorkoutEntry;
 import org.example.bearfitness.user.User;
 import org.example.bearfitness.user.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,9 @@ public class DBService {
 
     @Autowired
     private ExercisePlanRepository ExercisePlanRepository;
+
+    @Autowired
+    private UserEntryRepository userEntryRepository;
 
 
     public User authenticateUser(String username, String password) {
@@ -48,4 +52,18 @@ public class DBService {
                 .map(ExercisePlan::getPlanName)
                 .collect(Collectors.toList());
     }
+
+    public List<String[]> getUserEntries(Long userId) {
+        List<WorkoutEntry> entries = userEntryRepository.findByUserId(userId);
+        return entries.stream()
+                .map(entry -> new String[]{
+                        String.valueOf(entry.getDate()),
+                        entry.getExerciseTypeValue(),
+                        String.valueOf(entry.getDuration()),
+                        entry.getDescription(),
+                })
+                .collect(Collectors.toList());
+    }
+
+
 }
