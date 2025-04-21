@@ -52,11 +52,11 @@ public class ScreenManager extends JFrame {
                 layout.show(cards, Screen.TRAINER.name());
             }
             case BASIC -> {
-                //cards.add(new UserUI(dbService, this, user), Screen.USER.name());
+                cards.add(new UserUI(dbService, this, user), Screen.USER.name());
                 layout.show(cards, Screen.USER.name());
             }
             case ADMIN -> {
-                //cards.add(new AdminUI(dbService, this, user), Screen.ADMIN.name());
+                cards.add(new AdminUI(dbService, this, user), Screen.ADMIN.name());
                 layout.show(cards, Screen.ADMIN.name());
             }
         }
