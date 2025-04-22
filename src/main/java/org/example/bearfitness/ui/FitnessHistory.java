@@ -1,4 +1,4 @@
-package org.example.bearfitness.UI;
+package org.example.bearfitness.ui;
 
 import javax.swing.*;
 import java.awt.*;

@@ -45,8 +45,8 @@ public class User {
     private UserGoals goals;
 
     /** Logs of workouts performed by the user. */
-    @ElementCollection
-    private List<WorkoutEntry> entryList = new ArrayList<>();
+//    @ElementCollection
+//    private List<WorkoutEntry> entryList = new ArrayList<>();
 
     /** Exercise plans the user is currently subscribed to. */
     @ManyToMany(cascade = CascadeType.ALL)
@@ -72,7 +72,7 @@ public class User {
         this.userType = userType;
         this.userStats = new UserStats();
         this.goals = new UserGoals();
-        this.entryList = new ArrayList();
+        //this.entryList = new ArrayList();
         this.subscribedPlans = new ArrayList();
     }
 
@@ -134,13 +134,13 @@ public class User {
         this.goals = goals;
     }
 
-    public List<WorkoutEntry> getEntryList() {
-        return entryList;
-    }
-
-    public void setEntryList(List<WorkoutEntry> entryList) {
-        this.entryList = entryList;
-    }
+//    public List<WorkoutEntry> getEntryList() {
+//        return entryList;
+//    }
+//
+//    public void setEntryList(List<WorkoutEntry> entryList) {
+//        this.entryList = entryList;
+//    }
 
     public List<ExercisePlan> getSubscribedPlans() {
         return subscribedPlans;
@@ -188,9 +188,9 @@ public class User {
      *
      * @param entry The workout entry to add.
      */
-    public void addWorkoutEntry(WorkoutEntry entry) {
-        entryList.add(entry);
-    }
+//    public void addWorkoutEntry(WorkoutEntry entry) {
+//        entryList.add(entry);
+//    }
 
     /**
      * Creates and logs a workout entry.
@@ -200,10 +200,10 @@ public class User {
      * @param caloriesBurned Calories burned.
      * @param stepCount Number of steps taken.
      */
-    public void workoutEntryCreated(int duration, WorkoutEntry.ExerciseType exerciseType,
-                                    int caloriesBurned, int stepCount) {
-        addWorkoutEntry(new WorkoutEntry(duration, exerciseType, caloriesBurned, stepCount));
-    }
+//    public void workoutEntryCreated(int duration, WorkoutEntry.ExerciseType exerciseType,
+//                                    int caloriesBurned, int stepCount) {
+//        addWorkoutEntry(new WorkoutEntry(duration, exerciseType, caloriesBurned, stepCount));
+//    }
 
     // === Daily Tracking ===
 

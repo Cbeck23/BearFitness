@@ -1,8 +1,8 @@
-package org.example.bearfitness.UI;
+package org.example.bearfitness.ui;
 
 import org.example.bearfitness.data.DBService;
 import org.example.bearfitness.user.*;
-import org.example.bearfitness.UI.ScreenManager;
+import org.example.bearfitness.ui.ScreenManager;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -15,6 +15,8 @@ class UserUI extends JPanel {
     private ScreenManager screenManager;
     private User user;
     //private JTextArea plansDisplay;
+    private WorkoutHistoryUI workoutHistoryUI;
+    private PieChartPanel pieChartPanel;
 
     public UserUI(DBService dbService, ScreenManager screenManager, User user) {
         this.dbService = dbService;
@@ -23,51 +25,52 @@ class UserUI extends JPanel {
 
         setLayout(new BorderLayout());
 
-        JButton viewWorkoutHistory = new JButton("View Workout History");
-        viewWorkoutHistory.addActionListener(e -> screenManager.showScreen(ScreenManager.Screen.WORKOUT_HISTORY));
+        JButton settingsButton = new JButton("Settings");
+
+        JPanel topButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 10));
+        //topButtons.add(addWorkout);
+        topButtons.add(settingsButton);
+        add(topButtons, BorderLayout.NORTH);
+
+        // SplitPane for left/right resizable layout
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        splitPane.setResizeWeight(0.25);
+        splitPane.setDividerLocation(0.25);
+
+        // Right Panel Container
+        JPanel rightPanel = new JPanel(new BorderLayout());
+        JLabel titleLabel = new JLabel("Welcome, " + user.getUsername() + "!", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 32));
+        rightPanel.add(titleLabel, BorderLayout.NORTH);
+
+        // Split the content below the title
+        JPanel rightContent = new JPanel(new GridLayout(2, 1));  // Two rows, one for pie, one for future use
+        pieChartPanel = new PieChartPanel(dbService, user);
+        rightContent.add(pieChartPanel);
+
+        //PLACEHOLDER
+        JPanel futurePanel = new JPanel();
+        futurePanel.add(new JLabel("More charts & info"));
+        rightContent.add(futurePanel);
+        //breakdown of time spent this month, total exercises logged, goal progress, etc.
+
+        // Add the content split to the center of the rightPanel
+        rightPanel.add(rightContent, BorderLayout.CENTER);
 
 
-        JPanel topButtons = new JPanel(new GridLayout(1, 3, 20, 20));
-        topButtons.add(new JButton("Add New Workout Entry"));
-        topButtons.add(viewWorkoutHistory);
-        topButtons.add(new JButton("Settings"));
 
-        JPanel topWrapper = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        topWrapper.add(topButtons);
-        add(topWrapper, BorderLayout.NORTH);
+        //Left: Workout History
+        workoutHistoryUI = new WorkoutHistoryUI(dbService, screenManager, user, this);
 
+        splitPane.setRightComponent(rightPanel);
+        splitPane.setLeftComponent(workoutHistoryUI);
 
-//        goalsDisplay = new JTextArea(15, 30);
-//        goalsDisplay.setEditable(false);
-//        refreshPlansDisplay();
-//
-//        JPanel rightPanel = new JPanel(new BorderLayout());
-//        rightPanel.setBorder(BorderFactory.createTitledBorder("Your Plans"));
-//        rightPanel.add(new JScrollPane(plansDisplay), BorderLayout.CENTER);
-//        add(rightPanel, BorderLayout.EAST);
+        add(splitPane, BorderLayout.CENTER);
+
     }
 
-
-//    private void refreshPlansDisplay() {
-//        if (plansDisplay == null) return;
-//        try {
-//            java.util.List<String> planNames = dbService.getAllPlans();
-//            StringBuilder builder = new StringBuilder();
-//            for (String name : planNames) {
-//                builder.append("- ").append(name).append(" ");
-//            }
-//            plansDisplay.setText(builder.toString());
-//        } catch (Exception ex) {
-//            plansDisplay.setText("Failed to load plans.");
-//        }
-//    }
-
-//  public static void main(String[] args) {
-//    //SwingUtilities.invokeLater(() -> new TrainerUI().setVisible(false));
-//    ConfigurableApplicationContext context = SpringApplication.run(BearFitnessApplication.class, args);
-//    DBService dbService = context.getBean(DBService.class);
-//
-//
-//    SwingUtilities.invokeLater(() ->  new TrainerUI(dbService).setVisible(true));
-//  }
+    public void refresh() {
+        workoutHistoryUI.refresh();
+        pieChartPanel.refreshChart();
+    }
 }

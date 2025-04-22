@@ -1,11 +1,11 @@
 package org.example.bearfitness;
 
 import org.example.bearfitness.data.DBService;
-import org.example.bearfitness.UI.LoginUI;
+import org.example.bearfitness.ui.LoginUI;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.example.bearfitness.UI.ScreenManager;
+import org.example.bearfitness.ui.ScreenManager;
 import javax.swing.*;
 
 @SpringBootApplication

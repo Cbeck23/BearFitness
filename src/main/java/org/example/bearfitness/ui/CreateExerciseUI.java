@@ -1,4 +1,4 @@
-package org.example.bearfitness.UI;
+package org.example.bearfitness.ui;
 
 import org.example.bearfitness.fitness.FitnessLevel;
 import org.example.bearfitness.fitness.ExercisePlan;
