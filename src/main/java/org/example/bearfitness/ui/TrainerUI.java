@@ -29,7 +29,9 @@ class TrainerUI extends JPanel {
     JPanel topButtons = new JPanel(new GridLayout(1, 3, 20, 20));
     topButtons.add(new JButton("Workout"));
     topButtons.add(exerciseCreation);
-    topButtons.add(new JButton("Settings"));
+    JButton settings = new JButton("Settings");
+    settings.addActionListener(this::Settings);
+    topButtons.add(settings);
 
     JPanel topWrapper = new JPanel(new FlowLayout(FlowLayout.CENTER));
     topWrapper.add(topButtons);
@@ -75,6 +77,11 @@ class TrainerUI extends JPanel {
     } catch (Exception ex) {
       plansDisplay.setText("Failed to load plans.");
     }
+  }
+
+  private void Settings(ActionEvent e){
+    TrainerSettings settings = new TrainerSettings();
+    settings.setVisible(true);
   }
 
 //  public static void main(String[] args) {
