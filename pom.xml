@@ -58,6 +58,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>javazoom</groupId>
+            <artifactId>jlayer</artifactId>
+            <version>1.0.1</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.jdatepicker/jdatepicker -->
         <dependency>
             <groupId>org.jdatepicker</groupId>
@@ -69,7 +75,6 @@
             <artifactId>jfreechart</artifactId>
             <version>1.5.3</version>
         </dependency>
-
     </dependencies>
 
     <build>
