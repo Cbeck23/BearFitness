@@ -1,6 +1,7 @@
 package org.example.bearfitness.ui;
 
 import org.example.bearfitness.data.DBService;
+import org.example.bearfitness.data.PasswordHash;
 import org.example.bearfitness.ui.ScreenManager;
 
 import javax.swing.*;
@@ -12,6 +13,7 @@ public class LoginUI extends JPanel {
     private ScreenManager screenManager;
     private JTextField usernameField;
     private JPasswordField passwordField;
+    PasswordHash passwordHash = new PasswordHash();
 
     public LoginUI(DBService dbService, ScreenManager screenManager) {
         this.dbService = dbService;
@@ -46,6 +48,8 @@ public class LoginUI extends JPanel {
     private void userLogin() {
         String username = usernameField.getText();
         String password = new String(passwordField.getPassword());
+
+        password = passwordHash.hashPassword(password);
 
         if (dbService.authenticateUser(username, password) != null) {
             JOptionPane.showMessageDialog(this, "Login successful!");
