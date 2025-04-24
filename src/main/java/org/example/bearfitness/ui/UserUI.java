@@ -27,6 +27,14 @@ class UserUI extends JPanel {
 
         JButton settingsButton = new JButton("Settings");
 
+//        settingsButton.addActionListener(e-> UserSettings.show(
+//                dbService,
+//                (JFrame) SwingUtilities.getWindowAncestor(this),
+//                user,
+//                screenManager));
+        //UserSettings settingsPage = new UserSettings(dbService, screenManager, user, this);
+        settingsButton.addActionListener(e-> screenManager.showScreen(ScreenManager.Screen.SETTINGS));
+
         JPanel topButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 10));
         //topButtons.add(addWorkout);
         topButtons.add(settingsButton);

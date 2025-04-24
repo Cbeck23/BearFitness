@@ -65,10 +65,13 @@ public class ScreenManager extends JFrame {
                 UserUI userHome = new UserUI(dbService, this, user);
                 //WorkoutHistoryUI workoutHistory = new WorkoutHistoryUI(dbService, this, user);
                 //AddWorkoutUI workout = new AddWorkoutUI(dbService,this,user);
+                UserSettings userSettings = new UserSettings(dbService, this, user, userHome);
+                userSettings.setScreenManager(this);
 
                 cards.add(userHome, Screen.USER_HOME.name());
                 //cards.add(workoutHistory, Screen.WORKOUT_HISTORY.name());
                 //cards.add(workout, Screen.ADD_WORKOUT.name());
+                cards.add(userSettings.getPanel(), Screen.SETTINGS.name());
 
                 layout.show(cards, Screen.USER_HOME.name());
                 //Uselayout.show(cards, Screen.USER.name());
@@ -84,15 +87,26 @@ public class ScreenManager extends JFrame {
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setVisible(true);
     }
-
+    private boolean isScreenAdded(Screen screen) {
+        for (Component comp : cards.getComponents()) {
+            if (screen.name().equals(cards.getLayout().toString())) {
+                return true;
+            }
+        }
+        return false;
+    }
     public void showScreen(Screen screen) {
         showScreen(screen, null);
     }
     public void showScreen(Screen screen, User user) {
         if (screen == Screen.USER_HOME && user != null) {
-            UserUI userUI = new UserUI(dbService, this, user);
-            cards.add(userUI, Screen.USER_HOME.name());
+            // Only add if it hasn't already been added
+            if (!isScreenAdded(screen)) {
+                UserUI userUI = new UserUI(dbService, this, user);
+                cards.add(userUI, screen.name());
+            }
         }
         layout.show(cards, screen.name());
     }
+
 }

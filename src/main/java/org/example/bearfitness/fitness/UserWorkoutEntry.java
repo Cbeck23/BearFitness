@@ -31,7 +31,6 @@ public class UserWorkoutEntry {
     public Long getId() { return id; }
     public User getUser() { return user; }
     public WorkoutEntry getWorkoutEntry() { return workoutEntry; }
-    // ... setters
 
     public void setId(Long id) {
         this.id = id;
