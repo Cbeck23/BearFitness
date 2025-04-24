@@ -14,12 +14,20 @@ public class ScreenManager extends JFrame {
         SIGNUP,
         TRAINER,
         USER,
-        ADMIN
+        ADMIN,
+        USER_HOME,
+        ADD_WORKOUT,
+        SETTINGS
     }
 
     private final CardLayout layout;
     private final JPanel cards;
     private final DBService dbService;
+
+    private UserUI userHome;
+    private WorkoutHistoryUI workoutHistory;
+    private AddWorkoutUI addWorkout;
+    //private final User user;
 
     public ScreenManager(DBService dbService) {
         super("BearFitness");
@@ -52,8 +60,18 @@ public class ScreenManager extends JFrame {
                 layout.show(cards, Screen.TRAINER.name());
             }
             case BASIC -> {
-                cards.add(new UserUI(dbService, this, user), Screen.USER.name());
-                layout.show(cards, Screen.USER.name());
+
+                //cards.add(new UserUI(dbService, this, user), Screen.USER.name());
+                UserUI userHome = new UserUI(dbService, this, user);
+                //WorkoutHistoryUI workoutHistory = new WorkoutHistoryUI(dbService, this, user);
+                //AddWorkoutUI workout = new AddWorkoutUI(dbService,this,user);
+
+                cards.add(userHome, Screen.USER_HOME.name());
+                //cards.add(workoutHistory, Screen.WORKOUT_HISTORY.name());
+                //cards.add(workout, Screen.ADD_WORKOUT.name());
+
+                layout.show(cards, Screen.USER_HOME.name());
+                //Uselayout.show(cards, Screen.USER.name());
             }
             case ADMIN -> {
                 cards.add(new AdminUI(dbService, this, user), Screen.ADMIN.name());
@@ -68,6 +86,13 @@ public class ScreenManager extends JFrame {
     }
 
     public void showScreen(Screen screen) {
+        showScreen(screen, null);
+    }
+    public void showScreen(Screen screen, User user) {
+        if (screen == Screen.USER_HOME && user != null) {
+            UserUI userUI = new UserUI(dbService, this, user);
+            cards.add(userUI, Screen.USER_HOME.name());
+        }
         layout.show(cards, screen.name());
     }
 }

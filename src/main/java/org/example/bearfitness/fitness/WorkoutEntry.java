@@ -2,6 +2,7 @@ package org.example.bearfitness.fitness;
 
 import jakarta.persistence.Embeddable;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Objects;
 
@@ -34,7 +35,7 @@ public class WorkoutEntry {
     }
     private ExerciseType exerciseType = ExerciseType.OTHER;
     private String description = "";
-    private Date date = new Date();
+    private LocalDate date = LocalDate.now();
 
     public WorkoutEntry() {}
 
@@ -42,7 +43,13 @@ public class WorkoutEntry {
 //    private int caloriesBurned = 0;
 //    int stepCount = 0;
 
+    public LocalDate getDate() {
+        return date;
+    }
 
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
 
 
     public WorkoutEntry(int duration, ExerciseType exerciseType, int caloriesBurned, int stepCount) {
@@ -62,6 +69,9 @@ public class WorkoutEntry {
 
     public ExerciseType getExerciseType() {
         return exerciseType;
+    }
+    public String getExerciseTypeValue() {
+        return String.valueOf(exerciseType.ordinal());
     }
 
     public void setExerciseType(ExerciseType exerciseType) {
