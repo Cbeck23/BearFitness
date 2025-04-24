@@ -8,21 +8,34 @@ import jakarta.persistence.Embeddable;
 @Embeddable
 public class UserGoals {
 
-    private Integer goalWeight = null;
-    private Integer weeklyActivities = null;
+    private Integer goalWeight = 0;
+    private Double weeklyExHours = 0.0;
+    private Integer goalCalories = 0;
+    private Double goalSleep = 0.0;
 
     public UserGoals() {}
 
-    public UserGoals(Integer goalWeight, Integer weeklyActivities) {
+    public UserGoals(Integer goalWeight, Double weeklyExHours, Integer goalCalories, Double goalSleep) {
         this.goalWeight = goalWeight;
-        this.weeklyActivities = weeklyActivities;
+        this.weeklyExHours = weeklyExHours;
+        this.goalCalories = goalCalories;
+        this.goalSleep = goalSleep;
     }
 
     public Integer getGoalWeight() { return goalWeight; }
 
     public void setGoalWeight(Integer goalWeight) { this.goalWeight = goalWeight; }
 
-    public Integer getWeeklyActivities() { return weeklyActivities; }
+    public Double getWeeklyExHours() { return weeklyExHours; }
 
-    public void setWeeklyActivities(Integer weeklyActivities) { this.weeklyActivities = weeklyActivities; }
+    public void setWeeklyExHours(Double weeklyExHours) { this.weeklyExHours = weeklyExHours; }
+
+    public Integer getGoalCalories() {return goalCalories;}
+
+    public void setGoalCalories(Integer goalCalories) {this.goalCalories = goalCalories;}
+
+    public Double getGoalSleep() {return goalSleep;}
+
+    public void setGoalSleep(Double goalSleep) {this.goalSleep = goalSleep;}
+
 }

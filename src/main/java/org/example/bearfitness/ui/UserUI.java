@@ -2,12 +2,9 @@ package org.example.bearfitness.ui;
 
 import org.example.bearfitness.data.DBService;
 import org.example.bearfitness.user.*;
-import org.example.bearfitness.ui.ScreenManager;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 
 
 class UserUI extends JPanel {
@@ -26,19 +23,27 @@ class UserUI extends JPanel {
         setLayout(new BorderLayout());
 
         JButton settingsButton = new JButton("Settings");
-
-//        settingsButton.addActionListener(e-> UserSettings.show(
-//                dbService,
-//                (JFrame) SwingUtilities.getWindowAncestor(this),
-//                user,
-//                screenManager));
-        //UserSettings settingsPage = new UserSettings(dbService, screenManager, user, this);
         settingsButton.addActionListener(e-> screenManager.showScreen(ScreenManager.Screen.SETTINGS));
 
-        JPanel topButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 10));
-        //topButtons.add(addWorkout);
-        topButtons.add(settingsButton);
-        add(topButtons, BorderLayout.NORTH);
+
+        // Create the title label
+        JLabel titleLabel = new JLabel("Welcome, " + user.getUsername() + "!", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 32));
+        JPanel centerTitlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        centerTitlePanel.add(titleLabel);
+
+
+        // Right-aligned settings button panel
+        JPanel rightButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        rightButtonPanel.add(settingsButton);
+
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.add(centerTitlePanel, BorderLayout.CENTER);
+        topPanel.add(rightButtonPanel, BorderLayout.EAST);
+
+        add(topPanel, BorderLayout.NORTH);
+
+
 
         // SplitPane for left/right resizable layout
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
@@ -47,19 +52,95 @@ class UserUI extends JPanel {
 
         // Right Panel Container
         JPanel rightPanel = new JPanel(new BorderLayout());
-        JLabel titleLabel = new JLabel("Welcome, " + user.getUsername() + "!", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 32));
-        rightPanel.add(titleLabel, BorderLayout.NORTH);
+
 
         // Split the content below the title
         JPanel rightContent = new JPanel(new GridLayout(2, 1));  // Two rows, one for pie, one for future use
         pieChartPanel = new PieChartPanel(dbService, user);
         rightContent.add(pieChartPanel);
 
-        //PLACEHOLDER
-        JPanel futurePanel = new JPanel();
-        futurePanel.add(new JLabel("More charts & info"));
-        rightContent.add(futurePanel);
+
+//        JPanel dataPanel = new JPanel();
+//        dataPanel.add(new JLabel("More charts & info"));
+
+        // STATS DISPLAY AND LOGGING
+        JPanel dataPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        // Label above progress bar
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 3;
+        dataPanel.add(new JLabel("Progress towards Calorie Goal"), gbc);
+
+        // Progress bar
+        JProgressBar calProgressBar = new JProgressBar();
+        calProgressBar.setMinimum(0);
+        int goalCals = user.getGoals().getGoalCalories();
+        int lastWeekCals = user.getUserStats().getCaloriesLastWeek();
+        calProgressBar.setMaximum(goalCals);
+        calProgressBar.setValue(lastWeekCals);
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        gbc.gridx = 0;
+        gbc.weightx = 1.0;
+        dataPanel.add(calProgressBar, gbc);
+
+        // "Log New Calories" button
+        JButton logNewCaloriesButton = new JButton("Log New Calories");
+        gbc.gridx = 1;
+        gbc.weightx = 0;
+
+        dataPanel.add(logNewCaloriesButton, gbc);
+
+        // "Update Goal" button
+        JButton updateGoalButton = new JButton("Update Goal");
+        gbc.gridx = 2;
+        dataPanel.add(updateGoalButton, gbc);
+
+        // Progress text under bar
+        JLabel calProgressText = new JLabel(lastWeekCals+" / " + goalCals);
+        gbc.gridy = 2;
+        gbc.gridx = 0;
+        gbc.gridwidth = 3;
+        gbc.anchor = GridBagConstraints.CENTER;
+        dataPanel.add(calProgressText, gbc);
+
+
+        updateGoalButton.addActionListener(e->{
+            Integer newGoal = getValidCal(this);
+            user.setNewGoalCalories(newGoal);
+            dbService.updateUserData(user);
+
+            // Refresh progress bar and label
+            int updatedGoal = user.getGoals().getGoalCalories();
+            //int updatedCalories = user.getUserStats().getCaloriesLastWeek();
+
+            calProgressBar.setMaximum(updatedGoal);
+            calProgressBar.setValue(user.getUserStats().getCaloriesLastWeek());
+
+            calProgressText.setText(user.getUserStats().getCaloriesLastWeek() + " / " + updatedGoal);
+            refresh();
+        });
+
+        logNewCaloriesButton.addActionListener(e->{
+            Integer newCalories = getValidCal(this);
+            user.logNewCalories(newCalories);
+            dbService.updateUserData(user);
+            // Refresh progress bar and label
+            //int updatedGoal = user.getGoals().getGoalCalories();
+            int updatedCalories = user.getUserStats().getCaloriesLastWeek();
+
+            //calProgressBar.setMaximum(updatedGoal);
+            calProgressBar.setValue(updatedCalories);
+
+            calProgressText.setText(updatedCalories + " / " + user.getGoals().getGoalCalories());
+            refresh();
+        });
+
+        rightContent.add(dataPanel);
         //breakdown of time spent this month, total exercises logged, goal progress, etc.
 
         // Add the content split to the center of the rightPanel
@@ -74,6 +155,28 @@ class UserUI extends JPanel {
         splitPane.setLeftComponent(workoutHistoryUI);
 
         add(splitPane, BorderLayout.CENTER);
+
+    }
+
+    private static Integer getValidCal(JPanel parent) {
+        while (true) {
+//            int dateResult = JOptionPane.showConfirmDialog(
+//                    parent,
+//
+//                    "Select Workout Date",
+//                    JOptionPane.OK_CANCEL_OPTION
+//            );
+
+            try {
+                String input = JOptionPane.showInputDialog(parent, "Enter New Calories:");
+                if (input == null) return null;
+                int newWeight = Integer.parseInt(input);
+                if (newWeight > 0) return newWeight;
+                JOptionPane.showMessageDialog(parent, "Calories must be positive", "Error", JOptionPane.ERROR_MESSAGE);
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(parent, "Please enter a valid number", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
 
     }
 

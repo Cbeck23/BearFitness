@@ -52,7 +52,7 @@ public class UserSettings {
         logoutButton.addActionListener(e -> {
             JOptionPane.showMessageDialog(contentPane, "Logging Out . .","Have a Good Day!", JOptionPane.INFORMATION_MESSAGE);
             screenManager.showScreen(ScreenManager.Screen.LOGIN);
-            //TO DO: unassign current user after logout
+            //TO DO: unassign current user after logout (actually make this work)
         });
 
         backButton1.addActionListener(e -> {

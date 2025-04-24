@@ -100,6 +100,10 @@ public class DBService {
         throw new IllegalArgumentException("Workout entry not found for user.");
     }
 
+    public void updateUserData(User user){
+        db.save(user);
+    }
+
 
 
 }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import org.example.bearfitness.fitness.ExercisePlan;
 import org.example.bearfitness.fitness.WorkoutEntry;
 
+import java.time.LocalDate;
 import java.util.*;
 
 /**
@@ -37,8 +38,9 @@ public class User {
     // === Health & Fitness Tracking ===
 
     /** User-specific health and fitness statistics. */
-    @Embedded
-    private UserStats userStats;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    //@JoinColumn(name = "user_stats_id") // optional: customize the column name in DB
+    private UserStats userStats = null;
 
     /** Fitness goals set by the user. */
     @Embedded
@@ -119,14 +121,40 @@ public class User {
     }
 
     public UserStats getUserStats() {
-        return userStats;
+        if(userStats == null) {
+            return new UserStats();
+        }
+        else{
+            return userStats;
+        }
     }
 
     public void setUserStats(UserStats userStats) {
         this.userStats = userStats;
     }
 
+    public void logNewCalories(Integer newCalories) {
+        if(userStats==null) {
+            userStats = new UserStats();
+        }
+        //FIX?: maybe can change later to ask the user to enter a day/time
+        LocalDate currentTime = LocalDate.now();
+        userStats.logCalories(currentTime, newCalories);
+    }
+
+    public void setNewGoalCalories(Integer newGoal) {
+        if(goals==null) {
+            goals = new UserGoals();
+        }
+        //FIX?: maybe can change later to ask the user to enter a day/time
+        LocalDate currentTime = LocalDate.now();
+        goals.setGoalCalories(newGoal);
+    }
+
     public UserGoals getGoals() {
+        if(goals == null) {
+            return new UserGoals();
+        }
         return goals;
     }
 
@@ -164,10 +192,10 @@ public class User {
     /**
      * Sets the number of weekly activities the user aims to complete.
      *
-     * @param weeklyActivities Target number of weekly activities.
+     * @param weeklyExHours Target number of weekly activities.
      */
-    public void setWeeklyActivities(Integer weeklyActivities) {
-        this.goals.setWeeklyActivities(weeklyActivities);
+    public void setWeeklyExHours(Double weeklyExHours) {
+        this.goals.setWeeklyExHours(weeklyExHours);
     }
 
     // === Exercise Plan Management ===
@@ -183,23 +211,23 @@ public class User {
 
     // === Workout Logging ===
 
-    /**
-     * Adds a workout entry to the user's workout log.
-     *
-     * @param entry The workout entry to add.
-     */
+//    /**
+//     * Adds a workout entry to the user's workout log.
+//     *
+//     * @param entry The workout entry to add.
+//     */
 //    public void addWorkoutEntry(WorkoutEntry entry) {
 //        entryList.add(entry);
 //    }
 
-    /**
-     * Creates and logs a workout entry.
-     *
-     * @param duration Duration of the workout.
-     * @param exerciseType Type of exercise.
-     * @param caloriesBurned Calories burned.
-     * @param stepCount Number of steps taken.
-     */
+//    /**
+//     * Creates and logs a workout entry.
+//     *
+//     * @param duration Duration of the workout.
+//     * @param exerciseType Type of exercise.
+//     * @param caloriesBurned Calories burned.
+//     * @param stepCount Number of steps taken.
+//     */
 //    public void workoutEntryCreated(int duration, WorkoutEntry.ExerciseType exerciseType,
 //                                    int caloriesBurned, int stepCount) {
 //        addWorkoutEntry(new WorkoutEntry(duration, exerciseType, caloriesBurned, stepCount));
@@ -213,7 +241,7 @@ public class User {
      * @param date Date of entry.
      * @param calories Number of calories.
      */
-    public void logCalories(Date date, Integer calories) {
+    public void logCalories(LocalDate date, Integer calories) {
         userStats.logCalories(date, calories);
     }
 
@@ -240,7 +268,7 @@ public class User {
     // === Logs Accessors ===
 
     /** @return Map of calories logged by date. */
-    public Map<Date, Integer> getCaloriesLogged() {
+    public Map<LocalDate, Integer> getCaloriesLogged() {
         return userStats.getCaloriesLogged();
     }
 
