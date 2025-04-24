@@ -2,6 +2,7 @@ package org.example.bearfitness.ui;
 
 import org.example.bearfitness.data.DBService;
 import org.example.bearfitness.user.*;
+import org.example.bearfitness.ui.CalendarApp;
 import org.example.bearfitness.ui.ScreenManager;
 
 import javax.swing.*;
@@ -41,7 +42,7 @@ class TrainerUI extends JPanel {
     JScrollPane scrollPane = new JScrollPane(table);
 
     JPanel formatter = new JPanel(new GridLayout(1, 2));
-    formatter.add(new JTextField("Calendar"));
+    formatter.add(new CalendarApp());
     formatter.add(scrollPane);
     add(formatter, BorderLayout.CENTER);
 
