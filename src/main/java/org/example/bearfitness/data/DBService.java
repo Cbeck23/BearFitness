@@ -1,6 +1,8 @@
 package org.example.bearfitness.data;
 
 import org.example.bearfitness.fitness.ExercisePlan;
+import org.example.bearfitness.fitness.UserWorkoutEntry;
+import org.example.bearfitness.fitness.WorkoutEntry;
 import org.example.bearfitness.user.User;
 import org.example.bearfitness.user.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,9 @@ public class DBService {
 
     @Autowired
     private ExercisePlanRepository ExercisePlanRepository;
+
+    @Autowired
+    private UserEntryRepository userEntryRepository;
 
 
     public User authenticateUser(String username, String password) {
@@ -48,4 +53,53 @@ public class DBService {
                 .map(ExercisePlan::getPlanName)
                 .collect(Collectors.toList());
     }
+
+    public UserWorkoutEntry createUserWorkoutEntry(User user, WorkoutEntry entry) {
+        UserWorkoutEntry userEntry = new UserWorkoutEntry(user, entry);
+        return userEntryRepository.save(userEntry);
+    }
+
+    public List<WorkoutEntry> getUserEntries(Long userId) {
+        List<UserWorkoutEntry> entries = userEntryRepository.findByUserId(userId);
+//        return entries.stream()
+//                .map(entry -> new String[]{
+//                        String.valueOf(entry.getDate()),
+//                        entry.getExerciseTypeValue(),
+//                        String.valueOf(entry.getDuration()),
+//                        entry.getDescription(),
+//                })
+//                .collect(Collectors.toList());
+        return entries.stream()
+                .map(UserWorkoutEntry::getWorkoutEntry)
+                .collect(Collectors.toList());
+    }
+
+    //TO DO: verify these work
+    public void updateUserWorkoutEntry(User user, WorkoutEntry updatedEntry) {
+        List<UserWorkoutEntry> entries = userEntryRepository.findByUserId(user.getId());
+
+        for (UserWorkoutEntry userEntry : entries) {
+            if (userEntry.getWorkoutEntry().equals(updatedEntry)) {
+                userEntry.setWorkoutEntry(updatedEntry);
+                userEntryRepository.save(userEntry);
+                return;
+            }
+        }
+        throw new IllegalArgumentException("Workout entry not found for user.");
+    }
+
+    public void deleteUserWorkoutEntry(User user, WorkoutEntry entryToDelete) {
+        List<UserWorkoutEntry> entries = userEntryRepository.findByUserId(user.getId());
+
+        for (UserWorkoutEntry userEntry : entries) {
+            if (userEntry.getWorkoutEntry().equals(entryToDelete)) {
+                userEntryRepository.delete(userEntry);
+                return;
+            }
+        }
+        throw new IllegalArgumentException("Workout entry not found for user.");
+    }
+
+
+
 }
