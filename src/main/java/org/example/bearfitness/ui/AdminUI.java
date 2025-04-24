@@ -7,7 +7,6 @@ import javax.swing.*;
 
 public class AdminUI extends UserUI {
 
-    AdminUI(){}
 
     public AdminUI(DBService dbService, ScreenManager screenManager, User user) {
         super(dbService, screenManager, user);
