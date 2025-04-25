@@ -59,7 +59,7 @@ public class UserStats {
         }
     }
 
-    //pass in current day, get sum of calories of past week
+    //get sum of calories of past week
     public Integer getCaloriesLastWeek() {
         Map<LocalDate, Integer> calorieLog = this.caloriesLogged;
         LocalDate today = LocalDate.now();
@@ -78,4 +78,23 @@ public class UserStats {
 
         return totalCalories;
     }
+
+//    public Double getExerciseLastWeek() {
+//        Map<LocalDate, Integer> calorieLog = this.caloriesLogged;
+//        LocalDate today = LocalDate.now();
+//        LocalDate oneWeekAgo = today.minusDays(7);
+//
+//        int totalCalories = 0;
+//
+//        for (Map.Entry<LocalDate, Integer> entry : calorieLog.entrySet()) {
+//            LocalDate date = entry.getKey();
+//
+//            if ((date.isEqual(oneWeekAgo) || date.isAfter(oneWeekAgo)) &&
+//                    (date.isEqual(today) || date.isBefore(today))) {
+//                totalCalories += entry.getValue();
+//            }
+//        }
+//
+//        return totalCalories;
+//    }
 }

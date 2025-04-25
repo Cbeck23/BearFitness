@@ -8,6 +8,8 @@ import org.example.bearfitness.user.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -104,6 +106,17 @@ public class DBService {
         db.save(user);
     }
 
+    public int getExerciseLastWeek(Long userId) {
+        LocalDate today = LocalDate.now();
+        // Find the Sunday on or before today:
+        LocalDate startOfWeek = today.with(DayOfWeek.SUNDAY);
+        // Saturday is 6 days later
+        LocalDate endOfWeek = startOfWeek.plusDays(6);
 
+        return userEntryRepository.sumDurationByUserAndDateBetween(
+                userId, startOfWeek, endOfWeek
+        );
+
+    }
 
 }

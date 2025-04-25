@@ -14,6 +14,8 @@ class UserUI extends JPanel {
     //private JTextArea plansDisplay;
     private WorkoutHistoryUI workoutHistoryUI;
     private PieChartPanel pieChartPanel;
+    private JProgressBar exerciseProgressBar;
+    private JLabel exProgressText;
 
     public UserUI(DBService dbService, ScreenManager screenManager, User user) {
         this.dbService = dbService;
@@ -69,9 +71,45 @@ class UserUI extends JPanel {
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Label above progress bar
+
+        //EXERCISE
         gbc.gridx = 0;
         gbc.gridy = 0;
+        gbc.gridwidth = 3;
+        dataPanel.add(new JLabel("Progress towards Exercise Time Goal"), gbc);
+
+        // Progress bar
+        this.exerciseProgressBar = new JProgressBar();
+        exerciseProgressBar.setMinimum(0);
+
+
+        int exThisWeek = dbService.getExerciseLastWeek(user.getId());
+        int weeklyExGoal = user.getGoals().getWeeklyExMinutes();
+
+        exerciseProgressBar.setMaximum(weeklyExGoal);
+        exerciseProgressBar.setValue(exThisWeek);
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        gbc.gridx = 0;
+        gbc.weightx = 1.0;
+        dataPanel.add(exerciseProgressBar, gbc);
+        ;
+
+        // Progress text under bar
+        exProgressText = new JLabel(exThisWeek+" / " + weeklyExGoal + " hours");
+        gbc.gridy = 2;
+        gbc.gridx = 0;
+        gbc.gridwidth = 3;
+        gbc.anchor = GridBagConstraints.CENTER;
+        dataPanel.add(exProgressText, gbc);
+
+        updateExerciseUI();
+
+
+        //-----CALORIES-----
+        // Label above progress bar
+        gbc.gridx = 0;
+        gbc.gridy = 3;
         gbc.gridwidth = 3;
         dataPanel.add(new JLabel("Progress towards Calorie Goal"), gbc);
 
@@ -82,7 +120,7 @@ class UserUI extends JPanel {
         int lastWeekCals = user.getUserStats().getCaloriesLastWeek();
         calProgressBar.setMaximum(goalCals);
         calProgressBar.setValue(lastWeekCals);
-        gbc.gridy = 1;
+        gbc.gridy = 4;
         gbc.gridwidth = 1;
         gbc.gridx = 0;
         gbc.weightx = 1.0;
@@ -102,7 +140,7 @@ class UserUI extends JPanel {
 
         // Progress text under bar
         JLabel calProgressText = new JLabel(lastWeekCals+" / " + goalCals);
-        gbc.gridy = 2;
+        gbc.gridy = 5;
         gbc.gridx = 0;
         gbc.gridwidth = 3;
         gbc.anchor = GridBagConstraints.CENTER;
@@ -180,8 +218,16 @@ class UserUI extends JPanel {
 
     }
 
+    public void updateExerciseUI() {
+        int done  = dbService.getExerciseLastWeek(user.getId());
+        int goal  = user.getGoals().getWeeklyExMinutes();
+        exerciseProgressBar.setValue(done);
+        exProgressText.setText(done + " / " + goal + " hours");
+    }
+
     public void refresh() {
         workoutHistoryUI.refresh();
         pieChartPanel.refreshChart();
+        updateExerciseUI();
     }
 }

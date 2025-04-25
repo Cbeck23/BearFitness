@@ -51,8 +51,10 @@ public class AddWorkoutUI{
         entry.setDate(workoutDate);
         dbService.createUserWorkoutEntry(user, entry);
 
+
         if (userUI != null) {
             userUI.refresh();  // Update the history table with the new entry
+            userUI.updateExerciseUI(); //update exercise progress bar
         }
         //screenManager.showScreen(ScreenManager.Screen.USER_HOME);
         screenManager.showScreen(ScreenManager.Screen.USER_HOME, user);

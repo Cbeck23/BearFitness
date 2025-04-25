@@ -146,8 +146,6 @@ public class User {
         if(goals==null) {
             goals = new UserGoals();
         }
-        //FIX?: maybe can change later to ask the user to enter a day/time
-        LocalDate currentTime = LocalDate.now();
         goals.setGoalCalories(newGoal);
     }
 
@@ -194,8 +192,11 @@ public class User {
      *
      * @param weeklyExHours Target number of weekly activities.
      */
-    public void setWeeklyExHours(Double weeklyExHours) {
-        this.goals.setWeeklyExHours(weeklyExHours);
+    public void setWeeklyExMinutes(Integer weeklyExHours) {
+        if(goals == null) {
+            goals = new UserGoals();
+        }
+        this.goals.setWeeklyExMinutes(weeklyExHours);
     }
 
     // === Exercise Plan Management ===

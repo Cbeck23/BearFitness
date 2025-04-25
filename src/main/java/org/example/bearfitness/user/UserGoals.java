@@ -9,15 +9,15 @@ import jakarta.persistence.Embeddable;
 public class UserGoals {
 
     private Integer goalWeight = 0;
-    private Double weeklyExHours = 0.0;
+    private Integer weeklyExMinutes = 0;
     private Integer goalCalories = 0;
     private Double goalSleep = 0.0;
 
     public UserGoals() {}
 
-    public UserGoals(Integer goalWeight, Double weeklyExHours, Integer goalCalories, Double goalSleep) {
+    public UserGoals(Integer goalWeight, int weeklyExMinutes, Integer goalCalories, Double goalSleep) {
         this.goalWeight = goalWeight;
-        this.weeklyExHours = weeklyExHours;
+        this.weeklyExMinutes = weeklyExMinutes;
         this.goalCalories = goalCalories;
         this.goalSleep = goalSleep;
     }
@@ -26,9 +26,15 @@ public class UserGoals {
 
     public void setGoalWeight(Integer goalWeight) { this.goalWeight = goalWeight; }
 
-    public Double getWeeklyExHours() { return weeklyExHours; }
+    public Integer getWeeklyExMinutes() {
+        if(weeklyExMinutes==null) {
+            return 0;
+        }
+        return weeklyExMinutes;
+    }
 
-    public void setWeeklyExHours(Double weeklyExHours) { this.weeklyExHours = weeklyExHours; }
+    public void setWeeklyExMinutes(Integer weeklyExMinutes) {
+        this.weeklyExMinutes = weeklyExMinutes; }
 
     public Integer getGoalCalories() {return goalCalories;}
 
