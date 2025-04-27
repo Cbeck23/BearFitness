@@ -23,6 +23,13 @@ public class DBService {
     @Autowired
     private UserEntryRepository userEntryRepository;
 
+    //Constructor for mock tests, Lauren added this lol
+    public DBService(BearDB db, ExercisePlanRepository exercisePlanRepository, UserEntryRepository userEntryRepository) {
+        this.db = db;
+        this.ExercisePlanRepository = exercisePlanRepository;
+        this.userEntryRepository = userEntryRepository;
+    }
+
 
     public User authenticateUser(String username, String password) {
         Optional<User> optionalUser = db.findByUsername(username);
