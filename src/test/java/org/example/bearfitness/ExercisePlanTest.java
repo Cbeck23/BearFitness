@@ -18,14 +18,12 @@ class ExercisePlanTest {
         plan = new ExercisePlan();
     }
 
-    // ✅ Test: Setting and getting the plan name
     @Test
     void setAndGetPlanName_shouldReturnCorrectName() {
         plan.setPlanName("Strength Training");
         assertEquals("Strength Training", plan.getPlanName());
     }
 
-    // ✅ Test: Setting and getting required equipment
     @Test
     void setAndGetRequiredEquipment_shouldReturnCorrectList() {
         List<String> equipment = Arrays.asList("Dumbbells", "Bench");
@@ -33,28 +31,24 @@ class ExercisePlanTest {
         assertEquals(equipment, plan.getRequiredEquipment());
     }
 
-    // ✅ Test: Setting and getting recommended fitness level
     @Test
     void setAndGetRecommendedFitnessLevel_shouldReturnCorrectLevel() {
         plan.setRecommendedFitnessLevel("Intermediate");
         assertEquals("Intermediate", plan.getRecommendedFitnessLevel());
     }
 
-    // ✅ Test: Setting and getting average session length
     @Test
     void setAndGetAverageSessionLength_shouldReturnCorrectLength() {
         plan.setAverageSessionLength(45);
         assertEquals(45, plan.getAverageSessionLength());
     }
 
-    // ✅ Test: Setting and getting frequency per week
     @Test
     void setAndGetFrequencyPerWeek_shouldReturnCorrectFrequency() {
         plan.setFrequencyPerWeek(3);
         assertEquals(3, plan.getFrequencyPerWeek());
     }
 
-    // ✅ Test: Adding a valid exercise
     @Test
     void addExercise_validDayNumber_shouldReturnTrue() {
         WorkoutEntry entry = new WorkoutEntry();
@@ -63,7 +57,6 @@ class ExercisePlanTest {
         assertEquals(entry, plan.getSpecificExercise(3));
     }
 
-    // ✅ Test: Adding an exercise to an invalid day number
     @Test
     void addExercise_invalidDayNumber_shouldReturnFalse() {
         WorkoutEntry entry = new WorkoutEntry();
@@ -74,7 +67,6 @@ class ExercisePlanTest {
         assertFalse(addedHigh);
     }
 
-    // ✅ Test: Adding an exercise to a day that already has an exercise
     @Test
     void addExercise_dayAlreadyExists_shouldReturnFalse() {
         WorkoutEntry entry1 = new WorkoutEntry();
@@ -87,7 +79,6 @@ class ExercisePlanTest {
         assertEquals(entry1, plan.getSpecificExercise(4)); // Should still be the original
     }
 
-    // ✅ Test: Get specific exercise
     @Test
     void getSpecificExercise_validDay_shouldReturnCorrectExercise() {
         WorkoutEntry entry = new WorkoutEntry();
@@ -98,7 +89,6 @@ class ExercisePlanTest {
         assertEquals(entry, result);
     }
 
-    // ✅ Test: toString includes important information
     @Test
     void toString_shouldContainPlanDetails() {
         plan.setPlanName("Plan A");
