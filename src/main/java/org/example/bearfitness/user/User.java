@@ -2,6 +2,7 @@ package org.example.bearfitness.user;
 
 import jakarta.persistence.*;
 import org.example.bearfitness.fitness.ExercisePlan;
+import org.example.bearfitness.data.PasswordHash;
 import org.example.bearfitness.fitness.WorkoutEntry;
 
 import java.time.LocalDate;
@@ -13,7 +14,6 @@ import java.util.*;
  */
 @Entity
 public class User {
-
     // === Identification ===
 
     /** Unique identifier for the user. */
@@ -69,7 +69,7 @@ public class User {
      */
     public User(String username, String password, String email, UserType userType) {
         this.username = username;
-        this.password = password;
+        this.password = PasswordHash.hashPassword(password);
         this.email = email;
         this.userType = userType;
         this.userStats = new UserStats();
