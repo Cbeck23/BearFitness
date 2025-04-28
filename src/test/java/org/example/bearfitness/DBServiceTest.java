@@ -23,7 +23,6 @@ import static org.mockito.Mockito.*;
 
 class DBServiceTest {
 
-    //DBService Test vars
         private DBService dbService;
         private BearDB mockDb;
         private ExercisePlanRepository mockExercisePlanRepo;
@@ -38,7 +37,6 @@ class DBServiceTest {
             dbService = new DBService(mockDb, mockExercisePlanRepo, mockUserEntryRepo);
         }
 
-        // Test: Authenticate valid user
         @Test
         void authenticateUser_validCredentials_returnsUser() {
             User user = new User("testUser", "password123", "test@example.com", UserType.BASIC);
@@ -50,7 +48,6 @@ class DBServiceTest {
             assertEquals("testUser", result.getUsername());
         }
 
-        // Test: Authenticate invalid user
         @Test
         void authenticateUser_invalidCredentials_returnsNull() {
             when(mockDb.findByUsername("testUser")).thenReturn(Optional.empty());
@@ -60,7 +57,6 @@ class DBServiceTest {
             assertNull(result);
         }
 
-        // Test: Create user
         @Test
         void createUser_validInput_returnsSavedUser() {
             User user = new User("newUser", "newPass", "new@example.com", UserType.BASIC);
@@ -72,7 +68,6 @@ class DBServiceTest {
             assertEquals("newUser", result.getUsername());
         }
 
-        // Test: Create exercise plan
         @Test
         void createExercisePlan_validInput_returnsSavedPlan() {
             ExercisePlan plan = new ExercisePlan();
@@ -84,7 +79,6 @@ class DBServiceTest {
             assertEquals(plan, result);
         }
 
-        // Test: Get all plans
         @Test
         void getAllPlans_returnsListOfPlanNames() {
             ExercisePlan plan = new ExercisePlan();
@@ -97,7 +91,6 @@ class DBServiceTest {
             assertEquals("Plan A", plans.get(0));
         }
 
-        // Test: Create user workout entry
         @Test
         void createUserWorkoutEntry_validInput_returnsSavedEntry() {
             User user = new User();
@@ -111,7 +104,6 @@ class DBServiceTest {
             assertNotNull(result);
         }
 
-        // Test: Get user entries
         @Test
         void getUserEntries_validUserId_returnsWorkoutEntries() {
             UserWorkoutEntry userWorkoutEntry = new UserWorkoutEntry();
@@ -126,7 +118,6 @@ class DBServiceTest {
             assertEquals(workoutEntry, entries.get(0));
         }
 
-        // ✅ Test: Update user workout entry (success case)
         @Test
         void updateUserWorkoutEntry_existingEntry_updatesSuccessfully() {
             User user = new User();
@@ -141,7 +132,6 @@ class DBServiceTest {
             verify(mockUserEntryRepo, times(1)).save(any(UserWorkoutEntry.class));
         }
 
-        // ✅ Test: Update user workout entry (failure case)
         @Test
         void updateUserWorkoutEntry_nonExistingEntry_throwsException() {
             User user = new User();
@@ -151,7 +141,6 @@ class DBServiceTest {
             assertThrows(IllegalArgumentException.class, () -> dbService.updateUserWorkoutEntry(user, new WorkoutEntry()));
         }
 
-        // ✅ Test: Delete user workout entry (success case)
         @Test
         void deleteUserWorkoutEntry_existingEntry_deletesSuccessfully() {
             User user = new User();
@@ -166,7 +155,6 @@ class DBServiceTest {
             verify(mockUserEntryRepo, times(1)).delete(userWorkoutEntry);
         }
 
-        // ✅ Test: Delete user workout entry (failure case)
         @Test
         void deleteUserWorkoutEntry_nonExistingEntry_throwsException() {
             User user = new User();

@@ -4,6 +4,7 @@ import org.example.bearfitness.user.UserStats;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Map;
 
@@ -13,16 +14,18 @@ class UserStatsTest {
 
     private UserStats stats;
     private Date today;
+    private LocalDate todayLocalDate;
 
     @BeforeEach
     void setUp() {
         stats = new UserStats();
         today = new Date();
+        todayLocalDate = LocalDate.now();
     }
 
     @Test
     void setAndGetCaloriesLogged_shouldReturnCorrectMap() {
-        Map<Date, Integer> calories = Map.of(today, 2200);
+        Map<LocalDate, Integer> calories = Map.of(todayLocalDate, 2200);
         stats.setCaloriesLogged(calories);
 
         assertEquals(2200, stats.getCaloriesLogged().get(today));
@@ -30,8 +33,8 @@ class UserStatsTest {
 
     @Test
     void logCalories_shouldAddOrUpdateCalories() {
-        stats.logCalories(today, 500);
-        stats.logCalories(today, 700); // should merge and sum
+        stats.logCalories(todayLocalDate, 500);
+        stats.logCalories(todayLocalDate, 700);
 
         assertEquals(1200, stats.getCaloriesLogged().get(today));
     }
@@ -47,7 +50,7 @@ class UserStatsTest {
     @Test
     void logSleep_shouldAddOrUpdateSleep() {
         stats.logSleep(today, 6);
-        stats.logSleep(today, 3); // should merge and sum
+        stats.logSleep(today, 3);
 
         assertEquals(9, stats.getSleepLogged().get(today));
     }
@@ -63,7 +66,7 @@ class UserStatsTest {
     @Test
     void logWeight_shouldAddOrUpdateWeight() {
         stats.logWeight(today, 140.0);
-        stats.logWeight(today, 5.0); // should merge and sum
+        stats.logWeight(today, 5.0);
 
         assertEquals(145.0, stats.getWeightLog().get(today));
     }
@@ -81,7 +84,7 @@ class UserStatsTest {
     @Test
     void logWeight_nullOrNegativeValues_shouldNotThrowError() {
         assertDoesNotThrow(() -> stats.logWeight(null, null));
-        assertDoesNotThrow(() -> stats.logWeight(today, -5.0)); // Negative weight should not add
-        assertNull(stats.getWeightLog().get(today)); // Should not create an entry
+        assertDoesNotThrow(() -> stats.logWeight(today, -5.0));
+        assertNull(stats.getWeightLog().get(today));
     }
 }

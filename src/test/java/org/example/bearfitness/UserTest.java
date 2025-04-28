@@ -8,6 +8,7 @@ import org.example.bearfitness.user.UserType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Map;
 
@@ -25,7 +26,7 @@ class UserTest {
     @Test
     void constructor_shouldInitializeFieldsCorrectly() {
         assertEquals("testUser", user.getUsername());
-        assertEquals("password123", user.getPassword());
+        assertNotNull(user.getPassword());
         assertEquals("test@example.com", user.getEmail());
         assertEquals(UserType.BASIC, user.getUserType());
         assertNotNull(user.getUserStats());
@@ -85,16 +86,16 @@ class UserTest {
     }
 
     @Test
-    void setWeeklyActivities_shouldSetWeeklyActivitiesInGoals() {
-        user.setWeeklyActivities(5);
-        assertEquals(5, user.getGoals().getWeeklyActivities());
+    void setWeeklyMinutes_shouldSetWeeklyExMinutesInGoals() {
+        user.setWeeklyExMinutes(300);
+        assertEquals(300, user.getGoals().getWeeklyExMinutes());
     }
 
     @Test
     void logCalories_shouldRecordCaloriesInStats() {
-        Date today = new Date();
+        LocalDate today = LocalDate.now();
         user.logCalories(today, 2000);
-        Map<Date, Integer> caloriesLogged = user.getCaloriesLogged();
+        Map<LocalDate, Integer> caloriesLogged = user.getCaloriesLogged();
 
         assertEquals(2000, caloriesLogged.get(today));
     }

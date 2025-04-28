@@ -22,16 +22,18 @@ class UserGoalsTest {
     }
 
     @Test
-    void setAndGetWeeklyActivities_shouldReturnCorrectValue() {
-        goals.setWeeklyActivities(5);
-        assertEquals(5, goals.getWeeklyActivities());
+    void setAndGetWeeklyExMinutes_shouldReturnCorrectValue() {
+        goals.setWeeklyExMinutes(300);
+        assertEquals(300, goals.getWeeklyExMinutes());
     }
 
     @Test
     void constructorWithParameters_shouldInitializeFieldsCorrectly() {
-        UserGoals newGoals = new UserGoals(160, 4);
+        UserGoals newGoals = new UserGoals(160, 300, 2000, 8.5);
 
         assertEquals(160, newGoals.getGoalWeight());
-        assertEquals(4, newGoals.getWeeklyActivities());
+        assertEquals(300, newGoals.getWeeklyExMinutes());
+        assertEquals(2000, newGoals.getGoalCalories());
+        assertEquals(8.5, newGoals.getGoalSleep());
     }
 }
