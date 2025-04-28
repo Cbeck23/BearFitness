@@ -1,0 +1,41 @@
+public class Goals {
+    public enum Timeframe {
+        DAILY, WEEKLY, MONTHLY
+    }
+    
+    public enum Aspect {
+        CALORIES, WEIGHT, SLEEP, WORKOUTS
+    }
+    
+    private Timeframe timeframe;
+    private Aspect aspect;
+    
+    public Goals(Timeframe timeframe, Aspect aspect) {
+        this.timeframe = timeframe;
+        this.aspect = aspect;
+    }
+    
+    public Timeframe getTimeframe() {
+        return timeframe;
+    }
+    
+    public Aspect getAspect() {
+        return aspect;
+    }
+    
+    public void setTimeframe(Timeframe timeframe) {
+        this.timeframe = timeframe;
+    }
+    
+    public void setAspect(Aspect aspect) {
+        this.aspect = aspect;
+    }
+    
+    @Override
+    public String toString() {
+        return "Goals {" +
+                "Timeframe : " + timeframe +
+                ", Aspect : " + aspect +
+                '}';
+    }
+}
