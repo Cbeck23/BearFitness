@@ -2,10 +2,17 @@ package org.example.bearfitness.ui;
 
 import org.example.bearfitness.data.DBService;
 import org.example.bearfitness.user.User;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.swing.*;
 
 public class AdminManagementUI extends JPanel {
+
+    DBService dbService;
+
+
+
+
     AdminManagementUI(DBService dbService, ScreenManager screenManager, User user) {
         JTable userTable = new JTable();
         JScrollPane userTableScrollPane = new JScrollPane(userTable);

@@ -20,7 +20,7 @@ public class DBService {
     private BearDB db;
 
     @Autowired
-    private ExercisePlanRepository ExercisePlanRepository;
+    private ExercisePlanRepository exercisePlanRepository;
 
     @Autowired
     private UserEntryRepository userEntryRepository;
@@ -28,7 +28,7 @@ public class DBService {
     //Constructor for mock tests, Lauren added this lol
     public DBService(BearDB db, ExercisePlanRepository exercisePlanRepository, UserEntryRepository userEntryRepository) {
         this.db = db;
-        this.ExercisePlanRepository = exercisePlanRepository;
+        this.exercisePlanRepository = exercisePlanRepository;
         this.userEntryRepository = userEntryRepository;
     }
 
@@ -53,11 +53,11 @@ public class DBService {
 
     public ExercisePlan createExercisePlan(ExercisePlan exercisePlan) {
         ExercisePlan newPlan = new ExercisePlan(exercisePlan);
-        return ExercisePlanRepository.save(exercisePlan);
+        return exercisePlanRepository.save(exercisePlan);
     }
 
     public List<String> getAllPlans() {
-        List<ExercisePlan> plans = ExercisePlanRepository.findAll();
+        List<ExercisePlan> plans = exercisePlanRepository.findAll();
         return plans.stream()
                 .map(ExercisePlan::getPlanName)
                 .collect(Collectors.toList());
@@ -124,6 +124,10 @@ public class DBService {
                 userId, startOfWeek, endOfWeek
         );
 
+    }
+
+    public List<ExercisePlan> findExercisePlanByName(String planName) {
+        return exercisePlanRepository.findExercisePlanByPlanName(planName);
     }
 
 }
