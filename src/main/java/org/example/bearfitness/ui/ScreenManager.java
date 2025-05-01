@@ -18,7 +18,8 @@ public class ScreenManager extends JFrame {
         USER_HOME,
         ADD_WORKOUT,
         SETTINGS,
-        ADMINISTRATION
+        ADMINISTRATION,
+        VIEW_CLASSES
     }
 
     private final CardLayout layout;
