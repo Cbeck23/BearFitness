@@ -1,5 +1,6 @@
 package org.example.bearfitness.data;
 
+import org.example.bearfitness.fitness.ExerciseClass;
 import org.example.bearfitness.fitness.ExercisePlan;
 import org.example.bearfitness.fitness.UserWorkoutEntry;
 import org.example.bearfitness.fitness.WorkoutEntry;
@@ -25,11 +26,15 @@ public class DBService {
     @Autowired
     private UserEntryRepository userEntryRepository;
 
+    @Autowired
+    private ClassRepository classRepository;
+
     //Constructor for mock tests, Lauren added this lol
-    public DBService(BearDB db, ExercisePlanRepository exercisePlanRepository, UserEntryRepository userEntryRepository) {
+    public DBService(BearDB db, ExercisePlanRepository exercisePlanRepository, UserEntryRepository userEntryRepository, ClassRepository classRepository) {
         this.db = db;
         this.ExercisePlanRepository = exercisePlanRepository;
         this.userEntryRepository = userEntryRepository;
+        this.classRepository = classRepository;
     }
 
 
@@ -66,6 +71,11 @@ public class DBService {
     public UserWorkoutEntry createUserWorkoutEntry(User user, WorkoutEntry entry) {
         UserWorkoutEntry userEntry = new UserWorkoutEntry(user, entry);
         return userEntryRepository.save(userEntry);
+    }
+
+    public ExerciseClass createClassEntry(User user, WorkoutEntry classEntry) {
+        ExerciseClass entry = new ExerciseClass(user, classEntry);
+        return classRepository.save(entry);
     }
 
     public List<WorkoutEntry> getUserEntries(Long userId) {

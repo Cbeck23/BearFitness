@@ -1,6 +1,14 @@
 package org.example.bearfitness.ui;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -14,9 +22,13 @@ public class CalendarApp extends JPanel {
     private Calendar calendar;
     private int currentMonth;
     private int currentYear;
+    private JPanel daysPanel;
+    private JTextArea datesDisplay;
+
+    private Calendar[] buttonDates = new Calendar[42];  // To associate date with each button
 
     public CalendarApp() {
-        setSize(400, 300);
+        setLayout(new BorderLayout());
 
         calendar = new GregorianCalendar();
         currentMonth = calendar.get(Calendar.MONTH);
@@ -34,41 +46,62 @@ public class CalendarApp extends JPanel {
         headerPanel.add(prevButton);
         headerPanel.add(monthLabel);
         headerPanel.add(nextButton);
-
         calendarPanel.add(headerPanel, BorderLayout.NORTH);
 
-        JPanel daysPanel = new JPanel(new GridLayout(0, 7));
-        dayButtons = new JButton[42]; // 6 weeks * 7 days
+        daysPanel = new JPanel(new GridLayout(0, 7));
+        dayButtons = new JButton[42];
+
         for (int i = 0; i < 42; i++) {
+            int index = i;  // needed for inner class lambda
             dayButtons[i] = new JButton("");
             dayButtons[i].setEnabled(false);
+            dayButtons[i].addActionListener(e -> {
+                Calendar date = buttonDates[index];
+                if (date != null) {
+                    datesDisplay.setText("Selected Date: " + date.getTime().toString());
+                }
+                /// This needs to return the events on the day. Query database and get
+                /// classes for the day.  ? and times ?
+            });
             daysPanel.add(dayButtons[i]);
         }
-        calendarPanel.add(daysPanel, BorderLayout.CENTER);
 
-        add(calendarPanel);
+        calendarPanel.add(daysPanel, BorderLayout.CENTER);
+        add(calendarPanel, BorderLayout.CENTER);
+
+        datesDisplay = new JTextArea(3, 40);
+        datesDisplay.setLineWrap(true);
+        datesDisplay.setWrapStyleWord(true);
+        datesDisplay.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(datesDisplay);
+        add(scrollPane, BorderLayout.SOUTH);
+
         updateCalendar();
-        setVisible(true);
     }
 
     private void updateCalendar() {
+        for (int i = 0; i < 42; i++) {
+            dayButtons[i].setText("");
+            dayButtons[i].setEnabled(false);
+            buttonDates[i] = null;
+        }
+
         calendar.set(currentYear, currentMonth, 1);
         int firstDayOfMonth = calendar.get(Calendar.DAY_OF_WEEK);
         int daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
 
         int dayIndex = firstDayOfMonth - 1;
+
         for (int i = 1; i <= daysInMonth; i++) {
             dayButtons[dayIndex].setText(String.valueOf(i));
             dayButtons[dayIndex].setEnabled(true);
+
+            Calendar date = new GregorianCalendar(currentYear, currentMonth, i);
+            buttonDates[dayIndex] = date;
+
             dayIndex++;
         }
-
-        for (int i = dayIndex; i < 42; i++) {
-            dayButtons[i].setText("");
-            dayButtons[i].setEnabled(false);
-        }
     }
-
 
     private void changeMonth(int amount) {
         currentMonth += amount;
@@ -87,7 +120,4 @@ public class CalendarApp extends JPanel {
         return new java.text.DateFormatSymbols().getMonths()[month];
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(CalendarApp::new);
-    }
 }
