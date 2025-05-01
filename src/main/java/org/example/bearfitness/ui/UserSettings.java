@@ -10,6 +10,7 @@ import org.example.bearfitness.data.DBService;
 import org.example.bearfitness.fitness.WorkoutEntry;
 import org.example.bearfitness.ui.ScreenManager;
 import org.example.bearfitness.user.User;
+import org.example.bearfitness.user.UserType;
 import org.jdatepicker.impl.DateComponentFormatter;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
@@ -58,6 +59,12 @@ public class UserSettings {
         backButton1.addActionListener(e -> {
             screenManager.showScreen(ScreenManager.Screen.USER_HOME, user);
         });
+
+        if(user.getUserType() == UserType.ADMIN){
+            JButton userManagementButton = new JButton("Manage Users");
+            frame.getContentPane().add(userManagementButton);
+            userManagementButton.addActionListener(e -> screenManager.showScreen(ScreenManager.Screen.ADMINISTRATION));
+        }
     }
 
 //    public static void main(String[] args) {

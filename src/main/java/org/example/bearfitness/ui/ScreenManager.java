@@ -17,8 +17,8 @@ public class ScreenManager extends JFrame {
         ADMIN,
         USER_HOME,
         ADD_WORKOUT,
-        BASIC_SETTINGS,
-        ADMIN_SETTINGS
+        SETTINGS,
+        ADMINISTRATION
     }
 
     private final CardLayout layout;
@@ -61,25 +61,14 @@ public class ScreenManager extends JFrame {
                 layout.show(cards, Screen.TRAINER.name());
             }
             case BASIC -> {
-
-                //cards.add(new UserUI(dbService, this, user), Screen.USER.name());
-                UserUI userHome = new UserUI(dbService, this, user);
-                //WorkoutHistoryUI workoutHistory = new WorkoutHistoryUI(dbService, this, user);
-                //AddWorkoutUI workout = new AddWorkoutUI(dbService,this,user);
-                UserSettings userSettings = new UserSettings(dbService, this, user, userHome);
-                userSettings.setScreenManager(this);
-
-                cards.add(userHome, Screen.USER_HOME.name());
-                //cards.add(workoutHistory, Screen.WORKOUT_HISTORY.name());
-                //cards.add(workout, Screen.ADD_WORKOUT.name());
-                cards.add(userSettings.getPanel(), Screen.BASIC_SETTINGS.name());
-
+                cards.add(new UserUI(dbService, this, user), Screen.USER_HOME.name());
+                cards.add(new UserSettings(dbService, this, user, userHome).getPanel(), Screen.SETTINGS.name());
                 layout.show(cards, Screen.USER_HOME.name());
-                //Uselayout.show(cards, Screen.USER.name());
             }
             case ADMIN -> {
-                cards.add(new AdminUI(dbService, this, user), Screen.ADMIN.name());
-                //cards.add(adminSetting.getPanel, Screen.ADMIN_SETTINGS.name());
+                cards.add(new UserUI(dbService, this, user), Screen.ADMIN.name());
+                cards.add(new UserSettings(dbService, this, user, userHome).getPanel(), Screen.SETTINGS.name());
+                cards.add(new AdminManagementUI(dbService, this, user), Screen.ADMINISTRATION.name());
                 layout.show(cards, Screen.ADMIN.name());
             }
         }

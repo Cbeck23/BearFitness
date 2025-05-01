@@ -25,7 +25,8 @@ class UserUI extends JPanel {
         setLayout(new BorderLayout());
 
         JButton settingsButton = new JButton("Settings");
-        settingsButton.addActionListener(e-> screenManager.showScreen(ScreenManager.Screen.BASIC_SETTINGS));
+
+        settingsButton.addActionListener(e-> screenManager.showScreen(ScreenManager.Screen.SETTINGS));
 
 
         // Create the title label
