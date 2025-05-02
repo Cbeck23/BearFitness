@@ -1,9 +1,6 @@
 package org.example.bearfitness;
 
-import org.example.bearfitness.data.DBService;
-import org.example.bearfitness.data.BearDB;
-import org.example.bearfitness.data.ExercisePlanRepository;
-import org.example.bearfitness.data.UserEntryRepository;
+import org.example.bearfitness.data.*;
 
 import org.example.bearfitness.fitness.ExercisePlan;
 import org.example.bearfitness.fitness.UserWorkoutEntry;
@@ -27,14 +24,16 @@ class DBServiceTest {
         private BearDB mockDb;
         private ExercisePlanRepository mockExercisePlanRepo;
         private UserEntryRepository mockUserEntryRepo;
+        private ClassRepository mockClassRepo;
 
         @BeforeEach
         void setUp() {
             mockDb = mock(BearDB.class);
             mockExercisePlanRepo = mock(ExercisePlanRepository.class);
             mockUserEntryRepo = mock(UserEntryRepository.class);
+            mockClassRepo = mock(ClassRepository.class);
 
-            dbService = new DBService(mockDb, mockExercisePlanRepo, mockUserEntryRepo);
+            dbService = new DBService(mockDb, mockExercisePlanRepo, mockUserEntryRepo, mockClassRepo);
         }
 
         @Test
