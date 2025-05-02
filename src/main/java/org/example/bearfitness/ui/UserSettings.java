@@ -1,94 +1,161 @@
 package org.example.bearfitness.ui;
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.time.LocalDate;
-import java.util.Properties;
-
 import org.example.bearfitness.data.DBService;
-import org.example.bearfitness.fitness.WorkoutEntry;
-import org.example.bearfitness.ui.ScreenManager;
+import org.example.bearfitness.data.PasswordHash;
 import org.example.bearfitness.user.User;
-import org.example.bearfitness.user.UserType;
-import org.jdatepicker.impl.DateComponentFormatter;
-import org.jdatepicker.impl.JDatePanelImpl;
-import org.jdatepicker.impl.JDatePickerImpl;
-import org.jdatepicker.impl.UtilDateModel;
 
-public class UserSettings {
-    private JPanel contentPane;
+import javax.swing.*;
+import java.awt.*;
+
+public class UserSettings extends JPanel {
+    private JPasswordField oldPasswordField;
+    private JPasswordField newPasswordField;
+    private JPasswordField confirmPasswordField;
+    private JLabel exerciseStatLabel;
+    private JLabel calorieStatLabel;
+    private JPanel statPanel;
+    private JComboBox<String> themeComboBox;
     private JButton logoutButton;
-    private JTextField oldPassword;
-    private JTextField newPassword;
-    private JTextField confirmPassword;
-    private JButton cancelButton;
-    private JButton backButton1;
+    private JButton backButton;
     private JButton confirmButton;
-    private JLabel userDisplay;
-    private JLabel accInfo;
-    private JPanel statDisplay;
-    private JLabel resetLabel;
-    private JLabel oldPasswordLabel;
-    private JLabel newPasswordLabel;
-    private JLabel confirmPasswordLabel;
+    private JButton cancelButton;
 
-    private ScreenManager screenManager;
+    private final DBService dbService;
+    private final ScreenManager screenManager;
+    private final User user;
 
-    private DBService dbService;
-    private User user;
-    private UserUI parentUI;
-
-    public UserSettings(DBService dbService, ScreenManager screenManager, User user, UserUI parentUI){
-        this.parentUI = parentUI;
+    public UserSettings(DBService dbService, ScreenManager screenManager, User user) {
         this.dbService = dbService;
+        this.screenManager = screenManager;
         this.user = user;
-        JFrame frame = new JFrame("Settings");
+        setLayout(new BorderLayout(10, 10));
+        initComponents();
+        loadStats();
+        registerListeners();
+    }
 
-        frame.setContentPane(this.contentPane);
-        //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        //frame.setVisible(true);
+    private void initComponents() {
+        // Stats and theme at top
+        statPanel = new JPanel(new GridLayout(3, 1, 5, 5));
+        exerciseStatLabel = new JLabel();
+        calorieStatLabel = new JLabel();
+        JPanel themePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        themePanel.add(new JLabel("Theme:"));
+        themeComboBox = new JComboBox<>(new String[]{"Metal", "Nimbus", "CDE/Motif", "Windows", "Windows Classic"});
+        themePanel.add(themeComboBox);
+        statPanel.add(exerciseStatLabel);
+        statPanel.add(calorieStatLabel);
+        statPanel.add(themePanel);
+        add(statPanel, BorderLayout.NORTH);
+
+        // Password change form in center
+        JPanel passwordPanel = new JPanel(new GridLayout(3, 2, 5, 5));
+        passwordPanel.setBorder(BorderFactory.createTitledBorder("Change Password"));
+        oldPasswordField = new JPasswordField();
+        newPasswordField = new JPasswordField();
+        confirmPasswordField = new JPasswordField();
+        passwordPanel.add(new JLabel("Old Password:"));
+        passwordPanel.add(oldPasswordField);
+        passwordPanel.add(new JLabel("New Password:"));
+        passwordPanel.add(newPasswordField);
+        passwordPanel.add(new JLabel("Confirm Password:"));
+        passwordPanel.add(confirmPasswordField);
+        add(passwordPanel, BorderLayout.CENTER);
+
+        // Navigate buttons at bottom
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        backButton = new JButton("Back");
+        logoutButton = new JButton("Logout");
+        cancelButton = new JButton("Cancel");
+        confirmButton = new JButton("Confirm");
+        buttonPanel.add(backButton);
+        buttonPanel.add(logoutButton);
+        buttonPanel.add(cancelButton);
+        buttonPanel.add(confirmButton);
+        add(buttonPanel, BorderLayout.SOUTH);
+    }
+
+    private void loadStats() {
+        int exThisWeek = dbService.getExerciseLastWeek(user.getId());
+        int exGoal = user.getGoals().getWeeklyExMinutes();
+        exerciseStatLabel.setText("Exercise This Week: " + exThisWeek + " / " + exGoal + " min");
+
+        int calThisWeek = user.getGoals().getWeeklyExMinutes();
+        int calGoal = user.getGoals().getGoalCalories();
+        calorieStatLabel.setText("Calories This Week: " + calThisWeek + " / " + calGoal);
+    }
+
+    private void registerListeners() {
+        themeComboBox.addActionListener(e -> {
+            applyTheme((String) themeComboBox.getSelectedItem());
+        });
+
+        confirmButton.addActionListener(e -> handleChangePassword());
+        cancelButton.addActionListener(e -> clearPasswordFields());
 
         logoutButton.addActionListener(e -> {
-            JOptionPane.showMessageDialog(contentPane, "Logging Out . .","Have a Good Day!", JOptionPane.INFORMATION_MESSAGE);
             screenManager.showScreen(ScreenManager.Screen.LOGIN);
-            //TO DO: unassign current user after logout (actually make this work)
         });
 
-        backButton1.addActionListener(e -> {
+        backButton.addActionListener(e -> {
             screenManager.showScreen(ScreenManager.Screen.USER_HOME, user);
         });
-
-//        if(user.getUserType() == UserType.ADMIN){
-//            JButton userManagementButton = new JButton("Manage Users");
-//            frame.getContentPane().add(userManagementButton);
-//            userManagementButton.addActionListener(e -> screenManager.showScreen(ScreenManager.Screen.ADMINISTRATION));
-//        }
     }
 
-//    public static void main(String[] args) {
-//        JFrame frame = new JFrame("My Form");
-//        UserSettings form = new UserSettings();
-//
-//        frame.setContentPane(form.contentPane);
-//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        frame.pack();
-//        frame.setVisible(true);
-//    }
+    private void handleChangePassword() {
+        String oldPwd = new String(oldPasswordField.getPassword());
+        String newPwd = new String(newPasswordField.getPassword());
+        String confirmPwd = new String(confirmPasswordField.getPassword());
+
+        if(!PasswordHash.hashPassword(oldPwd).equals(user.getPassword())) {
+            JOptionPane.showMessageDialog(this, "Old Password Incorrect.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if(!newPwd.equals(confirmPwd)) {
+            JOptionPane.showMessageDialog(this, "New passwords do not match.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        user.setPassword(PasswordHash.hashPassword(newPwd));
+        dbService.updateUserData(user);
+        JOptionPane.showMessageDialog(this, "Password Updated.", "Success", JOptionPane.INFORMATION_MESSAGE);
+        clearPasswordFields();
+    }
+
+    private void clearPasswordFields() {
+        oldPasswordField.setText("");
+        newPasswordField.setText("");
+        confirmPasswordField.setText("");
+    }
+
+    private void applyTheme(String themeName) {
+        try {
+            switch(themeName) {
+                case "Nimbus":
+                    UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+                    break;
+                case "CDE/Motif":
+                    UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
+                    break;
+                case "Windows":
+                    UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+                    break;
+                case "Windows Classic":
+                    UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel");
+                    break;
+                default:
+                    UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+            }
+            SwingUtilities.updateComponentTreeUI(SwingUtilities.getWindowAncestor(this));
+        } catch(Exception ex) {
+            JOptionPane.showMessageDialog(this, "Failed to apply theme.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * Expose this panel for CardLayout
+     */
     public JPanel getPanel() {
-        return contentPane;
+        return this;
     }
-
-    public void setScreenManager(ScreenManager screenManager) {
-        this.screenManager = screenManager;
-    }
-
-//    public static void show(DBService dbService, JFrame parent, User user, ScreenManager screenManager) {
-//        this.parentUI = parentUI;
-//        this.dbService = dbService;
-//        this.user = user;
-//
-//        //screenManager.showScreen(ScreenManager.Screen.USER_HOME, user);
-//    }
 }
