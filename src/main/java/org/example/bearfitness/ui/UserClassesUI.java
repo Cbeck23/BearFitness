@@ -20,17 +20,25 @@ public class UserClassesUI extends JPanel {
     private JTextField searchField;
     private JList<String> subscribedList;
 
-    public UserClassesUI (DBService dbService, ScreenManager screenManager,User user) {
+    public UserClassesUI(DBService dbService, ScreenManager screenManager, User user) {
         this.user = user;
         this.dbService = dbService;
         this.screenManager = screenManager;
 
         setLayout(new BorderLayout(10, 10));
 
+        // Top panel with Back Button
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JButton backButton = new JButton("Back to Home");
+        backButton.addActionListener(e -> screenManager.showScreen(ScreenManager.Screen.USER_HOME, user));
+        topPanel.add(backButton);
+        add(topPanel, BorderLayout.NORTH);
+
         // Subscribed classes panel
         subscribedModel = new DefaultListModel<>();
         subscribedList = new JList<>(subscribedModel);
         JScrollPane subscribedScrollPane = new JScrollPane(subscribedList);
+        subscribedScrollPane.setPreferredSize(new Dimension(350, 500));
         populateSubscribedPlans();
 
         JPanel subscribedPanel = new JPanel(new BorderLayout());
@@ -42,7 +50,7 @@ public class UserClassesUI extends JPanel {
 
         // Search panel
         JPanel searchPanel = new JPanel(new BorderLayout(5, 5));
-        searchField = new JTextField();
+        searchField = new JTextField(20);
         JButton searchButton = new JButton("Search");
 
         searchPanel.add(searchField, BorderLayout.CENTER);
@@ -52,19 +60,26 @@ public class UserClassesUI extends JPanel {
         searchResultModel = new DefaultListModel<>();
         JList<String> searchResultList = new JList<>(searchResultModel);
         JScrollPane searchResultScrollPane = new JScrollPane(searchResultList);
+        searchResultScrollPane.setPreferredSize(new Dimension(350, 500));
 
         JPanel resultsPanel = new JPanel(new BorderLayout());
         resultsPanel.setBorder(BorderFactory.createTitledBorder("Search Results"));
         resultsPanel.add(searchResultScrollPane, BorderLayout.CENTER);
 
         JButton subscribeButton = new JButton("Subscribe to Selected Plan");
-
         resultsPanel.add(subscribeButton, BorderLayout.SOUTH);
 
-        // Main layout
-        add(subscribedPanel, BorderLayout.NORTH);
-        add(searchPanel, BorderLayout.CENTER);
-        add(resultsPanel, BorderLayout.SOUTH);
+        // Combine search panel and search results into one right panel
+        JPanel rightPanel = new JPanel(new BorderLayout(10, 10));
+        rightPanel.add(searchPanel, BorderLayout.NORTH);
+        rightPanel.add(resultsPanel, BorderLayout.CENTER);
+
+        // Use a split pane to divide left (Subscribed) and right (Search)
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, subscribedPanel, rightPanel);
+        splitPane.setDividerLocation(400);
+        splitPane.setResizeWeight(0.5); // Allow dragging nicely
+
+        add(splitPane, BorderLayout.CENTER);
 
         // Button actions
         searchButton.addActionListener(new ActionListener() {

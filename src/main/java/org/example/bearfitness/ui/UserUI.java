@@ -25,8 +25,12 @@ class UserUI extends JPanel {
         setLayout(new BorderLayout());
 
         JButton settingsButton = new JButton("Settings");
-
         settingsButton.addActionListener(e-> screenManager.showScreen(ScreenManager.Screen.SETTINGS));
+
+        JButton viewClassesButton = new JButton("View/Search Classes");
+        viewClassesButton.addActionListener(e -> screenManager.showScreen(ScreenManager.Screen.VIEW_CLASSES));
+
+
 
 
         // Create the title label
@@ -39,6 +43,7 @@ class UserUI extends JPanel {
         // Right-aligned settings button panel
         JPanel rightButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         rightButtonPanel.add(settingsButton);
+        rightButtonPanel.add(viewClassesButton);
 
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.add(centerTitlePanel, BorderLayout.CENTER);
