@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import org.example.bearfitness.user.User;
 
 import java.time.LocalDate;
-import java.util.Map;
 
 @Entity
 public class ExerciseClass {
@@ -33,6 +32,15 @@ public class ExerciseClass {
         return user;
     }
 
+    public ExerciseClass(User user, String name, LocalDate date, String fitnessLevel, int sessionLength) {
+        this.user = user;
+        this.name = name;
+        this.date = date;
+        this.fitnessLevel = fitnessLevel;
+        this.sessionLength = sessionLength;
+    }
+
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -40,19 +48,6 @@ public class ExerciseClass {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    public ExerciseClass(String name, LocalDate date, String fitnessLevel, int sessionLength) {
-        this.name = name;
-        this.date = date;
-        this.fitnessLevel = fitnessLevel;
-        this.sessionLength = sessionLength;
-    }
-
-    public ExerciseClass(User user, WorkoutEntry workoutEntry) {
-        this.user = user;
-        this.name = workoutEntry.getExerciseType().name();
-        this.date = workoutEntry.getDate();
-    }
 
     public ExerciseClass() {}
 

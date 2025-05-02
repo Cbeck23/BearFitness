@@ -4,14 +4,14 @@ import org.example.bearfitness.fitness.FitnessLevel;
 import org.example.bearfitness.fitness.ExercisePlan;
 import org.example.bearfitness.data.DBService;
 import org.example.bearfitness.fitness.*;
+import org.example.bearfitness.user.User;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 class CreateExerciseUI extends JPanel {
   private DBService dbService;
@@ -94,7 +94,7 @@ class CreateExerciseUI extends JPanel {
       JOptionPane.showMessageDialog(this, "Please check inputs.");
     }
   }
-  
+
 //  public static void main(String[] args) {
 //    SwingUtilities.invokeLater(() -> new CreateExerciseUI().setVisible(true));
 //  }

@@ -1,16 +1,15 @@
 package org.example.bearfitness.ui;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
+import org.example.bearfitness.data.DBService;
+import org.example.bearfitness.fitness.ExerciseClass;
+import org.example.bearfitness.user.User;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+
+import java.util.List;
 
 public class CalendarApp extends JPanel {
 
@@ -27,7 +26,7 @@ public class CalendarApp extends JPanel {
 
     private Calendar[] buttonDates = new Calendar[42];  // To associate date with each button
 
-    public CalendarApp() {
+    public CalendarApp(User user, DBService dbService) {
         setLayout(new BorderLayout());
 
         calendar = new GregorianCalendar();
@@ -55,14 +54,7 @@ public class CalendarApp extends JPanel {
             int index = i;  // needed for inner class lambda
             dayButtons[i] = new JButton("");
             dayButtons[i].setEnabled(false);
-            dayButtons[i].addActionListener(e -> {
-                Calendar date = buttonDates[index];
-                if (date != null) {
-                    datesDisplay.setText("Selected Date: " + date.getTime().toString());
-                }
-                /// This needs to return the events on the day. Query database and get
-                /// classes for the day.  ? and times ?
-            });
+            dayButtons[i].addActionListener(e -> dateSelection(index, user, dbService));
             daysPanel.add(dayButtons[i]);
         }
 
@@ -118,6 +110,29 @@ public class CalendarApp extends JPanel {
 
     private String getMonthName(int month) {
         return new java.text.DateFormatSymbols().getMonths()[month];
+    }
+
+    private void dateSelection(int index, User currentUser, DBService dbService) {
+        Calendar calendar = buttonDates[index];
+        if (calendar != null) {
+            LocalDate selectedDate = LocalDate.of(
+                    calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH) + 1,
+                    calendar.get(Calendar.DAY_OF_MONTH)
+            );
+
+            datesDisplay.setText("Selected Date: " + selectedDate);
+
+            List<ExerciseClass> classes = dbService.getClassesOnDate(currentUser, selectedDate);
+            if (classes.isEmpty()) {
+                datesDisplay.append("\nNo classes scheduled.");
+            } else {
+                for (ExerciseClass cls : classes) {
+                    datesDisplay.append(String.format("\n- %s (%s, %d min)",
+                            cls.getName(), cls.getFitnessLevel(), cls.getSessionLength()));
+                }
+            }
+        }
     }
 
 }

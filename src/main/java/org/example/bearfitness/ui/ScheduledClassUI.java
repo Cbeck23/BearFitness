@@ -4,6 +4,7 @@ import org.example.bearfitness.data.DBService;
 import org.example.bearfitness.fitness.ExercisePlan;
 import org.example.bearfitness.fitness.FitnessLevel;
 import org.example.bearfitness.fitness.WorkoutEntry;
+import org.example.bearfitness.user.User;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,7 +23,7 @@ public class ScheduledClassUI extends JPanel {
     private JComboBox<FitnessLevel> fitnessLevelCombo;
     private JTextArea planOutput;
 
-    public ScheduledClassUI(DBService dbService) {
+    public ScheduledClassUI(DBService dbService, User user) {
         this.dbService = dbService;
         setLayout(new BorderLayout());
 
@@ -44,10 +45,10 @@ public class ScheduledClassUI extends JPanel {
         planOutput.setEditable(false);
         add(new JScrollPane(planOutput), BorderLayout.CENTER);
 
-        savePlanButton.addActionListener(this::savePlan);
+        savePlanButton.addActionListener(e -> savePlan(e, user));
     }
 
-    private void savePlan(ActionEvent e) {
+    private void savePlan(ActionEvent e, User user) {
         try {
             List<LocalDate> selectedDates = datesButton.getSelectedDates();
 
@@ -64,7 +65,7 @@ public class ScheduledClassUI extends JPanel {
                     selectedDates.size(),
                     exercises
             );
-            dbService.createExercisePlan(plan);
+            dbService.createClassEntry(user, plan, selectedDates);
 
             StringBuilder dateStr = new StringBuilder();
             for (LocalDate d : selectedDates) {

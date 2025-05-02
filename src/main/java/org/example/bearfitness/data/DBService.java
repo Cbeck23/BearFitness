@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -73,10 +74,25 @@ public class DBService {
         return userEntryRepository.save(userEntry);
     }
 
-    public ExerciseClass createClassEntry(User user, WorkoutEntry classEntry) {
-        ExerciseClass entry = new ExerciseClass(user, classEntry);
-        return classRepository.save(entry);
+    public List<ExerciseClass> createClassEntry(User user, ExercisePlan classEntry, List<LocalDate> dates) {
+        List<ExerciseClass> entries = new ArrayList<>();
+        for (LocalDate date : dates) {
+            entries.add(new ExerciseClass(
+                    user,
+                    classEntry.getPlanName(),
+                    date,
+                    classEntry.getRecommendedFitnessLevel(),
+                    classEntry.getAverageSessionLength()
+            ));
+        }
+        return classRepository.saveAll(entries);
     }
+
+    public List<ExerciseClass> getClassesOnDate(User user, LocalDate date) {
+        return classRepository.findByUserAndDate(user, date);
+    }
+
+
 
     public List<WorkoutEntry> getUserEntries(Long userId) {
         List<UserWorkoutEntry> entries = userEntryRepository.findByUserId(userId);

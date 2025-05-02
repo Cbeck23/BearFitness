@@ -43,7 +43,7 @@ class TrainerUI extends JPanel {
     JScrollPane scrollPane = new JScrollPane(table);
 
     JPanel formatter = new JPanel(new GridLayout(1, 2));
-    formatter.add(new CalendarApp());
+    formatter.add(new CalendarApp(user, dbService));
     formatter.add(scrollPane);
     add(formatter, BorderLayout.CENTER);
 
@@ -68,7 +68,7 @@ class TrainerUI extends JPanel {
   }
 
   private void openClassCreator() {
-    ScheduledClassUI createPanel = new ScheduledClassUI(dbService);
+    ScheduledClassUI createPanel = new ScheduledClassUI(dbService, user);
     JDialog dialog = new JDialog((JFrame) SwingUtilities.getWindowAncestor(this), "Create Class", true);
     dialog.setContentPane(createPanel);
     dialog.pack();
