@@ -51,7 +51,7 @@ public class User {
 //    private List<WorkoutEntry> entryList = new ArrayList<>();
 
     /** Exercise plans the user is currently subscribed to. */
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<ExercisePlan> subscribedPlans = new ArrayList<>();
 
     // === Constructors ===

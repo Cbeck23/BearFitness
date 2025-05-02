@@ -20,7 +20,7 @@ public class UserClassesUI extends JPanel {
     private JTextField searchField;
     private JList<String> subscribedList;
 
-    public UserClassesUI(User user, DBService dbService, ScreenManager screenManager) {
+    public UserClassesUI (DBService dbService, ScreenManager screenManager,User user) {
         this.user = user;
         this.dbService = dbService;
         this.screenManager = screenManager;
