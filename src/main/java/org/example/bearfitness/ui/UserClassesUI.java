@@ -18,6 +18,7 @@ public class UserClassesUI extends JPanel {
     private DefaultListModel<String> subscribedModel;
     private DefaultListModel<String> searchResultModel;
     private JTextField searchField;
+    private JList<String> subscribedList;
 
     public UserClassesUI(User user, DBService dbService, ScreenManager screenManager) {
         this.user = user;
@@ -28,13 +29,16 @@ public class UserClassesUI extends JPanel {
 
         // Subscribed classes panel
         subscribedModel = new DefaultListModel<>();
-        JList<String> subscribedList = new JList<>(subscribedModel);
+        subscribedList = new JList<>(subscribedModel);
         JScrollPane subscribedScrollPane = new JScrollPane(subscribedList);
         populateSubscribedPlans();
 
         JPanel subscribedPanel = new JPanel(new BorderLayout());
         subscribedPanel.setBorder(BorderFactory.createTitledBorder("Your Subscribed Classes"));
         subscribedPanel.add(subscribedScrollPane, BorderLayout.CENTER);
+
+        JButton unsubscribeButton = new JButton("Unsubscribe Selected Plan");
+        subscribedPanel.add(unsubscribeButton, BorderLayout.SOUTH);
 
         // Search panel
         JPanel searchPanel = new JPanel(new BorderLayout(5, 5));
@@ -81,6 +85,18 @@ public class UserClassesUI extends JPanel {
                 }
             }
         });
+
+        unsubscribeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selectedPlanName = subscribedList.getSelectedValue();
+                if (selectedPlanName != null) {
+                    unsubscribeFromPlan(selectedPlanName);
+                } else {
+                    JOptionPane.showMessageDialog(UserClassesUI.this, "Please select a plan to unsubscribe.", "No Plan Selected", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        });
     }
 
     private void populateSubscribedPlans() {
@@ -124,6 +140,22 @@ public class UserClassesUI extends JPanel {
             }
         } else {
             JOptionPane.showMessageDialog(this, "Plan not found in database.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void unsubscribeFromPlan(String planName) {
+        ExercisePlan planToRemove = user.getSubscribedPlans().stream()
+                .filter(plan -> plan.getPlanName().equals(planName))
+                .findFirst()
+                .orElse(null);
+
+        if (planToRemove != null) {
+            user.getSubscribedPlans().remove(planToRemove);
+            dbService.updateUserData(user);
+            JOptionPane.showMessageDialog(this, "Successfully unsubscribed from: " + planName);
+            populateSubscribedPlans();
+        } else {
+            JOptionPane.showMessageDialog(this, "Plan not found in your subscriptions.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 }
