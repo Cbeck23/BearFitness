@@ -7,7 +7,9 @@ import java.time.LocalDate;
 import java.time.DateTimeException;
 
 public class DatePicker extends JFrame {
-    private JComboBox<String> dayCombo, monthCombo, yearCombo;
+    JComboBox<String> dayCombo;
+    JComboBox<String> monthCombo;
+    JComboBox<String> yearCombo;
     private JButton submitButton;
 
     public DatePicker() {
@@ -64,6 +66,14 @@ public class DatePicker extends JFrame {
             JOptionPane.showMessageDialog(this, "Invalid date!", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
+    public LocalDate getSelectedDate() throws DateTimeException {
+        int day = Integer.parseInt((String) dayCombo.getSelectedItem());
+        int month = monthCombo.getSelectedIndex() + 1;
+        int year = Integer.parseInt((String) yearCombo.getSelectedItem());
+        return LocalDate.of(year, month, day);
+    }
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new DatePicker().setVisible(true));

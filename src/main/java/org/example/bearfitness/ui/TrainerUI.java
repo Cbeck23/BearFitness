@@ -2,11 +2,8 @@ package org.example.bearfitness.ui;
 
 import org.example.bearfitness.data.DBService;
 import org.example.bearfitness.user.*;
-import org.example.bearfitness.ui.CalendarApp;
-import org.example.bearfitness.ui.ScreenManager;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
@@ -16,6 +13,7 @@ class TrainerUI extends JPanel {
   private ScreenManager screenManager;
   private User user;
   private JTextArea plansDisplay;
+  private JTextArea datesDisplay;
 
   public TrainerUI(DBService dbService, ScreenManager screenManager, User user) {
     this.dbService = dbService;
@@ -28,7 +26,10 @@ class TrainerUI extends JPanel {
     exerciseCreation.addActionListener(e -> openExerciseCreator());
 
     JPanel topButtons = new JPanel(new GridLayout(1, 3, 20, 20));
-    topButtons.add(new JButton("Workout"));
+    JButton classCreation = new JButton("Create a Class");
+    topButtons.add(classCreation);
+    classCreation.addActionListener(e -> openClassCreator());
+
     topButtons.add(exerciseCreation);
     JButton settings = new JButton("Settings");
     settings.addActionListener(this::Settings);
@@ -42,7 +43,7 @@ class TrainerUI extends JPanel {
     JScrollPane scrollPane = new JScrollPane(table);
 
     JPanel formatter = new JPanel(new GridLayout(1, 2));
-    formatter.add(new CalendarApp());
+    formatter.add(new CalendarApp(user, dbService));
     formatter.add(scrollPane);
     add(formatter, BorderLayout.CENTER);
 
@@ -59,6 +60,16 @@ class TrainerUI extends JPanel {
   private void openExerciseCreator() {
     CreateExerciseUI createPanel = new CreateExerciseUI(dbService);
     JDialog dialog = new JDialog((JFrame) SwingUtilities.getWindowAncestor(this), "Create Exercise Plan", true);
+    dialog.setContentPane(createPanel);
+    dialog.pack();
+    dialog.setLocationRelativeTo(this);
+    dialog.setVisible(true);
+    refreshPlansDisplay();
+  }
+
+  private void openClassCreator() {
+    ScheduledClassUI createPanel = new ScheduledClassUI(dbService, user);
+    JDialog dialog = new JDialog((JFrame) SwingUtilities.getWindowAncestor(this), "Create Class", true);
     dialog.setContentPane(createPanel);
     dialog.pack();
     dialog.setLocationRelativeTo(this);
