@@ -1,7 +1,9 @@
 package org.example.bearfitness.ui;
 
 import org.example.bearfitness.data.DBService;
+import org.example.bearfitness.fitness.WorkoutEntry;
 import org.example.bearfitness.user.User;
+import org.example.bearfitness.user.UserStats;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -12,21 +14,29 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.example.bearfitness.fitness.UserWorkoutEntry;
 
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.time.LocalDate;
-import java.util.Map;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class GoalsDisplayUI extends JPanel {
-    //private DBService dbService;
-    //private User user;
-    //private UserUI parentUI;
+    private DBService dbService;
+    private User user;
+    private UserUI parentUI;
 
-    public GoalsDisplayUI() {
-        /*this.dbService = dbService;
+    private List<WorkoutEntry> userEntries;
+
+    public GoalsDisplayUI(DBService dbService, User user, UserUI parentUI) {
+        this.dbService = dbService;
         this.user = user;
-        this.parentUI = parentUI;*/
+        this.parentUI = parentUI;
+        this.userEntries = dbService.getWorkoutEntriesForUser(user);
 
         setLayout(new BorderLayout());
         setBackground(Color.DARK_GRAY);
@@ -139,45 +149,112 @@ public class GoalsDisplayUI extends JPanel {
     }
 
     private DefaultCategoryDataset createCategoryDataset(String value) {
-        //Default data for example purposes only
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        dataset.addValue(1, value, "Week 1");
-        dataset.addValue(3, value, "Week 2");
-        dataset.addValue(6, value, "Week 3");
-        dataset.addValue(9, value, "Week 4");
+        int workoutCount = 0;
+        Map<LocalDate, Integer> calories = dbService.getCalsLogged(user);
+        Map<Date, Integer> sleep = dbService.getSleepLogged(user);
+        Map<Date, Double> weights = dbService.getWeightLogged(user);
 
-        return dataset;
-
-        /*List<UserWorkoutEntry> entries = dbService.getEntriesForUser(user.getId());
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
-        for (UserWorkoutEntry entry : entries) {
-            LocalDate date = entry.getDate();
-            dataset.addValue(entry.getCalories(), "Calories", date.toString());
-            dataset.addValue(entry.getSleep(), "Sleep", date.toString());
-            dataset.addValue(entry.getWeight(), "Weight", date.toString());
-            dataset.addValue(entry.getWorkoutsCompleted(), "Workouts", date.toString());
+
+        switch (value) {
+           case "Weight":
+               for (Map.Entry<Date, Double> entry : weights.entrySet()) {
+                   String formattedDate = new SimpleDateFormat("MM/dd").format(entry.getKey());
+                   dataset.addValue(entry.getValue(), "Weight", formattedDate);
+               }
+               break;
+
+            case "Calories":
+                for (Map.Entry<LocalDate, Integer> entry : calories.entrySet()) {
+                    String formattedDate = entry.getKey().format(DateTimeFormatter.ofPattern("MM/dd"));
+                    dataset.addValue(entry.getValue(), "Calories", formattedDate);
+                }
+                break;
+
+            case "Sleep":
+                for (Map.Entry<Date, Integer> entry : sleep.entrySet()) {
+                    String formattedDate = new SimpleDateFormat("MM/dd").format(entry.getKey());
+                    dataset.addValue(entry.getValue(), "Sleep", formattedDate);
+                }
+                break;
+
+            case "Workouts":
+                Map<LocalDate, Long> workoutCountMap = userEntries.stream()
+                        .collect(Collectors.groupingBy(
+                                WorkoutEntry::getDate,
+                                Collectors.counting()
+                        ));
+
+                for (Map.Entry<LocalDate, Long> entry : workoutCountMap.entrySet()) {
+                    String formattedDate = entry.getKey().format(DateTimeFormatter.ofPattern("MM/dd"));
+                    dataset.addValue(entry.getValue(), "Workouts", formattedDate);
+                }
+                break;
+
         }
 
-        return dataset;*/
+        return dataset;
     }
 
+    public static void main(String[] args) {
+        //MOCK DATA FOR TESTING
+        User dummyUser = new User();
+        dummyUser.setId(1L); // must match test data
+        dummyUser.setUsername("testUser");
 
-    public static void main (String[] args) {
-        //DBService dbService1 = new DBService();
-        //User user = new User();
+        UserStats stats = new UserStats();
 
-        //GoalsDisplayUI ui = new GoalsDisplayUI(dbService, user);
+        Map<Date, Double> weightLog = new HashMap<>();
+        weightLog.put(new Date(System.currentTimeMillis() - 86400000L * 3), 150.0); // 3 days ago
+        weightLog.put(new Date(System.currentTimeMillis() - 86400000L * 2), 149.2); // 2 days ago
+        weightLog.put(new Date(System.currentTimeMillis() - 86400000L), 148.6);     // yesterday
+        stats.setWeightLog(weightLog);
+
+        stats.setCaloriesLogged(Map.of(
+                LocalDate.now().minusDays(2), 2000,
+                LocalDate.now().minusDays(1), 2100
+        ));
+        stats.setSleepLogged(Map.of(
+                new Date(System.currentTimeMillis() - 86400000L * 2), 7,
+                new Date(System.currentTimeMillis() - 86400000L), 8
+        ));
+
+        dummyUser.setUserStats(stats);
+
+        DBService fakeDBService = new DBService(null, null, null, null) {
+            @Override
+            public Map<LocalDate, Integer> getCalsLogged(User user) {
+                return user.getUserStats().getCaloriesLogged();
+            }
+
+            @Override
+            public Map<Date, Integer> getSleepLogged(User user) {
+                return user.getUserStats().getSleepLogged();
+            }
+
+            @Override
+            public Map<Date, Double> getWeightLogged(User user) {
+                return user.getUserStats().getWeightLog();
+            }
+
+            @Override
+            public List<WorkoutEntry> getWorkoutEntriesForUser(User user) {
+                WorkoutEntry w1 = new WorkoutEntry();
+                w1.setDate(LocalDate.now().minusDays(2));
+                WorkoutEntry w2 = new WorkoutEntry();
+                w2.setDate(LocalDate.now().minusDays(1));
+                return List.of(w1, w2);
+            }
+        };
 
         SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame();
+            JFrame frame = new JFrame("Goals Display Test");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setTitle("Goals Display");
             frame.setSize(800, 600);
-            frame.add(new GoalsDisplayUI());
+            frame.add(new GoalsDisplayUI(fakeDBService, dummyUser, null));
             frame.setVisible(true);
         });
     }
-
 
 }
