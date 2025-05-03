@@ -156,4 +156,9 @@ public class DBService {
         return exercisePlanRepository.findExercisePlanByPlanName(planName);
     }
 
+    //for GoalsDisplayUI
+    public List<UserWorkoutEntry> getUserStats(Long userId) {
+        return userEntryRepository.findByUserId(userId);
+    }
+
 }
