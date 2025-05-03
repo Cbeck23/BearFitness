@@ -193,10 +193,12 @@ class UserUI extends JPanel {
 
 
         //Left: Workout History
+        JPanel leftPanel = new JPanel(new BorderLayout());
         workoutHistoryUI = new WorkoutHistoryUI(dbService, screenManager, user, this);
+        leftPanel.add(workoutHistoryUI, BorderLayout.CENTER);
 
         splitPane.setRightComponent(rightPanel);
-        splitPane.setLeftComponent(workoutHistoryUI);
+        splitPane.setLeftComponent(leftPanel);
 
         add(splitPane, BorderLayout.CENTER);
 
