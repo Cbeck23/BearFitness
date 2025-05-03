@@ -156,4 +156,15 @@ public class DBService {
         return exercisePlanRepository.findExercisePlanByPlanName(planName);
     }
 
+    public List<User> getAllUsers() {
+        return db.findAll();
+    }
+
+    public void deleteUser(User user) {
+        db.delete(user);
+    }
+
+    public Optional<User> findUserByUsername(String username) {
+        return db.findByUsername(username);
+    }
 }
