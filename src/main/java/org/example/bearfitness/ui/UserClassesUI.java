@@ -2,6 +2,7 @@ package org.example.bearfitness.ui;
 
 import org.example.bearfitness.data.DBService;
 import org.example.bearfitness.data.PasswordHash;
+import org.example.bearfitness.fitness.ExerciseClass;
 import org.example.bearfitness.fitness.ExercisePlan;
 import org.example.bearfitness.user.User;
 
@@ -117,9 +118,9 @@ public class UserClassesUI extends JPanel {
 
     private void populateSubscribedPlans() {
         subscribedModel.clear();
-        List<ExercisePlan> plans = user.getSubscribedPlans();
-        for (ExercisePlan plan : plans) {
-            subscribedModel.addElement(plan.getPlanName());
+        List<ExerciseClass> plans = user.getSubscribedPlans();
+        for (ExerciseClass plan : plans) {
+            subscribedModel.addElement(plan.getName());
         }
     }
 
@@ -138,16 +139,18 @@ public class UserClassesUI extends JPanel {
     }
 
     private void subscribeToPlan(String planName) {
-        List<ExercisePlan> matchingPlans = dbService.findExercisePlanByName(planName);
+        //List<ExercisePlan> matchingPlans = dbService.findExercisePlanByName(planName);
+        List<ExerciseClass> matchingPlans = dbService.findExerciseClassByName(planName);
 
         if (!matchingPlans.isEmpty()) {
-            ExercisePlan selectedPlan = matchingPlans.get(0);
+            //ExercisePlan selectedPlan = matchingPlans.get(0);
+            ExerciseClass selectedPlan = matchingPlans.get(0);
 
             boolean alreadySubscribed = user.getSubscribedPlans().stream()
                     .anyMatch(plan -> plan.getId().equals(selectedPlan.getId()));
 
             if (!alreadySubscribed) {
-                user.addPlan(selectedPlan);
+                user.addClass(selectedPlan);
                 dbService.updateUserData(user);
                 JOptionPane.showMessageDialog(this, "Successfully subscribed to: " + planName);
                 populateSubscribedPlans();
@@ -160,8 +163,8 @@ public class UserClassesUI extends JPanel {
     }
 
     private void unsubscribeFromPlan(String planName) {
-        ExercisePlan planToRemove = user.getSubscribedPlans().stream()
-                .filter(plan -> plan.getPlanName().equals(planName))
+        ExerciseClass planToRemove = user.getSubscribedPlans().stream()
+                .filter(plan -> plan.getName().equals(planName))
                 .findFirst()
                 .orElse(null);
 

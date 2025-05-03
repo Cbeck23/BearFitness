@@ -1,9 +1,8 @@
 package org.example.bearfitness.user;
 
 import jakarta.persistence.*;
-import org.example.bearfitness.fitness.ExercisePlan;
+import org.example.bearfitness.fitness.ExerciseClass;
 import org.example.bearfitness.data.PasswordHash;
-import org.example.bearfitness.fitness.WorkoutEntry;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -52,7 +51,7 @@ public class User {
 
     /** Exercise plans the user is currently subscribed to. */
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<ExercisePlan> subscribedPlans = new ArrayList<>();
+    private List<ExerciseClass> subscribedPlans = new ArrayList<ExerciseClass>();
 
     // === Constructors ===
 
@@ -168,11 +167,15 @@ public class User {
 //        this.entryList = entryList;
 //    }
 
-    public List<ExercisePlan> getSubscribedPlans() {
+    public List<ExerciseClass> getSubscribedPlans() {
         return subscribedPlans;
     }
 
-    public void setSubscribedPlans(List<ExercisePlan> subscribedPlans) {
+    public List<ExerciseClass> getSubscribedClasses() {
+        return subscribedPlans;
+    }
+
+    public void setSubscribedPlans(List<ExerciseClass> subscribedPlans) {
         this.subscribedPlans = subscribedPlans;
     }
 
@@ -206,7 +209,16 @@ public class User {
      *
      * @param plan The exercise plan to add.
      */
-    public void addPlan(ExercisePlan plan) {
+    public void addPlan(ExerciseClass plan) {
+        subscribedPlans.add(plan);
+    }
+
+    /**
+     * Adds a new exercise class to the list of subscribed plans.
+     *
+     * @param plan The exercise plan to add.
+     */
+    public void addClass(ExerciseClass plan) {
         subscribedPlans.add(plan);
     }
 
