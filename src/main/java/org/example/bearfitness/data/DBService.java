@@ -161,6 +161,11 @@ public class DBService {
     }
 
     public void deleteUser(User user) {
+        // First delete the user's workout entries
+        List<UserWorkoutEntry> entries = userEntryRepository.findByUserId(user.getId());
+        userEntryRepository.deleteAll(entries);
+
+        // Then delete the user
         db.delete(user);
     }
 
