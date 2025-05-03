@@ -97,6 +97,7 @@ public class UserSettings extends JPanel {
 
         logoutButton.addActionListener(e -> {
             screenManager.showScreen(ScreenManager.Screen.LOGIN);
+            JOptionPane.showMessageDialog(this, user.getUsername() + " has logged out.", "Logout", JOptionPane.INFORMATION_MESSAGE);
         });
 
         backButton.addActionListener(e -> {
