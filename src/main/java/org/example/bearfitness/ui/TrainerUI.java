@@ -32,8 +32,13 @@ class TrainerUI extends JPanel {
 
     topButtons.add(exerciseCreation);
     JButton settings = new JButton("Settings");
-    settings.addActionListener(this::Settings);
+    //settings.addActionListener(this::Settings);
+    settings.addActionListener(e-> screenManager.showScreen(ScreenManager.Screen.SETTINGS));
     topButtons.add(settings);
+
+    JButton music = new JButton("Music");
+    music.addActionListener(this::music);
+    topButtons.add(music);
 
     JPanel topWrapper = new JPanel(new FlowLayout(FlowLayout.CENTER));
     topWrapper.add(topButtons);
@@ -91,9 +96,14 @@ class TrainerUI extends JPanel {
     }
   }
 
-  private void Settings(ActionEvent e){
-    TrainerSettings settings = new TrainerSettings();
-    settings.setVisible(true);
+//  private void Settings(ActionEvent e){
+//    TrainerSettings settings = new TrainerSettings();
+//    settings.setVisible(true);
+//  }
+
+  private void music(ActionEvent e) {
+    SelectSong song = new SelectSong();
+    song.setVisible(true);
   }
 
 //  public static void main(String[] args) {

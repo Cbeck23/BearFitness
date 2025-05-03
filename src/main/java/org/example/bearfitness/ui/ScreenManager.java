@@ -59,6 +59,7 @@ public class ScreenManager extends JFrame {
         switch (user.getUserType()) {
             case TRAINER -> {
                 cards.add(new TrainerUI(dbService, this, user), Screen.TRAINER.name());
+                cards.add(new UserSettings(dbService, this, user).getPanel(), Screen.SETTINGS.name());
                 layout.show(cards, Screen.TRAINER.name());
             }
             case BASIC -> {

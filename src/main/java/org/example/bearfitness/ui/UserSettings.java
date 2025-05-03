@@ -3,6 +3,7 @@ package org.example.bearfitness.ui;
 import org.example.bearfitness.data.DBService;
 import org.example.bearfitness.data.PasswordHash;
 import org.example.bearfitness.user.User;
+import org.example.bearfitness.user.UserType;
 
 import javax.swing.*;
 import java.awt.*;
@@ -98,7 +99,12 @@ public class UserSettings extends JPanel {
         });
 
         backButton.addActionListener(e -> {
-            screenManager.showScreen(ScreenManager.Screen.USER_HOME, user);
+            if(user.getUserType() == UserType.TRAINER){
+                screenManager.showScreen(ScreenManager.Screen.TRAINER);
+            }
+            else {
+                screenManager.showScreen(ScreenManager.Screen.USER_HOME, user);
+            }
         });
     }
 
