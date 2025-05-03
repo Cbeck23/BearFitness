@@ -69,6 +69,12 @@ public class UserSettings extends JPanel {
         logoutButton = new JButton("Logout");
         cancelButton = new JButton("Cancel");
         confirmButton = new JButton("Confirm");
+
+        if(user.getUserType() == UserType.ADMIN){
+            JButton adminButton = new JButton("Admin");
+            adminButton.addActionListener(e -> screenManager.showScreen(ScreenManager.Screen.ADMINISTRATION));
+            buttonPanel.add(adminButton);
+        }
         buttonPanel.add(backButton);
         buttonPanel.add(logoutButton);
         buttonPanel.add(cancelButton);
