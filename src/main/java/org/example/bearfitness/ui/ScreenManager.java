@@ -56,17 +56,23 @@ public class ScreenManager extends JFrame {
 
         switch (user.getUserType()) {
             case TRAINER -> {
+                cards.add(new LoginUI(dbService, this), Screen.LOGIN.name());
+                cards.add(new SignUpUI(dbService, this), Screen.SIGNUP.name());
                 cards.add(new TrainerUI(dbService, this, user), Screen.TRAINER.name());
                 cards.add(new UserSettings(dbService, this, user).getPanel(), Screen.SETTINGS.name());
                 layout.show(cards, Screen.TRAINER.name());
             }
             case BASIC -> {
+                cards.add(new LoginUI(dbService, this), Screen.LOGIN.name());
+                cards.add(new SignUpUI(dbService, this), Screen.SIGNUP.name());
                 cards.add(new UserUI(dbService, this, user), Screen.USER_HOME.name());
                 cards.add(new UserSettings(dbService, this, user).getPanel(), Screen.SETTINGS.name());
                 cards.add(new UserClassesUI(dbService, this, user), Screen.VIEW_CLASSES.name());
                 layout.show(cards, Screen.USER_HOME.name());
             }
             case ADMIN -> {
+                cards.add(new LoginUI(dbService, this), Screen.LOGIN.name());
+                cards.add(new SignUpUI(dbService, this), Screen.SIGNUP.name());
                 cards.add(new UserUI(dbService, this, user), Screen.ADMIN.name());
                 cards.add(new UserSettings(dbService, this, user).getPanel(), Screen.SETTINGS.name());
                 cards.add(new AdminManagementUI(dbService, this, user), Screen.ADMINISTRATION.name());

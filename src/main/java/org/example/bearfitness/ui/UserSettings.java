@@ -73,6 +73,7 @@ public class UserSettings extends JPanel {
         buttonPanel.add(logoutButton);
         buttonPanel.add(cancelButton);
         buttonPanel.add(confirmButton);
+
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
