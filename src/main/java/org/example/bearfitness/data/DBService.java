@@ -7,13 +7,12 @@ import org.example.bearfitness.fitness.WorkoutEntry;
 import org.example.bearfitness.user.User;
 import org.example.bearfitness.user.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.context.annotation.Configuration;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Configuration
@@ -171,5 +170,26 @@ public class DBService {
 
     public Optional<User> findUserByUsername(String username) {
         return db.findByUsername(username);
+    }
+
+    //for GoalsDisplayUI
+    public Map<LocalDate, Integer> getCalsLogged(User user) {
+        return user.getUserStats().getCaloriesLogged();
+    }
+
+    public Map<Date, Integer> getSleepLogged(User user) {
+        return user.getUserStats().getSleepLogged();
+    }
+
+    public Map<Date, Double> getWeightLogged(User user) {
+        return user.getUserStats().getWeightLog();
+    }
+
+    public List<WorkoutEntry> getWorkoutEntriesForUser(User user) {
+        return userEntryRepository.findByUserId(user.getId())
+                .stream()
+                .map(UserWorkoutEntry::getWorkoutEntry)
+                .collect(Collectors.toList());
+
     }
 }

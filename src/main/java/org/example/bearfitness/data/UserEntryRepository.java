@@ -25,4 +25,6 @@ public interface UserEntryRepository extends JpaRepository<UserWorkoutEntry, Int
             @Param("startOfWeek") LocalDate startOfWeek,
             @Param("endOfWeek") LocalDate endOfWeek
     );
+
+
 }
