@@ -95,14 +95,6 @@ public class DBService {
 
     public List<WorkoutEntry> getUserEntries(Long userId) {
         List<UserWorkoutEntry> entries = userEntryRepository.findByUserId(userId);
-//        return entries.stream()
-//                .map(entry -> new String[]{
-//                        String.valueOf(entry.getDate()),
-//                        entry.getExerciseTypeValue(),
-//                        String.valueOf(entry.getDuration()),
-//                        entry.getDescription(),
-//                })
-//                .collect(Collectors.toList());
         return entries.stream()
                 .map(UserWorkoutEntry::getWorkoutEntry)
                 .collect(Collectors.toList());
@@ -195,5 +187,13 @@ public class DBService {
                 .map(UserWorkoutEntry::getWorkoutEntry)
                 .collect(Collectors.toList());
 
+    }
+
+    public List<String> getAllExercisePlans() {
+        return exercisePlanRepository.findAll().stream().map(ExercisePlan::getPlanName).collect(Collectors.toList());
+    }
+
+    List<ExercisePlan> findExercisePlansByName(String planName) {
+        return exercisePlanRepository.findExercisePlanByPlanName(planName);
     }
 }
