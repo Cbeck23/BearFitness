@@ -1,10 +1,12 @@
 package org.example.bearfitness.ui;
 
 import org.example.bearfitness.data.DBService;
+import org.example.bearfitness.data.PasswordHash;
 import org.example.bearfitness.user.User;
 import org.example.bearfitness.user.UserType;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
 import java.util.Optional;
@@ -23,38 +25,26 @@ public class AdminManagementUI extends JPanel {
 
         setLayout(new BorderLayout());
 
-        // User table
         userTable = new JTable();
+        userTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane userTableScrollPane = new JScrollPane(userTable);
         add(userTableScrollPane, BorderLayout.CENTER);
 
-        // Buttons
         JButton addUserButton = new JButton("Add User");
         JButton editUserButton = new JButton("Edit User");
         JButton deleteUserButton = new JButton("Delete User");
         JButton backButton = new JButton("Back");
 
-        // Button panel (horizontal center)
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         buttonPanel.add(addUserButton);
         buttonPanel.add(editUserButton);
         buttonPanel.add(deleteUserButton);
         buttonPanel.add(backButton);
         add(buttonPanel, BorderLayout.SOUTH);
 
-        // Action listeners
-
-        // Add user
         addUserButton.addActionListener(e -> addUser());
-
-        // Edit user
         editUserButton.addActionListener(e -> editUser());
-
-        // Delete user
         deleteUserButton.addActionListener(e -> deleteUser());
-
-        // Back button
         backButton.addActionListener(e -> screenManager.showScreen(ScreenManager.Screen.ADMIN));
 
         populateUserTable();
@@ -62,13 +52,15 @@ public class AdminManagementUI extends JPanel {
 
     private void addUser() {
         JTextField usernameField = new JTextField();
-        JTextField passwordField = new JTextField();
+        JPasswordField passwordField = new JPasswordField();
+        JPasswordField confirmPasswordField = new JPasswordField();
         JTextField emailField = new JTextField();
         JComboBox<UserType> userTypeCombo = new JComboBox<>(UserType.values());
 
         Object[] fields = {
                 "Username:", usernameField,
                 "Password:", passwordField,
+                "Confirm Password:", confirmPasswordField,
                 "Email:", emailField,
                 "User Type:", userTypeCombo
         };
@@ -76,10 +68,15 @@ public class AdminManagementUI extends JPanel {
         int option = JOptionPane.showConfirmDialog(this, fields, "Add User", JOptionPane.OK_CANCEL_OPTION);
 
         if (option == JOptionPane.OK_OPTION) {
+            if (!new String(passwordField.getPassword()).equals(new String(confirmPasswordField.getPassword()))) {
+                JOptionPane.showMessageDialog(this, "Passwords do not match!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
             try {
                 dbService.createUser(
                         usernameField.getText(),
-                        passwordField.getText(),
+                        PasswordHash.hashPassword(new String(passwordField.getPassword())),
                         emailField.getText(),
                         (UserType) userTypeCombo.getSelectedItem()
                 );
@@ -101,14 +98,16 @@ public class AdminManagementUI extends JPanel {
                 User selectedUser = userOpt.get();
 
                 JTextField usernameField = new JTextField(selectedUser.getUsername());
-                JTextField passwordField = new JTextField(selectedUser.getPassword());
+                JPasswordField passwordField = new JPasswordField();
+                JPasswordField confirmPasswordField = new JPasswordField();
                 JTextField emailField = new JTextField(selectedUser.getEmail());
                 JComboBox<UserType> userTypeCombo = new JComboBox<>(UserType.values());
                 userTypeCombo.setSelectedItem(selectedUser.getUserType());
 
                 Object[] fields = {
                         "Username:", usernameField,
-                        "Password:", passwordField,
+                        "New Password (leave blank to keep current):", passwordField,
+                        "Confirm New Password:", confirmPasswordField,
                         "Email:", emailField,
                         "User Type:", userTypeCombo
                 };
@@ -117,9 +116,19 @@ public class AdminManagementUI extends JPanel {
 
                 if (option == JOptionPane.OK_OPTION) {
                     selectedUser.setUsername(usernameField.getText());
-                    selectedUser.setPassword(passwordField.getText());
                     selectedUser.setEmail(emailField.getText());
                     selectedUser.setUserType((UserType) userTypeCombo.getSelectedItem());
+
+                    String newPassword = new String(passwordField.getPassword());
+                    String confirmPassword = new String(confirmPasswordField.getPassword());
+
+                    if (!newPassword.isEmpty()) {
+                        if (!newPassword.equals(confirmPassword)) {
+                            JOptionPane.showMessageDialog(this, "Passwords do not match!", "Error", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+                        selectedUser.setPassword(PasswordHash.hashPassword(newPassword));
+                    }
 
                     try {
                         dbService.updateUserData(selectedUser);
@@ -167,11 +176,18 @@ public class AdminManagementUI extends JPanel {
         for (int i = 0; i < users.size(); i++) {
             User user = users.get(i);
             data[i][0] = user.getUsername();
-            data[i][1] = user.getPassword();
+            data[i][1] = "********"; // Hide hashed password
             data[i][2] = user.getEmail();
             data[i][3] = user.getUserType().toString();
         }
 
-        userTable.setModel(new javax.swing.table.DefaultTableModel(data, columnNames));
+        DefaultTableModel model = new DefaultTableModel(data, columnNames) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        userTable.setModel(model);
     }
 }

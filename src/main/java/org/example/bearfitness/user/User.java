@@ -1,8 +1,10 @@
 package org.example.bearfitness.user;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import org.example.bearfitness.fitness.ExerciseClass;
 import org.example.bearfitness.data.PasswordHash;
+import org.example.bearfitness.fitness.ExercisePlan;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -49,9 +51,14 @@ public class User {
 //    @ElementCollection
 //    private List<WorkoutEntry> entryList = new ArrayList<>();
 
-    /** Exercise plans the user is currently subscribed to. */
+    /** Exercise classes the user is currently subscribed to. */
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<ExerciseClass> subscribedPlans = new ArrayList<ExerciseClass>();
+    private List<ExerciseClass> subscribedPlans;
+
+    /** Exercise plans the user is currently subscribed to. */
+    @Getter
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<ExercisePlan> exercisePlans;
 
     // === Constructors ===
 
@@ -73,11 +80,14 @@ public class User {
         this.userType = userType;
         this.userStats = new UserStats();
         this.goals = new UserGoals();
-        //this.entryList = new ArrayList();
         this.subscribedPlans = new ArrayList();
+        this.exercisePlans = new ArrayList();
     }
 
     // === Getters and Setters ===
+    public void setExercisePlans(List<ExercisePlan> exercisePlans) {
+        this.exercisePlans = exercisePlans;
+    }
 
     public Long getId() {
         return id;
@@ -159,13 +169,6 @@ public class User {
         this.goals = goals;
     }
 
-//    public List<WorkoutEntry> getEntryList() {
-//        return entryList;
-//    }
-//
-//    public void setEntryList(List<WorkoutEntry> entryList) {
-//        this.entryList = entryList;
-//    }
 
     public List<ExerciseClass> getSubscribedPlans() {
         return subscribedPlans;
@@ -202,15 +205,15 @@ public class User {
         this.goals.setWeeklyExMinutes(weeklyExHours);
     }
 
-    // === Exercise Plan Management ===
+    // === Exercise Plan and Class Management ===
 
     /**
      * Adds a new exercise plan to the list of subscribed plans.
      *
      * @param plan The exercise plan to add.
      */
-    public void addPlan(ExerciseClass plan) {
-        subscribedPlans.add(plan);
+    public void addPlan(ExercisePlan plan) {
+        exercisePlans.add(plan);
     }
 
     /**
@@ -222,29 +225,8 @@ public class User {
         subscribedPlans.add(plan);
     }
 
-    // === Workout Logging ===
 
-//    /**
-//     * Adds a workout entry to the user's workout log.
-//     *
-//     * @param entry The workout entry to add.
-//     */
-//    public void addWorkoutEntry(WorkoutEntry entry) {
-//        entryList.add(entry);
-//    }
 
-//    /**
-//     * Creates and logs a workout entry.
-//     *
-//     * @param duration Duration of the workout.
-//     * @param exerciseType Type of exercise.
-//     * @param caloriesBurned Calories burned.
-//     * @param stepCount Number of steps taken.
-//     */
-//    public void workoutEntryCreated(int duration, WorkoutEntry.ExerciseType exerciseType,
-//                                    int caloriesBurned, int stepCount) {
-//        addWorkoutEntry(new WorkoutEntry(duration, exerciseType, caloriesBurned, stepCount));
-//    }
 
     // === Daily Tracking ===
 
