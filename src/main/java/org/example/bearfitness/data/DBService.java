@@ -196,4 +196,18 @@ public class DBService {
     List<ExercisePlan> findExercisePlansByName(String planName) {
         return exercisePlanRepository.findExercisePlanByPlanName(planName);
     }
+
+    public List<String> getAllExerciseClassNames() {
+        List<ExerciseClass> classes = classRepository.findAll();
+        return classes.stream()
+                .map(ExerciseClass::getName)
+                .collect(Collectors.toList());
+    }
+
+    public List<String> getAllExerciseClassNamesWithTrainer() {
+        List<ExerciseClass> classes = classRepository.findAll();
+        return classes.stream()
+                .map(c -> c.getName() + " - Hosted by: " + c.getUser().getUsername())
+                .collect(Collectors.toList());
+    }
 }

@@ -154,10 +154,10 @@ public class UserClassesUI extends JPanel {
         searchClassesResultModel.clear();
         String keyword = searchClassesField.getText().trim();
         if (!keyword.isEmpty()) {
-            List<String> classes = dbService.getAllPlans();
-            for (String name : classes) {
-                if (name.toLowerCase().contains(keyword.toLowerCase())) {
-                    searchClassesResultModel.addElement(name);
+            List<String> classes = dbService.getAllExerciseClassNamesWithTrainer();  //<-- NEW METHOD
+            for (String displayString : classes) {
+                if (displayString.toLowerCase().contains(keyword.toLowerCase())) {
+                    searchClassesResultModel.addElement(displayString);
                 }
             }
         }
@@ -185,10 +185,13 @@ public class UserClassesUI extends JPanel {
             if (!exists) {
                 user.addClass(selected);
                 dbService.updateUserData(user);
-                JOptionPane.showMessageDialog(this, "Subscribed to class: " + name);
+                JOptionPane.showMessageDialog(this, "Successfully subscribed to class: " + name);
                 populateSubscribedClasses();
             } else {
-                JOptionPane.showMessageDialog(this, "Already subscribed.", "Warning", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this,
+                        "You are already subscribed to the class \"" + name + "\".",
+                        "Duplicate Subscription",
+                        JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -202,10 +205,13 @@ public class UserClassesUI extends JPanel {
             if (!exists) {
                 user.getExercisePlans().add(selected);
                 dbService.updateUserData(user);
-                JOptionPane.showMessageDialog(this, "Subscribed to plan: " + name);
+                JOptionPane.showMessageDialog(this, "Successfully subscribed to plan: " + name);
                 populateSubscribedPlans();
             } else {
-                JOptionPane.showMessageDialog(this, "Already subscribed.", "Warning", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this,
+                        "You are already subscribed to the plan \"" + name + "\".",
+                        "Duplicate Subscription",
+                        JOptionPane.ERROR_MESSAGE);
             }
         }
     }
