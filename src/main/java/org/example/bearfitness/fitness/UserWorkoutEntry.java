@@ -47,7 +47,9 @@ public class UserWorkoutEntry {
         this.workoutEntry = workoutEntry;
     }
 
+    @Column(name = "workout_date")
     private LocalDate date;
+
     private Double weight;
     private Integer sleep;
     private Integer calories;

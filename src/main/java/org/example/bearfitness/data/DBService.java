@@ -87,8 +87,8 @@ public class DBService {
         return classRepository.saveAll(entries);
     }
 
-    public List<ExerciseClass> getClassesOnDate(User user, LocalDate date) {
-        return classRepository.findByUserAndDate(user, date);
+    public List<ExerciseClass> getClassesOnDate(LocalDate date) {
+        return classRepository.findByDate(date);
     }
 
 
@@ -153,6 +153,10 @@ public class DBService {
 
     public List<ExercisePlan> findExercisePlanByName(String planName) {
         return exercisePlanRepository.findExercisePlanByPlanName(planName);
+    }
+
+    public List<ExerciseClass> findExerciseClassByName(String name) {
+        return classRepository.findExerciseClassByName(name);
     }
 
     public List<User> getAllUsers() {
