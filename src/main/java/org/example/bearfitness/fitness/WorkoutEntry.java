@@ -59,6 +59,13 @@ public class WorkoutEntry {
 //        this.stepCount = stepCount;
     }
 
+    public WorkoutEntry(ExerciseClass classe) {
+        this.exerciseType = ExerciseType.OTHER;
+        this.description = classe.toString() + classe.getFitnessLevel();
+        this.date = LocalDate.now();
+        this.duration = classe.getSessionLength();
+    }
+
     public int getDuration() {
         return duration;
     }
