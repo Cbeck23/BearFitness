@@ -223,7 +223,7 @@ public class UserClassesUI extends JPanel {
         if (name == null) return;
         ExerciseClass toRemove = user.getSubscribedClasses().stream().filter(c -> c.getName().equals(name)).findFirst().orElse(null);
         if (toRemove != null) {
-            user.getSubscribedPlans().remove(toRemove);
+            user.getSubscribedClasses().remove(toRemove);
             dbService.updateUserData(user);
             JOptionPane.showMessageDialog(this, "Unsubscribed from class: " + name);
             populateSubscribedClasses();
