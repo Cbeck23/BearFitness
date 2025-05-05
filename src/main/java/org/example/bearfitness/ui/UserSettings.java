@@ -229,8 +229,6 @@ public class UserSettings extends JPanel {
             musicButton.addActionListener(e -> {
                 SelectSong selector = new SelectSong();
                 selector.setVisible(true);
-                // after selection, play via musicPlayer.play(fileName)
-                selector.setSongSelectedListener(fileName -> musicPlayer.play(fileName));
             });
         }
     }

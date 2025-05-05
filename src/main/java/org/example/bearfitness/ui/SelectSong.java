@@ -11,15 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SelectSong extends JFrame {
-    /**
-     * Listener interface for song selection events
-     */
-    public interface SongSelectedListener {
-        void songSelected(String filePath);
-    }
 
-    private SongSelectedListener listener;
+    private Music music;
     private List<Song> songs;
+    private JTable table;
+    private JButton playButton, stopButton;
 
     public SelectSong() {
         super("Select Song");
@@ -27,44 +23,51 @@ public class SelectSong extends JFrame {
         setSize(800, 600);
         setLayout(new BorderLayout());
 
-        //Load songs using the correct loader class
+        music = new Music(); // Create a new Music player
+
+        // Load songs
         musicFileLoader loader = new musicFileLoader();
         try {
             songs = loader.LoadMusicFile();
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             songs = new ArrayList<>();
         }
 
-        //Table of songs
+        // Table of songs
         String[] headers = {"Name", "Artist"};
         DefaultTableModel model = new DefaultTableModel(headers, 0);
-        JTable table = new JTable(model);
-        for(Song s: songs) {
+        table = new JTable(model);
+        for (Song s : songs) {
             model.addRow(new Object[]{s.getName(), s.getArtist()});
         }
         add(new JScrollPane(table), BorderLayout.CENTER);
 
-        // Select button triggers listener
-        JButton selectButton = new JButton("Select");
-        selectButton.addActionListener(e -> {
-            int row = table.getSelectedRow();
-            if(row == -1) {
-                JOptionPane.showMessageDialog(this, "Please select a song.");
-                return;
-            }
-            String filePath = songs.get(row).getFile();
-            if(listener != null) {
-                listener.songSelected(filePath);
-            }
-            dispose();
-        });
-        add(selectButton, BorderLayout.SOUTH);
+        // Buttons Panel
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+
+        playButton = new JButton("Play ▶️");
+        playButton.addActionListener(e -> playSelectedSong());
+
+        stopButton = new JButton("Stop ⏹️");
+        stopButton.addActionListener(e -> music.stop());
+
+        buttonPanel.add(playButton);
+        buttonPanel.add(stopButton);
+
+        add(buttonPanel, BorderLayout.SOUTH);
 
         setVisible(true);
     }
 
-    public void setSongSelectedListener(SongSelectedListener listener) {
-        this.listener = listener;
+    private void playSelectedSong() {
+        int row = table.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a song.");
+            return;
+        }
+
+        String filePath = songs.get(row).getFile();
+        music.play(filePath);
     }
 }
