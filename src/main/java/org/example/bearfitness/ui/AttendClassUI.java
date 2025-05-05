@@ -64,7 +64,7 @@ public class AttendClassUI extends JPanel {
         date = LocalDate.now();
         try {
             // 1. Get the user's subscribed classes
-            subscribedClasses = user.getSubscribedPlans().stream()
+            subscribedClasses = user.getSubscribedClasses().stream()
                     .filter(exerciseClass -> exerciseClass.getDate().equals(date))
                     .toList(); // Java 16+; otherwise use .collect(Collectors.toList())
 

@@ -146,7 +146,7 @@ public class UserClassesUI extends JPanel {
 
     private void populateSubscribedPlans() {
         subscribedPlansModel.clear();
-        List<ExercisePlan> plans = user.getExercisePlans();
+        List<ExercisePlan> plans = user.getSubscribedPlans();
         for (ExercisePlan ep : plans) {
             subscribedPlansModel.addElement(ep.getPlanName());
         }
@@ -204,9 +204,9 @@ public class UserClassesUI extends JPanel {
         List<ExercisePlan> plans = dbService.findExercisePlanByName(name);
         if (!plans.isEmpty()) {
             ExercisePlan selected = plans.get(0);
-            boolean exists = user.getExercisePlans().stream().anyMatch(p -> p.getId().equals(selected.getId()));
+            boolean exists = user.getSubscribedPlans().stream().anyMatch(p -> p.getId().equals(selected.getId()));
             if (!exists) {
-                user.getExercisePlans().add(selected);
+                user.getSubscribedPlans().add(selected);
                 dbService.updateUserData(user);
                 JOptionPane.showMessageDialog(this, "Successfully subscribed to plan: " + name);
                 populateSubscribedPlans();
@@ -221,7 +221,7 @@ public class UserClassesUI extends JPanel {
 
     private void unsubscribeFromClass(String name) {
         if (name == null) return;
-        ExerciseClass toRemove = user.getSubscribedPlans().stream().filter(c -> c.getName().equals(name)).findFirst().orElse(null);
+        ExerciseClass toRemove = user.getSubscribedClasses().stream().filter(c -> c.getName().equals(name)).findFirst().orElse(null);
         if (toRemove != null) {
             user.getSubscribedPlans().remove(toRemove);
             dbService.updateUserData(user);
@@ -232,9 +232,9 @@ public class UserClassesUI extends JPanel {
 
     private void unsubscribeFromPlan(String name) {
         if (name == null) return;
-        ExercisePlan toRemove = user.getExercisePlans().stream().filter(p -> p.getPlanName().equals(name)).findFirst().orElse(null);
+        ExercisePlan toRemove = user.getSubscribedPlans().stream().filter(p -> p.getPlanName().equals(name)).findFirst().orElse(null);
         if (toRemove != null) {
-            user.getExercisePlans().remove(toRemove);
+            user.getSubscribedPlans().remove(toRemove);
             dbService.updateUserData(user);
             JOptionPane.showMessageDialog(this, "Unsubscribed from plan: " + name);
             populateSubscribedPlans();

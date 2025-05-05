@@ -1,5 +1,6 @@
 package org.example.bearfitness.ui;
 
+import com.formdev.flatlaf.FlatDarculaLaf;
 import org.example.bearfitness.data.DBService;
 import org.example.bearfitness.data.PasswordHash;
 import org.example.bearfitness.trainerJuice.Music;
@@ -99,20 +100,6 @@ public class UserSettings extends JPanel {
         statPanel.add(exerciseStatLabel);
         statPanel.add(calorieStatLabel);
         statPanel.add(sleepStatLabel);
-
-        rGbc.gridy = 2;
-        rightPanel.add(statPanel, rGbc);
-
-        // Theme panel
-        JPanel themePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        themeComboBox = new JComboBox<>(new String[]{"Metal", "Nimbus", "CDE/Motif", "Windows", "Windows Classic"});
-        JLabel themeLabel = new JLabel("Theme: ");
-        themePanel.add(themeLabel);
-        themePanel.add(themeComboBox);
-        statPanel.add(exerciseStatLabel);
-        statPanel.add(calorieStatLabel);
-        statPanel.add(themePanel);
-
         // If trainer, add music control
         if(user.getUserType() == UserType.TRAINER) {
             JPanel musicPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -121,8 +108,16 @@ public class UserSettings extends JPanel {
             musicPanel.add(musicButton);
             statPanel.add(musicPanel);
         }
+        rGbc.gridy = 2;
+        rightPanel.add(statPanel, rGbc);
 
-        add(statPanel, BorderLayout.NORTH);
+        // Theme panel
+        JPanel themePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        themeComboBox = new JComboBox<>(new String[]{"Metal", "Dark Mode","Nimbus", "CDE/Motif", "Windows", "Windows Classic"});
+        JLabel themeLabel = new JLabel("Theme: ");
+        themePanel.add(themeLabel);
+        themePanel.add(themeComboBox);
+
 
         rGbc.gridy = 3;
         rightPanel.add(themePanel, rGbc);
@@ -271,6 +266,9 @@ public class UserSettings extends JPanel {
             switch(themeName) {
                 case "Nimbus":
                     UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+                    break;
+                case "Dark Mode":
+                    UIManager.setLookAndFeel("com.formdev.flatlaf.FlatDarculaLaf");
                     break;
                 case "CDE/Motif":
                     UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
