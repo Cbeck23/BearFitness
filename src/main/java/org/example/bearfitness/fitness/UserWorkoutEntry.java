@@ -49,4 +49,51 @@ public class UserWorkoutEntry {
     public void setWorkoutEntry(WorkoutEntry workoutEntry) {
         this.workoutEntry = workoutEntry;
     }
+
+    //@Column(name = "workout_date")
+//    private LocalDate date;
+//    private Double weight;
+//    private Integer sleep;
+//    private Integer calories;
+//    private Integer workoutsCompleted;
+//
+//    public void setDate(LocalDate date) {
+//        this.date = date;
+//    }
+//
+//    public void setWeight(Double weight) {
+//        this.weight = weight;
+//    }
+//
+//    public void setSleep(Integer sleep) {
+//        this.sleep = sleep;
+//    }
+//
+//    public void setCalories(Integer calories) {
+//        this.calories = calories;
+//    }
+//
+//    public void setWorkoutsCompleted(Integer workoutsCompleted) {
+//        this.workoutsCompleted = workoutsCompleted;
+//    }
+//
+//    public LocalDate getDate() {
+//        return date;
+//    }
+//
+//    public Double getWeight() {
+//        return weight;
+//    }
+//
+//    public Integer getSleep() {
+//        return sleep;
+//    }
+//
+//    public Integer getCalories() {
+//        return calories;
+//    }
+//
+//    public Integer getWorkoutsCompleted() {
+//        return workoutsCompleted;
+//    }
 }

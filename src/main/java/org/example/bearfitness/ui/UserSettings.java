@@ -2,6 +2,7 @@ package org.example.bearfitness.ui;
 
 import org.example.bearfitness.data.DBService;
 import org.example.bearfitness.data.PasswordHash;
+import org.example.bearfitness.trainerJuice.Music;
 import org.example.bearfitness.user.User;
 import org.example.bearfitness.user.UserType;
 
@@ -23,10 +24,12 @@ public class UserSettings extends JPanel {
     private JButton backButton;
     private JButton confirmButton;
     private JButton cancelButton;
+    private JButton musicButton;
 
     private final DBService dbService;
     private final ScreenManager screenManager;
     private final User user;
+    private final Music musicPlayer = new Music();
 
     public UserSettings(DBService dbService, ScreenManager screenManager, User user) {
         this.dbService = dbService;
@@ -106,6 +109,20 @@ public class UserSettings extends JPanel {
         JLabel themeLabel = new JLabel("Theme: ");
         themePanel.add(themeLabel);
         themePanel.add(themeComboBox);
+        statPanel.add(exerciseStatLabel);
+        statPanel.add(calorieStatLabel);
+        statPanel.add(themePanel);
+
+        // If trainer, add music control
+        if(user.getUserType() == UserType.TRAINER) {
+            JPanel musicPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            musicPanel.add(new JLabel("Music:"));
+            musicButton = new JButton("Select & Play");
+            musicPanel.add(musicButton);
+            statPanel.add(musicPanel);
+        }
+
+        add(statPanel, BorderLayout.NORTH);
 
         rGbc.gridy = 3;
         rightPanel.add(themePanel, rGbc);
@@ -127,6 +144,7 @@ public class UserSettings extends JPanel {
         JLabel confirmPasswordLabel = new JLabel("Confirm Password: ");
         passwordPanel.add(confirmPasswordLabel);
         passwordPanel.add(confirmPasswordField);
+        //add(passwordPanel, BorderLayout.CENTER);
 
         rGbc.gridy = 4;
         rightPanel.add(passwordPanel, rGbc);
@@ -190,7 +208,6 @@ public class UserSettings extends JPanel {
         sleepStatLabel.setText("Total Number of Sleep Hours Logged: " + totalSleep);
     }
 
-
     private void registerListeners() {
         themeComboBox.addActionListener(e -> {
             applyTheme((String) themeComboBox.getSelectedItem());
@@ -212,6 +229,15 @@ public class UserSettings extends JPanel {
                 screenManager.showScreen(ScreenManager.Screen.USER_HOME, user);
             }
         });
+
+        if (musicButton != null) {
+            musicButton.addActionListener(e -> {
+                SelectSong selector = new SelectSong();
+                selector.setVisible(true);
+                // after selection, play via musicPlayer.play(fileName)
+                selector.setSongSelectedListener(fileName -> musicPlayer.play(fileName));
+            });
+        }
     }
 
     private void handleChangePassword() {

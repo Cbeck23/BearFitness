@@ -14,6 +14,7 @@ class TrainerUI extends JPanel {
   private User user;
   private JTextArea plansDisplay;
   private JTextArea datesDisplay;
+  private TraineesList traineesList;
 
   public TrainerUI(DBService dbService, ScreenManager screenManager, User user) {
     this.dbService = dbService;
@@ -32,7 +33,6 @@ class TrainerUI extends JPanel {
 
     topButtons.add(exerciseCreation);
     JButton settings = new JButton("Settings");
-    //settings.addActionListener(this::Settings);
     settings.addActionListener(e-> screenManager.showScreen(ScreenManager.Screen.SETTINGS));
     topButtons.add(settings);
 
@@ -44,12 +44,12 @@ class TrainerUI extends JPanel {
     topWrapper.add(topButtons);
     add(topWrapper, BorderLayout.NORTH);
 
-    JTable table = new JTable(new String[][]{}, new String[]{"Name", "Age"});
-    JScrollPane scrollPane = new JScrollPane(table);
+
+    traineesList = new TraineesList(dbService, screenManager, user, this);
 
     JPanel formatter = new JPanel(new GridLayout(1, 2));
     formatter.add(new CalendarApp(user, dbService));
-    formatter.add(scrollPane);
+    formatter.add(traineesList);
     add(formatter, BorderLayout.CENTER);
 
     plansDisplay = new JTextArea(15, 30);

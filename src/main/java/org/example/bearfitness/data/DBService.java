@@ -6,9 +6,6 @@ import org.example.bearfitness.fitness.UserWorkoutEntry;
 import org.example.bearfitness.fitness.WorkoutEntry;
 import org.example.bearfitness.user.User;
 import org.example.bearfitness.user.UserType;
-import org.hibernate.Hibernate;
-import org.hibernate.Session;
-import org.hibernate.SessionBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.Local;
 import org.springframework.context.annotation.Configuration;
@@ -31,7 +28,6 @@ public class DBService {
 
     @Autowired
     private ClassRepository classRepository;
-    private SessionBuilder sessionFactory;
 
     //Constructor for mock tests, Lauren added this lol
     public DBService(BearDB db, ExercisePlanRepository exercisePlanRepository, UserEntryRepository userEntryRepository, ClassRepository classRepository) {
@@ -95,16 +91,10 @@ public class DBService {
         return classRepository.findByDate(date);
     }
 
+
+
     public List<WorkoutEntry> getUserEntries(Long userId) {
         List<UserWorkoutEntry> entries = userEntryRepository.findByUserId(userId);
-//        return entries.stream()
-//                .map(entry -> new String[]{
-//                        String.valueOf(entry.getDate()),
-//                        entry.getExerciseTypeValue(),
-//                        String.valueOf(entry.getDuration()),
-//                        entry.getDescription(),
-//                })
-//                .collect(Collectors.toList());
         return entries.stream()
                 .map(UserWorkoutEntry::getWorkoutEntry)
                 .collect(Collectors.toList());
@@ -204,4 +194,25 @@ public class DBService {
 
     }
 
+    public List<String> getAllExercisePlans() {
+        return exercisePlanRepository.findAll().stream().map(ExercisePlan::getPlanName).collect(Collectors.toList());
+    }
+
+    List<ExercisePlan> findExercisePlansByName(String planName) {
+        return exercisePlanRepository.findExercisePlanByPlanName(planName);
+    }
+
+    public List<String> getAllExerciseClassNames() {
+        List<ExerciseClass> classes = classRepository.findAll();
+        return classes.stream()
+                .map(ExerciseClass::getName)
+                .collect(Collectors.toList());
+    }
+
+    public List<String> getAllExerciseClassNamesWithTrainer() {
+        List<ExerciseClass> classes = classRepository.findAll();
+        return classes.stream()
+                .map(c -> c.getName() + " - Hosted by: " + c.getUser().getUsername())
+                .collect(Collectors.toList());
+    }
 }

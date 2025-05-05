@@ -2,6 +2,7 @@ package org.example.bearfitness.ui;
 
 import org.example.bearfitness.data.DBService;
 import org.example.bearfitness.data.PasswordHash;
+import org.example.bearfitness.fitness.ExerciseClass;
 import org.example.bearfitness.fitness.ExercisePlan;
 import org.example.bearfitness.user.User;
 
@@ -16,10 +17,17 @@ public class UserClassesUI extends JPanel {
     private DBService dbService;
     private ScreenManager screenManager;
 
-    private DefaultListModel<String> subscribedModel;
-    private DefaultListModel<String> searchResultModel;
-    private JTextField searchField;
-    private JList<String> subscribedList;
+    // Exercise Classes
+    private DefaultListModel<String> subscribedClassesModel;
+    private DefaultListModel<String> searchClassesResultModel;
+    private JTextField searchClassesField;
+    private JList<String> subscribedClassesList;
+
+    // Exercise Plans
+    private DefaultListModel<String> subscribedPlansModel;
+    private DefaultListModel<String> searchPlansResultModel;
+    private JTextField searchPlansField;
+    private JList<String> subscribedPlansList;
 
     public UserClassesUI(DBService dbService, ScreenManager screenManager, User user) {
         this.user = user;
@@ -28,154 +36,208 @@ public class UserClassesUI extends JPanel {
 
         setLayout(new BorderLayout(10, 10));
 
-        // Top panel with Back Button
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton backButton = new JButton("Back to Home");
         backButton.addActionListener(e -> screenManager.showScreen(ScreenManager.Screen.USER_HOME, user));
         topPanel.add(backButton);
         add(topPanel, BorderLayout.NORTH);
 
-        // Subscribed classes panel
-        subscribedModel = new DefaultListModel<>();
-        subscribedList = new JList<>(subscribedModel);
-        JScrollPane subscribedScrollPane = new JScrollPane(subscribedList);
-        subscribedScrollPane.setPreferredSize(new Dimension(350, 500));
-        populateSubscribedPlans();
+        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane.add("Exercise Classes", createClassPanel());
+        tabbedPane.add("Exercise Plans", createPlanPanel());
 
-        JPanel subscribedPanel = new JPanel(new BorderLayout());
-        subscribedPanel.setBorder(BorderFactory.createTitledBorder("Your Subscribed Classes"));
-        subscribedPanel.add(subscribedScrollPane, BorderLayout.CENTER);
+        add(tabbedPane, BorderLayout.CENTER);
+    }
 
-        JButton unsubscribeButton = new JButton("Unsubscribe Selected Plan");
-        subscribedPanel.add(unsubscribeButton, BorderLayout.SOUTH);
+    private JPanel createClassPanel() {
+        JPanel panel = new JPanel(new BorderLayout(10, 10));
 
-        // Search panel
+        subscribedClassesModel = new DefaultListModel<>();
+        subscribedClassesList = new JList<>(subscribedClassesModel);
+        JScrollPane subscribedScrollPane = new JScrollPane(subscribedClassesList);
+        populateSubscribedClasses();
+
+        JButton unsubscribeButton = new JButton("Unsubscribe Selected Class");
+        unsubscribeButton.addActionListener(e -> unsubscribeFromClass(subscribedClassesList.getSelectedValue()));
+
+        JPanel leftPanel = new JPanel(new BorderLayout());
+        leftPanel.setBorder(BorderFactory.createTitledBorder("Your Subscribed Classes"));
+        leftPanel.add(subscribedScrollPane, BorderLayout.CENTER);
+        leftPanel.add(unsubscribeButton, BorderLayout.SOUTH);
+
         JPanel searchPanel = new JPanel(new BorderLayout(5, 5));
-        searchField = new JTextField(20);
-        JButton searchButton = new JButton("Search");
-
-        searchPanel.add(searchField, BorderLayout.CENTER);
+        searchClassesField = new JTextField(20);
+        JButton searchButton = new JButton("Search Classes");
+        searchButton.addActionListener(e -> performClassSearch());
+        searchPanel.add(searchClassesField, BorderLayout.CENTER);
         searchPanel.add(searchButton, BorderLayout.EAST);
 
-        // Search results panel
-        searchResultModel = new DefaultListModel<>();
-        JList<String> searchResultList = new JList<>(searchResultModel);
+        searchClassesResultModel = new DefaultListModel<>();
+        JList<String> searchResultList = new JList<>(searchClassesResultModel);
         JScrollPane searchResultScrollPane = new JScrollPane(searchResultList);
-        searchResultScrollPane.setPreferredSize(new Dimension(350, 500));
 
-        JPanel resultsPanel = new JPanel(new BorderLayout());
-        resultsPanel.setBorder(BorderFactory.createTitledBorder("Search Results"));
-        resultsPanel.add(searchResultScrollPane, BorderLayout.CENTER);
+        JButton subscribeButton = new JButton("Subscribe to Selected Class");
+        subscribeButton.addActionListener(e -> subscribeToClass(searchResultList.getSelectedValue()));
+
+        JPanel rightPanel = new JPanel(new BorderLayout());
+        rightPanel.setBorder(BorderFactory.createTitledBorder("Search Results"));
+        rightPanel.add(searchPanel, BorderLayout.NORTH);
+        rightPanel.add(searchResultScrollPane, BorderLayout.CENTER);
+        rightPanel.add(subscribeButton, BorderLayout.SOUTH);
+
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanel, rightPanel);
+        splitPane.setDividerLocation(400);
+
+        panel.add(splitPane, BorderLayout.CENTER);
+        return panel;
+    }
+
+    private JPanel createPlanPanel() {
+        JPanel panel = new JPanel(new BorderLayout(10, 10));
+
+        subscribedPlansModel = new DefaultListModel<>();
+        subscribedPlansList = new JList<>(subscribedPlansModel);
+        JScrollPane subscribedScrollPane = new JScrollPane(subscribedPlansList);
+        populateSubscribedPlans();
+
+        JButton unsubscribeButton = new JButton("Unsubscribe Selected Plan");
+        unsubscribeButton.addActionListener(e -> unsubscribeFromPlan(subscribedPlansList.getSelectedValue()));
+
+        JPanel leftPanel = new JPanel(new BorderLayout());
+        leftPanel.setBorder(BorderFactory.createTitledBorder("Your Subscribed Plans"));
+        leftPanel.add(subscribedScrollPane, BorderLayout.CENTER);
+        leftPanel.add(unsubscribeButton, BorderLayout.SOUTH);
+
+        JPanel searchPanel = new JPanel(new BorderLayout(5, 5));
+        searchPlansField = new JTextField(20);
+        JButton searchButton = new JButton("Search Plans");
+        searchButton.addActionListener(e -> performPlanSearch());
+        searchPanel.add(searchPlansField, BorderLayout.CENTER);
+        searchPanel.add(searchButton, BorderLayout.EAST);
+
+        searchPlansResultModel = new DefaultListModel<>();
+        JList<String> searchResultList = new JList<>(searchPlansResultModel);
+        JScrollPane searchResultScrollPane = new JScrollPane(searchResultList);
 
         JButton subscribeButton = new JButton("Subscribe to Selected Plan");
-        resultsPanel.add(subscribeButton, BorderLayout.SOUTH);
+        subscribeButton.addActionListener(e -> subscribeToPlan(searchResultList.getSelectedValue()));
 
-        // Combine search panel and search results into one right panel
-        JPanel rightPanel = new JPanel(new BorderLayout(10, 10));
+        JPanel rightPanel = new JPanel(new BorderLayout());
+        rightPanel.setBorder(BorderFactory.createTitledBorder("Search Results"));
         rightPanel.add(searchPanel, BorderLayout.NORTH);
-        rightPanel.add(resultsPanel, BorderLayout.CENTER);
+        rightPanel.add(searchResultScrollPane, BorderLayout.CENTER);
+        rightPanel.add(subscribeButton, BorderLayout.SOUTH);
 
-        // Use a split pane to divide left (Subscribed) and right (Search)
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, subscribedPanel, rightPanel);
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanel, rightPanel);
         splitPane.setDividerLocation(400);
-        splitPane.setResizeWeight(0.5); // Allow dragging nicely
 
-        add(splitPane, BorderLayout.CENTER);
-
-        // Button actions
-        searchButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                performSearch();
-            }
-        });
-
-        subscribeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String selectedPlanName = searchResultList.getSelectedValue();
-                if (selectedPlanName != null) {
-                    subscribeToPlan(selectedPlanName);
-                } else {
-                    JOptionPane.showMessageDialog(UserClassesUI.this, "Please select a plan to subscribe.", "No Plan Selected", JOptionPane.WARNING_MESSAGE);
-                }
-            }
-        });
-
-        unsubscribeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String selectedPlanName = subscribedList.getSelectedValue();
-                if (selectedPlanName != null) {
-                    unsubscribeFromPlan(selectedPlanName);
-                } else {
-                    JOptionPane.showMessageDialog(UserClassesUI.this, "Please select a plan to unsubscribe.", "No Plan Selected", JOptionPane.WARNING_MESSAGE);
-                }
-            }
-        });
+        panel.add(splitPane, BorderLayout.CENTER);
+        return panel;
     }
+
+    private void populateSubscribedClasses() {
+        subscribedClassesModel.clear();
+        List<ExerciseClass> classes = user.getSubscribedClasses();
+        for (ExerciseClass ec : classes) {
+            subscribedClassesModel.addElement(ec.getName());
+        }
+    }
+
 
     private void populateSubscribedPlans() {
-        subscribedModel.clear();
-        List<ExercisePlan> plans = user.getSubscribedPlans();
-        if(!plans.isEmpty()) {
-
-            for (ExercisePlan plan : plans) {
-                subscribedModel.addElement(plan.getPlanName());
-            }
+        subscribedPlansModel.clear();
+        List<ExercisePlan> plans = user.getExercisePlans();
+        for (ExercisePlan ep : plans) {
+            subscribedPlansModel.addElement(ep.getPlanName());
         }
     }
 
-    private void performSearch() {
-        searchResultModel.clear();
-        String keyword = searchField.getText().trim();
-
+    private void performClassSearch() {
+        searchClassesResultModel.clear();
+        String keyword = searchClassesField.getText().trim();
         if (!keyword.isEmpty()) {
-            List<String> plans = dbService.getAllPlans();
-            for (String planName : plans) {
-                if (planName.toLowerCase().contains(keyword.toLowerCase())) {
-                    searchResultModel.addElement(planName);
+            List<String> classes = dbService.getAllExerciseClassNamesWithTrainer();  //<-- NEW METHOD
+            for (String displayString : classes) {
+                if (displayString.toLowerCase().contains(keyword.toLowerCase())) {
+                    searchClassesResultModel.addElement(displayString);
                 }
             }
         }
     }
 
-    private void subscribeToPlan(String planName) {
-        List<ExercisePlan> matchingPlans = dbService.findExercisePlanByName(planName);
+    private void performPlanSearch() {
+        searchPlansResultModel.clear();
+        String keyword = searchPlansField.getText().trim();
+        if (!keyword.isEmpty()) {
+            List<String> plans = dbService.getAllExercisePlans();
+            for (String name : plans) {
+                if (name.toLowerCase().contains(keyword.toLowerCase())) {
+                    searchPlansResultModel.addElement(name);
+                }
+            }
+        }
+    }
 
-        if (!matchingPlans.isEmpty()) {
-            ExercisePlan selectedPlan = matchingPlans.get(0);
-
-            boolean alreadySubscribed = user.getSubscribedPlans().stream()
-                    .anyMatch(plan -> plan.getId().equals(selectedPlan.getId()));
-
-            if (!alreadySubscribed) {
-                user.addPlan(selectedPlan);
+    private void subscribeToClass(String name) {
+        if (name == null) return;
+        String actualClassName = name.split(" - Hosted by:")[0].trim();
+        List<ExerciseClass> classes = dbService.findExerciseClassByName(actualClassName);
+        if (!classes.isEmpty()) {
+            ExerciseClass selected = classes.get(0);
+            boolean exists = user.getSubscribedPlans().stream().anyMatch(c -> c.getId().equals(selected.getId()));
+            if (!exists) {
+                user.addClass(selected);
                 dbService.updateUserData(user);
-                JOptionPane.showMessageDialog(this, "Successfully subscribed to: " + planName);
+                JOptionPane.showMessageDialog(this, "Successfully subscribed to class: " + name);
+                populateSubscribedClasses();
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "You are already subscribed to the class \"" + name + "\".",
+                        "Duplicate Subscription",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void subscribeToPlan(String name) {
+        if (name == null) return;
+        List<ExercisePlan> plans = dbService.findExercisePlanByName(name);
+        if (!plans.isEmpty()) {
+            ExercisePlan selected = plans.get(0);
+            boolean exists = user.getExercisePlans().stream().anyMatch(p -> p.getId().equals(selected.getId()));
+            if (!exists) {
+                user.getExercisePlans().add(selected);
+                dbService.updateUserData(user);
+                JOptionPane.showMessageDialog(this, "Successfully subscribed to plan: " + name);
                 populateSubscribedPlans();
             } else {
-                JOptionPane.showMessageDialog(this, "You are already subscribed to this plan.", "Duplicate Subscription", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this,
+                        "You are already subscribed to the plan \"" + name + "\".",
+                        "Duplicate Subscription",
+                        JOptionPane.ERROR_MESSAGE);
             }
-        } else {
-            JOptionPane.showMessageDialog(this, "Plan not found in database.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    private void unsubscribeFromPlan(String planName) {
-        ExercisePlan planToRemove = user.getSubscribedPlans().stream()
-                .filter(plan -> plan.getPlanName().equals(planName))
-                .findFirst()
-                .orElse(null);
-
-        if (planToRemove != null) {
-            user.getSubscribedPlans().remove(planToRemove);
+    private void unsubscribeFromClass(String name) {
+        if (name == null) return;
+        ExerciseClass toRemove = user.getSubscribedPlans().stream().filter(c -> c.getName().equals(name)).findFirst().orElse(null);
+        if (toRemove != null) {
+            user.getSubscribedPlans().remove(toRemove);
             dbService.updateUserData(user);
-            JOptionPane.showMessageDialog(this, "Successfully unsubscribed from: " + planName);
-            populateSubscribedPlans();
-        } else {
-            JOptionPane.showMessageDialog(this, "Plan not found in your subscriptions.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Unsubscribed from class: " + name);
+            populateSubscribedClasses();
         }
     }
 
+    private void unsubscribeFromPlan(String name) {
+        if (name == null) return;
+        ExercisePlan toRemove = user.getExercisePlans().stream().filter(p -> p.getPlanName().equals(name)).findFirst().orElse(null);
+        if (toRemove != null) {
+            user.getExercisePlans().remove(toRemove);
+            dbService.updateUserData(user);
+            JOptionPane.showMessageDialog(this, "Unsubscribed from plan: " + name);
+            populateSubscribedPlans();
+        }
+    }
 }

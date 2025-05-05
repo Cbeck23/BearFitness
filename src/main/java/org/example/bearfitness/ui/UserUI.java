@@ -17,6 +17,7 @@ class UserUI extends JPanel {
     private User user;
     //private JTextArea plansDisplay;
     private WorkoutHistoryUI workoutHistoryUI;
+    private AttendClassUI attendClassUI;
     private PieChartPanel pieChartPanel;
     private JProgressBar exerciseProgressBar;
     private JLabel exProgressText;
@@ -360,10 +361,15 @@ class UserUI extends JPanel {
 
 
         //Left: Workout History
+        JPanel leftPanel = new JPanel(new BorderLayout());
         workoutHistoryUI = new WorkoutHistoryUI(dbService, screenManager, user, this);
+        attendClassUI = new AttendClassUI(dbService, user, this);
+        leftPanel.add(workoutHistoryUI, BorderLayout.CENTER);
+        leftPanel.add(attendClassUI, BorderLayout.SOUTH);
 
         splitPane.setRightComponent(rightPanel);
-        splitPane.setLeftComponent(workoutHistoryUI);
+        //splitPane.setLeftComponent(workoutHistoryUI);
+        splitPane.setLeftComponent(leftPanel);
 
         add(splitPane, BorderLayout.CENTER);
 
