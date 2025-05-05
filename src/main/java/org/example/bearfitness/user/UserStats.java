@@ -22,10 +22,10 @@ public class UserStats {
     private Map<LocalDate, Integer> caloriesLogged = new HashMap<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
-    private Map<Date, Integer> sleepLogged = new HashMap<>();
+    private Map<LocalDate, Double> sleepLogged = new HashMap<>();
 
-    @ElementCollection
-    private Map<Date, Double> weightLog = new HashMap<>();
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Map<LocalDate, Double> weightLog = new HashMap<>();
 
     public UserStats() {}
 
@@ -39,23 +39,23 @@ public class UserStats {
         }
     }
 
-    public Map<Date, Integer> getSleepLogged() { return sleepLogged; }
+    public Map<LocalDate, Double> getSleepLogged() { return sleepLogged; }
 
-    public void setSleepLogged(Map<Date, Integer> sleepLogged) { this.sleepLogged = sleepLogged; }
+    public void setSleepLogged(Map<LocalDate, Double> sleepLogged) { this.sleepLogged = sleepLogged; }
 
-    public void logSleep(Date date, Integer sleep) {
+    public void logSleep(LocalDate date, Double sleep) {
         if (date != null && sleep != null) {
-            sleepLogged.merge(date, sleep, Integer::sum);
+            sleepLogged.merge(date, sleep, Double::sum);
         }
     }
 
-    public Map<Date, Double> getWeightLog() { return weightLog; }
+    public Map<LocalDate, Double> getWeightLog() { return weightLog; }
 
-    public void setWeightLog(Map<Date, Double> weightLog) { this.weightLog = weightLog; }
+    public void setWeightLog(Map<LocalDate, Double> weightLog) { this.weightLog = weightLog; }
 
-    public void logWeight(Date date, Double weight) {
+    public void logWeight(LocalDate date, Double weight) {
         if (date != null && weight != null && weight >= 0) {
-            weightLog.merge(date, weight, Double::sum);
+            weightLog.put(date, weight);
         }
     }
 
@@ -79,22 +79,22 @@ public class UserStats {
         return totalCalories;
     }
 
-//    public Double getExerciseLastWeek() {
-//        Map<LocalDate, Integer> calorieLog = this.caloriesLogged;
-//        LocalDate today = LocalDate.now();
-//        LocalDate oneWeekAgo = today.minusDays(7);
-//
-//        int totalCalories = 0;
-//
-//        for (Map.Entry<LocalDate, Integer> entry : calorieLog.entrySet()) {
-//            LocalDate date = entry.getKey();
-//
-//            if ((date.isEqual(oneWeekAgo) || date.isAfter(oneWeekAgo)) &&
-//                    (date.isEqual(today) || date.isBefore(today))) {
-//                totalCalories += entry.getValue();
-//            }
-//        }
-//
-//        return totalCalories;
-//    }
+    public Double getSleepLastWeek() {
+        Map<LocalDate, Double> sleepLog = this.sleepLogged;
+        LocalDate today = LocalDate.now();
+        LocalDate oneWeekAgo = today.minusDays(7);
+
+        Double totalSleep = 0.0;
+
+        for (Map.Entry<LocalDate, Double> entry : sleepLog.entrySet()) {
+            LocalDate date = entry.getKey();
+
+            if ((date.isEqual(oneWeekAgo) || date.isAfter(oneWeekAgo)) &&
+                    (date.isEqual(today) || date.isBefore(today))) {
+                totalSleep += entry.getValue();
+            }
+        }
+
+        return totalSleep;
+    }
 }

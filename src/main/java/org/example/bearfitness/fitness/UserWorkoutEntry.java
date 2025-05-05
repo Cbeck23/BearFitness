@@ -3,9 +3,6 @@ package org.example.bearfitness.fitness;
 import org.example.bearfitness.fitness.WorkoutEntry;
 import jakarta.persistence.*;
 import org.example.bearfitness.user.User;
-import org.springframework.cglib.core.Local;
-
-import java.time.LocalDate;
 
 @Entity
 @Table(name = "user_entry_list") // Maps to the desired table name
@@ -20,6 +17,12 @@ public class UserWorkoutEntry {
     private User user;
 
     @Embedded // Includes fields from WorkoutEntry (embedded object)
+    @AttributeOverrides({
+            @AttributeOverride(name = "date", column = @Column(name = "date")),
+            @AttributeOverride(name = "duration", column = @Column(name = "duration")),
+            @AttributeOverride(name = "exerciseType", column = @Column(name = "exercise_type")),
+            @AttributeOverride(name = "description", column = @Column(name = "description"))
+    })
     private WorkoutEntry workoutEntry;
 
     // Constructors, getters, and setters
@@ -45,51 +48,5 @@ public class UserWorkoutEntry {
 
     public void setWorkoutEntry(WorkoutEntry workoutEntry) {
         this.workoutEntry = workoutEntry;
-    }
-
-    private LocalDate date;
-    private Double weight;
-    private Integer sleep;
-    private Integer calories;
-    private Integer workoutsCompleted;
-
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    public void setWeight(Double weight) {
-        this.weight = weight;
-    }
-
-    public void setSleep(Integer sleep) {
-        this.sleep = sleep;
-    }
-
-    public void setCalories(Integer calories) {
-        this.calories = calories;
-    }
-
-    public void setWorkoutsCompleted(Integer workoutsCompleted) {
-        this.workoutsCompleted = workoutsCompleted;
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public Double getWeight() {
-        return weight;
-    }
-
-    public Integer getSleep() {
-        return sleep;
-    }
-
-    public Integer getCalories() {
-        return calories;
-    }
-
-    public Integer getWorkoutsCompleted() {
-        return workoutsCompleted;
     }
 }

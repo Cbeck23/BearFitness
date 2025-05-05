@@ -81,14 +81,14 @@ class UserTest {
 
     @Test
     void setGoalWeight_shouldSetGoalWeightInGoals() {
-        user.setGoalWeight(150);
+        user.setGoalWeight(150.0);
         assertEquals(150, user.getGoals().getGoalWeight());
     }
 
     @Test
     void setWeeklyMinutes_shouldSetWeeklyExMinutesInGoals() {
-        user.setWeeklyExMinutes(300);
-        assertEquals(300, user.getGoals().getWeeklyExMinutes());
+        user.setWeeklyExercises(3);
+        assertEquals(300, user.getGoals().getWeeklyExercises());
     }
 
     @Test
@@ -102,18 +102,18 @@ class UserTest {
 
     @Test
     void logSleep_shouldRecordSleepInStats() {
-        Date today = new Date();
-        user.logSleep(today, 8);
-        Map<Date, Integer> sleepLogged = user.getSleepLogged();
+        LocalDate today = LocalDate.now();
+        user.logSleep(today, 8.0);
+        Map<LocalDate, Double> sleepLogged = user.getSleepLogged();
 
         assertEquals(8, sleepLogged.get(today));
     }
 
     @Test
     void recordWeight_shouldRecordWeightInStats() {
-        Date today = new Date();
+        LocalDate today = LocalDate.now();
         user.recordWeight(today, 150.5);
-        Map<Date, Double> weightLogged = user.getWeightLog();
+        Map<LocalDate, Double> weightLogged = user.getWeightLog();
 
         assertEquals(150.5, weightLogged.get(today));
     }

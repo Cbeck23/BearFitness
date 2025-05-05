@@ -11,5 +11,6 @@ import java.util.List;
 
 @Repository
 public interface ClassRepository extends JpaRepository<ExerciseClass, Long> {
-    List<ExerciseClass> findByUserAndDate(User user, LocalDate date);
+    List<ExerciseClass> findByDate(LocalDate date);
+    List<ExerciseClass> findExerciseClassByName(String name);
 }

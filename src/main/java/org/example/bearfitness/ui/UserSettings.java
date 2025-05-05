@@ -7,6 +7,8 @@ import org.example.bearfitness.user.UserType;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 public class UserSettings extends JPanel {
     private JPasswordField oldPasswordField;
@@ -14,6 +16,7 @@ public class UserSettings extends JPanel {
     private JPasswordField confirmPasswordField;
     private JLabel exerciseStatLabel;
     private JLabel calorieStatLabel;
+    private JLabel sleepStatLabel;
     private JPanel statPanel;
     private JComboBox<String> themeComboBox;
     private JButton logoutButton;
@@ -36,62 +39,157 @@ public class UserSettings extends JPanel {
     }
 
     private void initComponents() {
-        // Stats and theme at top
+        setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.BOTH;
+
+        // LEFT PANEL (Navigation & Username)
+        JPanel leftPanel = new JPanel(new BorderLayout());
+
+//        JLabel usernameLabel = new JLabel(user.getUsername(), SwingConstants.LEFT);
+//        usernameLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
+//        leftPanel.add(usernameLabel, BorderLayout.WEST);
+
+        backButton = new JButton("Back");
+        logoutButton = new JButton("Logout");
+        JPanel navPanel = new JPanel(new BorderLayout());
+        navPanel.add(backButton, BorderLayout.NORTH);
+        navPanel.add(logoutButton, BorderLayout.SOUTH);
+        leftPanel.add(navPanel, BorderLayout.WEST);
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridheight = 3;
+        gbc.weightx = 0.3;
+        gbc.weighty = 1.0;
+        add(leftPanel, gbc);
+
+        // RIGHT PANEL (Stats, Theme, Password)
+        JPanel rightPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints rGbc = new GridBagConstraints();
+        rGbc.insets = new Insets(10, 10, 10, 10);
+        rGbc.fill = GridBagConstraints.HORIZONTAL;
+
+        // Title
+        JLabel usernameLabel = new JLabel("Username: " + user.getUsername(), SwingConstants.CENTER);
+        usernameLabel.setFont(new Font("SansSerif", Font.BOLD, 20));
+        rGbc.gridx = 0;
+        rGbc.gridy = 0;
+        rGbc.gridwidth = 2;
+        rGbc.weightx = 1.0;
+        rightPanel.add(usernameLabel, rGbc);
+
+        JLabel titleLabel = new JLabel("Account Statistics", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
+        rGbc.gridx = 0;
+        rGbc.gridy = 1;
+        rGbc.gridwidth = 2;
+        rGbc.weightx = 1.0;
+        rightPanel.add(titleLabel, rGbc);
+
+        // Stat panel
         statPanel = new JPanel(new GridLayout(3, 1, 5, 5));
         exerciseStatLabel = new JLabel();
         calorieStatLabel = new JLabel();
-        JPanel themePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        themePanel.add(new JLabel("Theme:"));
-        themeComboBox = new JComboBox<>(new String[]{"Metal", "Nimbus", "CDE/Motif", "Windows", "Windows Classic"});
-        themePanel.add(themeComboBox);
+        sleepStatLabel = new JLabel();
         statPanel.add(exerciseStatLabel);
         statPanel.add(calorieStatLabel);
-        statPanel.add(themePanel);
-        add(statPanel, BorderLayout.NORTH);
+        statPanel.add(sleepStatLabel);
 
-        // Password change form in center
+        rGbc.gridy = 2;
+        rightPanel.add(statPanel, rGbc);
+
+        // Theme panel
+        JPanel themePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        themeComboBox = new JComboBox<>(new String[]{"Metal", "Nimbus", "CDE/Motif", "Windows", "Windows Classic"});
+        JLabel themeLabel = new JLabel("Theme: ");
+        themePanel.add(themeLabel);
+        themePanel.add(themeComboBox);
+
+        rGbc.gridy = 3;
+        rightPanel.add(themePanel, rGbc);
+
+        // Password panel
         JPanel passwordPanel = new JPanel(new GridLayout(3, 2, 5, 5));
         passwordPanel.setBorder(BorderFactory.createTitledBorder("Change Password"));
         oldPasswordField = new JPasswordField();
         newPasswordField = new JPasswordField();
         confirmPasswordField = new JPasswordField();
-        passwordPanel.add(new JLabel("Old Password:"));
+        JLabel passwordLabel = new JLabel("Old Password: ");
+        passwordPanel.add(passwordLabel);
         passwordPanel.add(oldPasswordField);
-        passwordPanel.add(new JLabel("New Password:"));
+
+        JLabel newPasswordLabel = new JLabel("New Password: ");
+        passwordPanel.add(newPasswordLabel);
         passwordPanel.add(newPasswordField);
-        passwordPanel.add(new JLabel("Confirm Password:"));
+
+        JLabel confirmPasswordLabel = new JLabel("Confirm Password: ");
+        passwordPanel.add(confirmPasswordLabel);
         passwordPanel.add(confirmPasswordField);
-        add(passwordPanel, BorderLayout.CENTER);
 
-        // Navigate buttons at bottom
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        backButton = new JButton("Back");
-        logoutButton = new JButton("Logout");
-        cancelButton = new JButton("Cancel");
+        rGbc.gridy = 4;
+        rightPanel.add(passwordPanel, rGbc);
+
+        // Confirm/Cancel button panel
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         confirmButton = new JButton("Confirm");
+        cancelButton = new JButton("Cancel");
+        buttonPanel.add(confirmButton);
+        buttonPanel.add(cancelButton);
 
-        if(user.getUserType() == UserType.ADMIN){
+        rGbc.gridy = 5;
+        rightPanel.add(buttonPanel, rGbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.gridheight = 3;
+        gbc.weightx = 0.7;
+        add(rightPanel, gbc);
+
+        // Admin Button (optional)
+        if (user.getUserType() == UserType.ADMIN) {
             JButton adminButton = new JButton("Admin");
             adminButton.addActionListener(e -> screenManager.showScreen(ScreenManager.Screen.ADMINISTRATION));
-            buttonPanel.add(adminButton);
+            rGbc.gridy = 5;
+            rightPanel.add(adminButton, rGbc);
         }
-        buttonPanel.add(backButton);
-        buttonPanel.add(logoutButton);
-        buttonPanel.add(cancelButton);
-        buttonPanel.add(confirmButton);
 
-        add(buttonPanel, BorderLayout.SOUTH);
+        // Optional: scale components on resize
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                int width = getWidth();
+                int fontSize = Math.max(12, width / 60);
+                Font scaledFont = new Font("SansSerif", Font.PLAIN, fontSize);
+                for (JComponent comp : new JComponent[]{backButton, logoutButton, confirmButton, cancelButton,
+                        titleLabel, exerciseStatLabel, calorieStatLabel, sleepStatLabel,
+                        themeLabel, themeComboBox,
+                        oldPasswordField, newPasswordField, confirmPasswordField, passwordLabel, newPasswordLabel,
+                        confirmPasswordLabel, passwordPanel}) {
+                    comp.setFont(scaledFont);
+                }
+                revalidate();
+                repaint();
+            }
+        });
     }
+
 
     private void loadStats() {
-        int exThisWeek = dbService.getExerciseLastWeek(user.getId());
-        int exGoal = user.getGoals().getWeeklyExMinutes();
-        exerciseStatLabel.setText("Exercise This Week: " + exThisWeek + " / " + exGoal + " min");
+//        int exThisWeek = dbService.getExerciseLastWeek(user.getId());
+//        int exGoal = user.getGoals().getWeeklyExercises();
 
-        int calThisWeek = user.getGoals().getWeeklyExMinutes();
-        int calGoal = user.getGoals().getGoalCalories();
-        calorieStatLabel.setText("Calories This Week: " + calThisWeek + " / " + calGoal);
+        int totalEntries = dbService.countByUserId(user.getId());
+        exerciseStatLabel.setText("Total Number of Exercises Logged: " + totalEntries);
+
+        int totalCalories = user.getTotalCaloriesLogged(user.getUserStats());
+        calorieStatLabel.setText("Total Number of Calories Logged: " + totalCalories);
+
+        double totalSleep = user.getTotalSleepLogged(user.getUserStats());
+        sleepStatLabel.setText("Total Number of Sleep Hours Logged: " + totalSleep);
     }
+
 
     private void registerListeners() {
         themeComboBox.addActionListener(e -> {

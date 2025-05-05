@@ -17,14 +17,14 @@ class UserGoalsTest {
 
     @Test
     void setAndGetGoalWeight_shouldReturnCorrectValue() {
-        goals.setGoalWeight(150);
+        goals.setGoalWeight(150.0);
         assertEquals(150, goals.getGoalWeight());
     }
 
     @Test
     void setAndGetWeeklyExMinutes_shouldReturnCorrectValue() {
-        goals.setWeeklyExMinutes(300);
-        assertEquals(300, goals.getWeeklyExMinutes());
+        goals.setWeeklyExercises(3);
+        assertEquals(3, goals.getWeeklyExercises());
     }
 
     @Test
@@ -32,7 +32,7 @@ class UserGoalsTest {
         UserGoals newGoals = new UserGoals(160, 300, 2000, 8.5);
 
         assertEquals(160, newGoals.getGoalWeight());
-        assertEquals(300, newGoals.getWeeklyExMinutes());
+        assertEquals(300, newGoals.getWeeklyExercises());
         assertEquals(2000, newGoals.getGoalCalories());
         assertEquals(8.5, newGoals.getGoalSleep());
     }

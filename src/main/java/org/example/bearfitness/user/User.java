@@ -51,7 +51,7 @@ public class User {
 //    private List<WorkoutEntry> entryList = new ArrayList<>();
 
     /** Exercise plans the user is currently subscribed to. */
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<ExercisePlan> subscribedPlans = new ArrayList<>();
 
     // === Constructors ===
@@ -160,6 +160,28 @@ public class User {
         this.goals = goals;
     }
 
+    public void setNewGoalExercises(Integer newGoal) {
+        if(goals==null) {
+            goals = new UserGoals();
+        }
+        goals.setWeeklyExercises(newGoal);
+    }
+
+    public void logNewSleep(Double newSleep) {
+        if(userStats==null) {
+            userStats = new UserStats();
+        }
+        //FIX?: maybe can change later to ask the user to enter a day/time
+        LocalDate currentTime = LocalDate.now();
+        userStats.logSleep(currentTime, newSleep);
+    }
+
+    public void setNewGoalSleep(Double newGoal) {
+        if(goals==null) {
+            goals = new UserGoals();
+        }
+        goals.setGoalSleep(newGoal);
+    }
 //    public List<WorkoutEntry> getEntryList() {
 //        return entryList;
 //    }
@@ -168,7 +190,12 @@ public class User {
 //        this.entryList = entryList;
 //    }
 
+
     public List<ExercisePlan> getSubscribedPlans() {
+
+        if(subscribedPlans.isEmpty()) {
+            return new ArrayList<>();
+        }
         return subscribedPlans;
     }
 
@@ -183,20 +210,20 @@ public class User {
      *
      * @param weight The target weight.
      */
-    public void setGoalWeight(Integer weight) {
+    public void setGoalWeight(Double weight) {
         this.goals.setGoalWeight(weight);
     }
 
     /**
      * Sets the number of weekly activities the user aims to complete.
      *
-     * @param weeklyExHours Target number of weekly activities.
+     * @param weeklyEx Target number of weekly activities.
      */
-    public void setWeeklyExMinutes(Integer weeklyExHours) {
+    public void setWeeklyExercises(Integer weeklyEx) {
         if(goals == null) {
             goals = new UserGoals();
         }
-        this.goals.setWeeklyExMinutes(weeklyExHours);
+        this.goals.setWeeklyExercises(weeklyEx);
     }
 
     // === Exercise Plan Management ===
@@ -252,7 +279,7 @@ public class User {
      * @param date Date of entry.
      * @param sleep Hours of sleep.
      */
-    public void logSleep(Date date, Integer sleep) {
+    public void logSleep(LocalDate date, Double sleep) {
         userStats.logSleep(date, sleep);
     }
 
@@ -262,7 +289,7 @@ public class User {
      * @param date Date of entry.
      * @param weight Weight in kilograms or pounds.
      */
-    public void recordWeight(Date date, Double weight) {
+    public void recordWeight(LocalDate date, Double weight) {
         userStats.logWeight(date, weight);
     }
 
@@ -274,12 +301,27 @@ public class User {
     }
 
     /** @return Map of sleep hours logged by date. */
-    public Map<Date, Integer> getSleepLogged() {
+    public Map<LocalDate, Double> getSleepLogged() {
         return userStats.getSleepLogged();
     }
 
     /** @return Map of weight entries by date. */
-    public Map<Date, Double> getWeightLog() {
+    public Map<LocalDate, Double> getWeightLog() {
         return userStats.getWeightLog();
+    }
+
+    public int getTotalCaloriesLogged(UserStats stats) {
+        return stats.getCaloriesLogged()
+                .values()
+                .stream()
+                .mapToInt(Integer::intValue)
+                .sum();
+    }
+    public double getTotalSleepLogged(UserStats stats) {
+        return stats.getSleepLogged()
+                .values()
+                .stream()
+                .mapToDouble(Double::doubleValue)
+                .sum();
     }
 }

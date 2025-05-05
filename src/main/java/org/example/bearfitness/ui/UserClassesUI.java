@@ -118,8 +118,11 @@ public class UserClassesUI extends JPanel {
     private void populateSubscribedPlans() {
         subscribedModel.clear();
         List<ExercisePlan> plans = user.getSubscribedPlans();
-        for (ExercisePlan plan : plans) {
-            subscribedModel.addElement(plan.getPlanName());
+        if(!plans.isEmpty()) {
+
+            for (ExercisePlan plan : plans) {
+                subscribedModel.addElement(plan.getPlanName());
+            }
         }
     }
 

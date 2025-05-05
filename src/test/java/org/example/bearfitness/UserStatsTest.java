@@ -41,23 +41,23 @@ class UserStatsTest {
 
     @Test
     void setAndGetSleepLogged_shouldReturnCorrectMap() {
-        Map<Date, Integer> sleep = Map.of(today, 8);
+        Map<LocalDate, Double> sleep = Map.of(todayLocalDate, 8.0);
         stats.setSleepLogged(sleep);
 
-        assertEquals(8, stats.getSleepLogged().get(today));
+        assertEquals(8, stats.getSleepLogged().get(todayLocalDate));
     }
 
     @Test
     void logSleep_shouldAddOrUpdateSleep() {
-        stats.logSleep(today, 6);
-        stats.logSleep(today, 3);
+        stats.logSleep(todayLocalDate, 6.0);
+        stats.logSleep(todayLocalDate, 3.0);
 
-        assertEquals(9, stats.getSleepLogged().get(today));
+        assertEquals(9, stats.getSleepLogged().get(todayLocalDate));
     }
 
     @Test
     void setAndGetWeightLog_shouldReturnCorrectMap() {
-        Map<Date, Double> weight = Map.of(today, 150.5);
+        Map<LocalDate, Double> weight = Map.of(todayLocalDate, 150.5);
         stats.setWeightLog(weight);
 
         assertEquals(150.5, stats.getWeightLog().get(today));
@@ -65,8 +65,8 @@ class UserStatsTest {
 
     @Test
     void logWeight_shouldAddOrUpdateWeight() {
-        stats.logWeight(today, 140.0);
-        stats.logWeight(today, 5.0);
+        stats.logWeight(todayLocalDate, 140.0);
+        stats.logWeight(todayLocalDate, 5.0);
 
         assertEquals(145.0, stats.getWeightLog().get(today));
     }
@@ -84,7 +84,7 @@ class UserStatsTest {
     @Test
     void logWeight_nullOrNegativeValues_shouldNotThrowError() {
         assertDoesNotThrow(() -> stats.logWeight(null, null));
-        assertDoesNotThrow(() -> stats.logWeight(today, -5.0));
+        assertDoesNotThrow(() -> stats.logWeight(todayLocalDate, -5.0));
         assertNull(stats.getWeightLog().get(today));
     }
 }

@@ -6,6 +6,9 @@ import org.example.bearfitness.fitness.UserWorkoutEntry;
 import org.example.bearfitness.fitness.WorkoutEntry;
 import org.example.bearfitness.user.User;
 import org.example.bearfitness.user.UserType;
+import org.hibernate.Hibernate;
+import org.hibernate.Session;
+import org.hibernate.SessionBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.Local;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +31,7 @@ public class DBService {
 
     @Autowired
     private ClassRepository classRepository;
+    private SessionBuilder sessionFactory;
 
     //Constructor for mock tests, Lauren added this lol
     public DBService(BearDB db, ExercisePlanRepository exercisePlanRepository, UserEntryRepository userEntryRepository, ClassRepository classRepository) {
@@ -87,11 +91,9 @@ public class DBService {
         return classRepository.saveAll(entries);
     }
 
-    public List<ExerciseClass> getClassesOnDate(User user, LocalDate date) {
-        return classRepository.findByUserAndDate(user, date);
+    public List<ExerciseClass> getClassesOnDate(LocalDate date) {
+        return classRepository.findByDate(date);
     }
-
-
 
     public List<WorkoutEntry> getUserEntries(Long userId) {
         List<UserWorkoutEntry> entries = userEntryRepository.findByUserId(userId);
@@ -140,19 +142,28 @@ public class DBService {
 
     public int getExerciseLastWeek(Long userId) {
         LocalDate today = LocalDate.now();
-        // Find the Sunday on or before today:
-        LocalDate startOfWeek = today.with(DayOfWeek.SUNDAY);
-        // Saturday is 6 days later
+        LocalDate startOfWeek = today.minusWeeks(1).with(DayOfWeek.SUNDAY);
         LocalDate endOfWeek = startOfWeek.plusDays(6);
 
-        return userEntryRepository.sumDurationByUserAndDateBetween(
+        System.out.println("Calling countEntriesByUserAndDateBetween with:");
+        System.out.println("userId = " + userId);
+        System.out.println("startOfWeek = " + startOfWeek);
+        System.out.println("endOfWeek = " + endOfWeek);
+        return userEntryRepository.countEntriesByUserAndDateBetween(
                 userId, startOfWeek, endOfWeek
         );
+    }
 
+    public int countByUserId(Long userId) {
+        return userEntryRepository.countByUserId(userId);
     }
 
     public List<ExercisePlan> findExercisePlanByName(String planName) {
         return exercisePlanRepository.findExercisePlanByPlanName(planName);
+    }
+
+    public List<ExerciseClass> findExerciseClassByName(String name) {
+        return classRepository.findExerciseClassByName(name);
     }
 
     public List<User> getAllUsers() {
@@ -177,11 +188,11 @@ public class DBService {
         return user.getUserStats().getCaloriesLogged();
     }
 
-    public Map<Date, Integer> getSleepLogged(User user) {
+    public Map<LocalDate, Double> getSleepLogged(User user) {
         return user.getUserStats().getSleepLogged();
     }
 
-    public Map<Date, Double> getWeightLogged(User user) {
+    public Map<LocalDate, Double> getWeightLogged(User user) {
         return user.getUserStats().getWeightLog();
     }
 
@@ -192,4 +203,5 @@ public class DBService {
                 .collect(Collectors.toList());
 
     }
+
 }

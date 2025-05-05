@@ -151,15 +151,15 @@ public class GoalsDisplayUI extends JPanel {
     private DefaultCategoryDataset createCategoryDataset(String value) {
         int workoutCount = 0;
         Map<LocalDate, Integer> calories = dbService.getCalsLogged(user);
-        Map<Date, Integer> sleep = dbService.getSleepLogged(user);
-        Map<Date, Double> weights = dbService.getWeightLogged(user);
+        Map<LocalDate, Double> sleep = dbService.getSleepLogged(user);
+        Map<LocalDate, Double> weights = dbService.getWeightLogged(user);
 
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
 
         switch (value) {
            case "Weight":
-               for (Map.Entry<Date, Double> entry : weights.entrySet()) {
+               for (Map.Entry<LocalDate, Double> entry : weights.entrySet()) {
                    String formattedDate = new SimpleDateFormat("MM/dd").format(entry.getKey());
                    dataset.addValue(entry.getValue(), "Weight", formattedDate);
                }
@@ -173,7 +173,7 @@ public class GoalsDisplayUI extends JPanel {
                 break;
 
             case "Sleep":
-                for (Map.Entry<Date, Integer> entry : sleep.entrySet()) {
+                for (Map.Entry<LocalDate, Double> entry : sleep.entrySet()) {
                     String formattedDate = new SimpleDateFormat("MM/dd").format(entry.getKey());
                     dataset.addValue(entry.getValue(), "Sleep", formattedDate);
                 }
@@ -205,10 +205,10 @@ public class GoalsDisplayUI extends JPanel {
 
         UserStats stats = new UserStats();
 
-        Map<Date, Double> weightLog = new HashMap<>();
-        weightLog.put(new Date(System.currentTimeMillis() - 86400000L * 3), 150.0); // 3 days ago
-        weightLog.put(new Date(System.currentTimeMillis() - 86400000L * 2), 149.2); // 2 days ago
-        weightLog.put(new Date(System.currentTimeMillis() - 86400000L), 148.6);     // yesterday
+        Map<LocalDate, Double> weightLog = new HashMap<>();
+        weightLog.put(LocalDate.now().minusDays(3), 150.0); // 3 days ago
+        weightLog.put(LocalDate.now().minusDays(2), 149.2); // 2 days ago
+        weightLog.put(LocalDate.now().minusDays(1), 148.6);     // yesterday
         stats.setWeightLog(weightLog);
 
         stats.setCaloriesLogged(Map.of(
@@ -216,8 +216,8 @@ public class GoalsDisplayUI extends JPanel {
                 LocalDate.now().minusDays(1), 2100
         ));
         stats.setSleepLogged(Map.of(
-                new Date(System.currentTimeMillis() - 86400000L * 2), 7,
-                new Date(System.currentTimeMillis() - 86400000L), 8
+                LocalDate.now().minusDays(2), 7.0,
+                LocalDate.now().minusDays(1), 8.0
         ));
 
         dummyUser.setUserStats(stats);
@@ -229,12 +229,12 @@ public class GoalsDisplayUI extends JPanel {
             }
 
             @Override
-            public Map<Date, Integer> getSleepLogged(User user) {
+            public Map<LocalDate, Double> getSleepLogged(User user) {
                 return user.getUserStats().getSleepLogged();
             }
 
             @Override
-            public Map<Date, Double> getWeightLogged(User user) {
+            public Map<LocalDate, Double> getWeightLogged(User user) {
                 return user.getUserStats().getWeightLog();
             }
 

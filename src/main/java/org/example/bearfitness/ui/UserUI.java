@@ -5,6 +5,10 @@ import org.example.bearfitness.user.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 class UserUI extends JPanel {
@@ -78,11 +82,13 @@ class UserUI extends JPanel {
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
 
-        //EXERCISE
+        //----EXERCISE----
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 3;
-        dataPanel.add(new JLabel("Progress towards Exercise Time Goal"), gbc);
+        JLabel exLabel = new JLabel("Progress towards Weekly Exercise Goal:");
+        exLabel.setFont(new Font("Sans Serif", Font.BOLD, 14));
+        dataPanel.add(exLabel, gbc);
 
         // Progress bar
         this.exerciseProgressBar = new JProgressBar();
@@ -90,24 +96,49 @@ class UserUI extends JPanel {
 
 
         int exThisWeek = dbService.getExerciseLastWeek(user.getId());
-        int weeklyExGoal = user.getGoals().getWeeklyExMinutes();
+        int weeklyExGoal = user.getGoals().getWeeklyExercises();
+        //System.out.println("EXERCISE THIS WEEK: " + exThisWeek);
 
         exerciseProgressBar.setMaximum(weeklyExGoal);
         exerciseProgressBar.setValue(exThisWeek);
         gbc.gridy = 1;
-        gbc.gridwidth = 1;
+        gbc.gridwidth = 2;
         gbc.gridx = 0;
         gbc.weightx = 1.0;
         dataPanel.add(exerciseProgressBar, gbc);
         ;
 
         // Progress text under bar
-        exProgressText = new JLabel(exThisWeek+" / " + weeklyExGoal + " hours");
+        exProgressText = new JLabel(exThisWeek+" / " + weeklyExGoal + " sessions");
         gbc.gridy = 2;
         gbc.gridx = 0;
         gbc.gridwidth = 3;
         gbc.anchor = GridBagConstraints.CENTER;
         dataPanel.add(exProgressText, gbc);
+
+
+        JButton updateExGoalButton = new JButton("Update Goal");
+        gbc.gridy = 1;
+        gbc.gridx = 2;
+        gbc.gridwidth = 1;
+        dataPanel.add(updateExGoalButton, gbc);
+
+        updateExGoalButton.addActionListener(e->{
+            Integer newGoal = getValidEx(this);
+            user.setWeeklyExercises(newGoal);
+            dbService.updateUserData(user);
+
+            // Refresh progress bar and label
+            int updatedGoal = user.getGoals().getWeeklyExercises();
+            //int updatedCalories = user.getUserStats().getCaloriesLastWeek();
+
+            exerciseProgressBar.setMaximum(updatedGoal);
+            exerciseProgressBar.setValue(dbService.getExerciseLastWeek(user.getId()));
+
+            exProgressText.setText(dbService.getExerciseLastWeek(user.getId()) + " / " + updatedGoal);
+            refresh();
+            updateExerciseUI();
+        });
 
         updateExerciseUI();
 
@@ -117,7 +148,9 @@ class UserUI extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.gridwidth = 3;
-        dataPanel.add(new JLabel("Progress towards Calorie Goal"), gbc);
+        JLabel calorieLabel = new JLabel("Progress towards Weekly Calorie Goal:");
+        calorieLabel.setFont(new Font("Sans Serif", Font.BOLD, 14));
+        dataPanel.add(calorieLabel, gbc);
 
         // Progress bar
         JProgressBar calProgressBar = new JProgressBar();
@@ -142,10 +175,11 @@ class UserUI extends JPanel {
         // "Update Goal" button
         JButton updateGoalButton = new JButton("Update Goal");
         gbc.gridx = 2;
+        gbc.gridwidth = 1;
         dataPanel.add(updateGoalButton, gbc);
 
         // Progress text under bar
-        JLabel calProgressText = new JLabel(lastWeekCals+" / " + goalCals);
+        JLabel calProgressText = new JLabel(lastWeekCals+" / " + goalCals + " calories");
         gbc.gridy = 5;
         gbc.gridx = 0;
         gbc.gridwidth = 3;
@@ -165,7 +199,7 @@ class UserUI extends JPanel {
             calProgressBar.setMaximum(updatedGoal);
             calProgressBar.setValue(user.getUserStats().getCaloriesLastWeek());
 
-            calProgressText.setText(user.getUserStats().getCaloriesLastWeek() + " / " + updatedGoal);
+            calProgressText.setText(user.getUserStats().getCaloriesLastWeek() + " / " + updatedGoal+ " calories");
             refresh();
         });
 
@@ -180,9 +214,142 @@ class UserUI extends JPanel {
             //calProgressBar.setMaximum(updatedGoal);
             calProgressBar.setValue(updatedCalories);
 
-            calProgressText.setText(updatedCalories + " / " + user.getGoals().getGoalCalories());
+            calProgressText.setText(updatedCalories + " / " + user.getGoals().getGoalCalories()+ " calories");
             refresh();
         });
+
+        //-----SLEEP-----
+        // Label above progress bar
+        gbc.gridx = 0;
+        gbc.gridy = 6;
+        gbc.gridwidth = 3;
+        JLabel sleepLabel = new JLabel("Progress towards Weekly Sleep Goal:");
+        sleepLabel.setFont(new Font("Sans Serif", Font.BOLD, 14));
+        dataPanel.add(sleepLabel, gbc);
+
+
+        // Progress bar
+        JProgressBar sleepProgressBar = new JProgressBar();
+        sleepProgressBar.setMinimum(0);
+        Double goalSleep = user.getGoals().getGoalSleep();
+        Double lastWeekSleep = user.getUserStats().getSleepLastWeek();
+        sleepProgressBar.setMaximum((int)(goalSleep*10));
+        sleepProgressBar.setValue((int)(lastWeekSleep*10));
+        gbc.gridy = 7;
+        gbc.gridwidth = 1;
+        gbc.gridx = 0;
+        gbc.weightx = 1.0;
+        dataPanel.add(sleepProgressBar, gbc);
+
+        // "Log New Sleep" button
+        JButton logNewSleepButton = new JButton("Log New Sleep");
+        gbc.gridx = 1;
+        gbc.weightx = 0;
+
+        dataPanel.add(logNewSleepButton, gbc);
+
+        // "Update Goal" button
+        JButton updateSleepGoalButton = new JButton("Update Goal");
+        gbc.gridx = 2;
+        gbc.gridwidth = 1;
+        gbc.weightx = 0;
+        dataPanel.add(updateSleepGoalButton, gbc);
+
+        // Progress text under bar
+        JLabel sleepProgressText = new JLabel(lastWeekSleep+" / " + goalSleep+" hours");
+        gbc.gridy = 8;
+        gbc.gridx = 0;
+        gbc.gridwidth = 3;
+        gbc.anchor = GridBagConstraints.CENTER;
+        dataPanel.add(sleepProgressText, gbc);
+
+
+        updateSleepGoalButton.addActionListener(e->{
+            Double newGoal = getValidSleep(this);
+            user.setNewGoalSleep(newGoal);
+            dbService.updateUserData(user);
+
+            // Refresh progress bar and label
+            double updatedGoal = user.getGoals().getGoalSleep();
+
+            sleepProgressBar.setMaximum((int)(updatedGoal*10));
+            sleepProgressBar.setValue((int)(user.getUserStats().getSleepLastWeek()*10));
+
+            sleepProgressText.setText(user.getUserStats().getSleepLastWeek() + " / " + updatedGoal+" hours");
+            refresh();
+        });
+
+        logNewSleepButton.addActionListener(e->{
+            Double newSleep = getValidSleep(this);
+            user.logNewSleep(newSleep);
+            dbService.updateUserData(user);
+            // Refresh progress bar and label
+            //int updatedGoal = user.getGoals().getGoalCalories();
+            double updatedSleep = user.getUserStats().getSleepLastWeek();
+
+            //calProgressBar.setMaximum(updatedGoal);
+            sleepProgressBar.setValue((int)(updatedSleep*10));
+
+            sleepProgressText.setText(updatedSleep + " / " + user.getGoals().getGoalSleep()+" hours");
+            refresh();
+        });
+
+        //----WEIGHT----
+        gbc.gridx = 0;
+        gbc.gridy = 9;
+        gbc.gridwidth = 3;
+
+        AtomicReference<Double> mostRecentWeight = new AtomicReference<>(0.0);
+        Map<LocalDate, Double> weightLog = user.getUserStats().getWeightLog();
+        if (!weightLog.isEmpty()) {
+            LocalDate mostRecentDate = Collections.max(weightLog.keySet());
+            mostRecentWeight.set(weightLog.get(mostRecentDate));
+        }
+
+        JLabel currentWeightLabel = new JLabel("Current Weight: " + mostRecentWeight + " lbs");
+        currentWeightLabel.setFont(new Font("Sans Serif", Font.BOLD, 14));
+        dataPanel.add(currentWeightLabel,gbc);
+
+        JButton logNewWeightButton = new JButton("Log New Weight");
+        gbc.gridx = 1;
+        gbc.weightx = 0;
+        dataPanel.add(logNewWeightButton, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 10;
+        gbc.gridwidth = 3;
+        JLabel currentGoalLabel = new JLabel("Goal Weight: " + user.getGoals().getGoalWeight() + " lbs");
+        currentGoalLabel.setFont(new Font("Sans Serif", Font.BOLD, 14));
+        dataPanel.add(currentGoalLabel,gbc);
+
+        JButton updateWeightGoalButton = new JButton("Update Goal Weight");
+        gbc.gridx = 1;
+        gbc.weightx = 0;
+        dataPanel.add(updateWeightGoalButton, gbc);
+
+        updateWeightGoalButton.addActionListener(e->{
+            Double newGoal = getValidWeight(this);
+            user.setGoalWeight(newGoal);
+            dbService.updateUserData(user);
+            double updatedGoal = user.getGoals().getGoalWeight();
+            currentGoalLabel.setText("Goal Weight: " + updatedGoal + " lbs");
+            refresh();
+        });
+
+        logNewWeightButton.addActionListener(e->{
+            Double newWeight = getValidWeight(this);
+            user.recordWeight(LocalDate.now(),newWeight);
+            dbService.updateUserData(user);
+            // Refresh progress bar and label
+            if (!weightLog.isEmpty()) {
+                LocalDate mostRecentDate = Collections.max(weightLog.keySet());
+                mostRecentWeight.set(weightLog.get(mostRecentDate));
+            }
+
+            currentWeightLabel.setText("Current Weight: " + mostRecentWeight + " lbs");
+            refresh();
+        });
+
 
         rightContent.add(dataPanel);
         //breakdown of time spent this month, total exercises logged, goal progress, etc.
@@ -193,12 +360,10 @@ class UserUI extends JPanel {
 
 
         //Left: Workout History
-        JPanel leftPanel = new JPanel(new BorderLayout());
         workoutHistoryUI = new WorkoutHistoryUI(dbService, screenManager, user, this);
-        leftPanel.add(workoutHistoryUI, BorderLayout.CENTER);
 
         splitPane.setRightComponent(rightPanel);
-        splitPane.setLeftComponent(leftPanel);
+        splitPane.setLeftComponent(workoutHistoryUI);
 
         add(splitPane, BorderLayout.CENTER);
 
@@ -216,9 +381,75 @@ class UserUI extends JPanel {
             try {
                 String input = JOptionPane.showInputDialog(parent, "Enter New Calories:");
                 if (input == null) return null;
-                int newWeight = Integer.parseInt(input);
-                if (newWeight > 0) return newWeight;
+                int newCal = Integer.parseInt(input);
+                if (newCal > 0) return newCal;
                 JOptionPane.showMessageDialog(parent, "Calories must be positive", "Error", JOptionPane.ERROR_MESSAGE);
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(parent, "Please enter a valid number", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+    }
+
+    private static Integer getValidEx(JPanel parent) {
+        while (true) {
+//            int dateResult = JOptionPane.showConfirmDialog(
+//                    parent,
+//
+//                    "Select Workout Date",
+//                    JOptionPane.OK_CANCEL_OPTION
+//            );
+
+            try {
+                String input = JOptionPane.showInputDialog(parent, "Enter New Workout Goal:");
+                if (input == null) return null;
+                int newWorkout = Integer.parseInt(input);
+                if (newWorkout > 0) return newWorkout;
+                JOptionPane.showMessageDialog(parent, "Goal must be positive", "Error", JOptionPane.ERROR_MESSAGE);
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(parent, "Please enter a valid number", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+    }
+
+    private static Double getValidSleep(JPanel parent) {
+        while (true) {
+//            int dateResult = JOptionPane.showConfirmDialog(
+//                    parent,
+//
+//                    "Select Workout Date",
+//                    JOptionPane.OK_CANCEL_OPTION
+//            );
+
+            try {
+                String input = JOptionPane.showInputDialog(parent, "Enter New Sleep (hrs per week):");
+                if (input == null) return null;
+                Double newSleep = Double.parseDouble(input);
+                if (newSleep > 0.0 && newSleep <168.0) return newSleep;
+                JOptionPane.showMessageDialog(parent, "Sleep must be positive and less than 24 hrs/day", "Error", JOptionPane.ERROR_MESSAGE);
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(parent, "Please enter a valid number", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+    }
+
+    private static Double getValidWeight(JPanel parent) {
+        while (true) {
+//            int dateResult = JOptionPane.showConfirmDialog(
+//                    parent,
+//
+//                    "Select Workout Date",
+//                    JOptionPane.OK_CANCEL_OPTION
+//            );
+
+            try {
+                String input = JOptionPane.showInputDialog(parent, "Enter New Weight (lbs):");
+                if (input == null) return null;
+                Double newWeight = Double.parseDouble(input);
+                if (newWeight > 0.0) return newWeight;
+                JOptionPane.showMessageDialog(parent, "Weight must be positive", "Error", JOptionPane.ERROR_MESSAGE);
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(parent, "Please enter a valid number", "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -228,9 +459,9 @@ class UserUI extends JPanel {
 
     public void updateExerciseUI() {
         int done  = dbService.getExerciseLastWeek(user.getId());
-        int goal  = user.getGoals().getWeeklyExMinutes();
+        int goal  = user.getGoals().getWeeklyExercises();
         exerciseProgressBar.setValue(done);
-        exProgressText.setText(done + " / " + goal + " hours");
+        exProgressText.setText(done + " / " + goal + " sessions");
     }
 
     public void refresh() {

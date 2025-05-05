@@ -3,6 +3,10 @@ package org.example.bearfitness.ui;
 import org.example.bearfitness.data.DBService;
 import org.example.bearfitness.data.PasswordHash;
 import org.example.bearfitness.ui.ScreenManager;
+import org.example.bearfitness.user.User;
+import org.hibernate.Hibernate;
+import org.hibernate.Session;
+import org.hibernate.SessionBuilder;
 
 import javax.swing.*;
 import java.awt.*;

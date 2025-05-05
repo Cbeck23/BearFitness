@@ -70,7 +70,7 @@ public class WorkoutHistoryUI extends JPanel {
 
         loadUserEntries();
 
-        editButton.addActionListener(e -> editSelectedEntry());
+        editButton.addActionListener(e -> editSelectedEntry(this.parentUI));
         deleteButton.addActionListener(e -> deleteSelectedEntry(this.parentUI));
         filterButton.addActionListener(e -> applyFilter());
         clearFilterButton.addActionListener(e -> sorter.setRowFilter(null));
@@ -97,7 +97,7 @@ public class WorkoutHistoryUI extends JPanel {
         }
     }
 
-    private void editSelectedEntry() {
+    private void editSelectedEntry(UserUI parentUI) {
         int viewRow = table.getSelectedRow();
         if (viewRow == -1) {
             JOptionPane.showMessageDialog(this, "Please select an entry to edit.");
@@ -119,6 +119,10 @@ public class WorkoutHistoryUI extends JPanel {
                 JOptionPane.showMessageDialog(this, "Failed to update entry in the database.", "Error", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
             }
+        }
+        if (parentUI != null) {
+            parentUI.refresh();
+            parentUI.updateExerciseUI();
         }
     }
 
@@ -147,6 +151,7 @@ public class WorkoutHistoryUI extends JPanel {
         }
         if (parentUI != null) {
             parentUI.refresh();
+            parentUI.updateExerciseUI();
         }
     }
 

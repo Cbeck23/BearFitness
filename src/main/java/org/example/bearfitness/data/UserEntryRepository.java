@@ -14,17 +14,22 @@ import java.util.List;
 public interface UserEntryRepository extends JpaRepository<UserWorkoutEntry, Integer> {
     List<UserWorkoutEntry> findByUserId(Long userId);
 
-    @Query("""
-      SELECT COALESCE(SUM(e.workoutEntry.duration),0)
-      FROM UserWorkoutEntry e
-      WHERE e.user.id = :userId
-        AND e.workoutEntry.date BETWEEN :startOfWeek AND :endOfWeek
-    """)
-    int sumDurationByUserAndDateBetween(
+    @Query(value = """
+    SELECT COUNT(*)
+    FROM user_entry_list
+    WHERE user_id = :userId
+      AND date BETWEEN :startOfWeek AND :endOfWeek
+""", nativeQuery = true)
+    int countEntriesByUserAndDateBetween(
             @Param("userId") Long userId,
             @Param("startOfWeek") LocalDate startOfWeek,
             @Param("endOfWeek") LocalDate endOfWeek
     );
 
-
+    @Query("""
+    SELECT COUNT(e)
+    FROM UserWorkoutEntry e
+    WHERE e.user.id = :userId
+""")
+    int countByUserId(@Param("userId") Long userId);
 }

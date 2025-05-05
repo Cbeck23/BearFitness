@@ -123,7 +123,7 @@ public class CalendarApp extends JPanel {
 
             datesDisplay.setText("Selected Date: " + selectedDate);
 
-            List<ExerciseClass> classes = dbService.getClassesOnDate(currentUser, selectedDate);
+            List<ExerciseClass> classes = dbService.getClassesOnDate(selectedDate);
             if (classes.isEmpty()) {
                 datesDisplay.append("\nNo classes scheduled.");
             } else {
