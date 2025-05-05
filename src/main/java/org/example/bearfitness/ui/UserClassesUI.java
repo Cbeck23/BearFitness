@@ -1,15 +1,15 @@
 package org.example.bearfitness.ui;
 
 import org.example.bearfitness.data.DBService;
-import org.example.bearfitness.data.PasswordHash;
+//import org.example.bearfitness.data.PasswordHash;
 import org.example.bearfitness.fitness.ExerciseClass;
 import org.example.bearfitness.fitness.ExercisePlan;
 import org.example.bearfitness.user.User;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+//import java.awt.event.ActionEvent;
+//import java.awt.event.ActionListener;
 import java.util.List;
 
 public class UserClassesUI extends JPanel {
@@ -184,7 +184,7 @@ public class UserClassesUI extends JPanel {
         List<ExerciseClass> classes = dbService.findExerciseClassByName(actualClassName);
         if (!classes.isEmpty()) {
             ExerciseClass selected = classes.get(0);
-            boolean exists = user.getSubscribedPlans().stream().anyMatch(c -> c.getId().equals(selected.getId()));
+            boolean exists = user.getSubscribedClasses().stream().anyMatch(c -> c.getId().equals(selected.getId()));
             if (!exists) {
                 user.addClass(selected);
                 dbService.updateUserData(user);
