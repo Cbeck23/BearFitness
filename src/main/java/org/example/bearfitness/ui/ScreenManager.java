@@ -19,7 +19,8 @@ public class ScreenManager extends JFrame {
         ADD_WORKOUT,
         SETTINGS,
         ADMINISTRATION,
-        VIEW_CLASSES
+        VIEW_CLASSES,
+        GOALS
     }
 
     private final CardLayout layout;
@@ -65,6 +66,7 @@ public class ScreenManager extends JFrame {
                 cards.add(new UserUI(dbService, this, user), Screen.USER_HOME.name());
                 cards.add(new UserSettings(dbService, this, user).getPanel(), Screen.SETTINGS.name());
                 cards.add(new UserClassesUI(dbService, this, user), Screen.VIEW_CLASSES.name());
+                cards.add(new GoalsDisplayUI(dbService,user,null), Screen.GOALS.name());
                 layout.show(cards, Screen.USER_HOME.name());
             }
             case ADMIN -> {

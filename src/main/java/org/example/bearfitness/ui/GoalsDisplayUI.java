@@ -49,12 +49,12 @@ public class GoalsDisplayUI extends JPanel {
         CardLayout cardLayout = new CardLayout();
         JPanel chartContainer = new JPanel(cardLayout);
 
-        String defaultTime = "Week";
+        //String defaultTime = "Week";
 
-        ChartPanel progressChart = new ChartPanel(createProgressChart(defaultTime));
-        ChartPanel calChart = new ChartPanel(createCalChart(defaultTime));
-        ChartPanel weightChart = new ChartPanel(createWeightChart(defaultTime));
-        ChartPanel sleepChart = new ChartPanel(createSleepChart(defaultTime));
+        ChartPanel progressChart = new ChartPanel(createProgressChart());
+        ChartPanel calChart = new ChartPanel(createCalChart());
+        ChartPanel weightChart = new ChartPanel(createWeightChart());
+        ChartPanel sleepChart = new ChartPanel(createSleepChart());
 
         chartContainer.add(progressChart, "Progress");
         chartContainer.add(calChart, "Calories");
@@ -69,7 +69,7 @@ public class GoalsDisplayUI extends JPanel {
             buttonPanel.add(button);
         }
 
-        String[] timeOptions = {"Week", "Month", "Year"};
+        /*String[] timeOptions = {"Week", "Month", "Year"};
         JComboBox<String> timePicker = new JComboBox<>(timeOptions);
         timePicker.addActionListener(e -> {
             String selectedTime = (String) timePicker.getSelectedItem();
@@ -83,16 +83,16 @@ public class GoalsDisplayUI extends JPanel {
             chartContainer.repaint();
         });
 
-        buttonPanel.add(timePicker);
+        buttonPanel.add(timePicker);*/
 
         add(buttonPanel, BorderLayout.NORTH);
         add(chartContainer, BorderLayout.CENTER);
     }
 
-    private JFreeChart createProgressChart(String timeScale) {
+    private JFreeChart createProgressChart() {
         DefaultCategoryDataset dataset = createCategoryDataset("Workouts");
 
-        JFreeChart chart = createChart("Workout Progress Over Time", timeScale, "Workouts Completed", dataset);
+        JFreeChart chart = createChart("Workout Progress Over Time", "All Data", "Workouts Completed", dataset);
 
         NumberAxis yAxis = (NumberAxis) chart.getCategoryPlot().getRangeAxis();
         yAxis.setRange(0, 20);
@@ -101,10 +101,10 @@ public class GoalsDisplayUI extends JPanel {
         return chart;
     }
 
-    private JFreeChart createCalChart(String timeScale) {
+    private JFreeChart createCalChart() {
         DefaultCategoryDataset dataset = createCategoryDataset("Calories");
 
-        JFreeChart chart = createChart("Calories Over Time", timeScale, "Calories Consumed", dataset);
+        JFreeChart chart = createChart("Calories Over Time", "All Data", "Calories Consumed", dataset);
 
         NumberAxis yAxis = (NumberAxis) chart.getCategoryPlot().getRangeAxis();
         yAxis.setRange(0, 2400);
@@ -113,10 +113,10 @@ public class GoalsDisplayUI extends JPanel {
         return chart;
     }
 
-    private JFreeChart createWeightChart(String timeScale) {
+    private JFreeChart createWeightChart() {
         DefaultCategoryDataset dataset = createCategoryDataset("Weight");
 
-        JFreeChart chart = createChart("Weight Over Time", timeScale, "Weight", dataset);
+        JFreeChart chart = createChart("Weight Over Time", "All Data", "Weight", dataset);
 
         NumberAxis yAxis = (NumberAxis) chart.getCategoryPlot().getRangeAxis();
         yAxis.setRange(0, 500);
@@ -124,10 +124,10 @@ public class GoalsDisplayUI extends JPanel {
         return chart;
     }
 
-    private JFreeChart createSleepChart(String timeScale) {
+    private JFreeChart createSleepChart() {
         DefaultCategoryDataset dataset = createCategoryDataset("Sleep");
 
-        JFreeChart chart = createChart("Sleep Over Time", timeScale, "Hours Slept", dataset);
+        JFreeChart chart = createChart("Sleep Over Time", "All Data", "Hours Slept", dataset);
 
         NumberAxis yAxis = (NumberAxis) chart.getCategoryPlot().getRangeAxis();
         yAxis.setRange(0, 24);
@@ -158,25 +158,31 @@ public class GoalsDisplayUI extends JPanel {
 
 
         switch (value) {
-           case "Weight":
-               for (Map.Entry<Date, Double> entry : weights.entrySet()) {
-                   String formattedDate = new SimpleDateFormat("MM/dd").format(entry.getKey());
-                   dataset.addValue(entry.getValue(), "Weight", formattedDate);
-               }
-               break;
+            case "Weight":
+                weights.entrySet().stream()
+                        .sorted(Map.Entry.comparingByKey())
+                        .forEach(entry -> {
+                            String formattedDate = new SimpleDateFormat("MM/dd").format(entry.getKey());
+                            dataset.addValue(entry.getValue(), "Weight", formattedDate);
+                        });
+                break;
 
             case "Calories":
-                for (Map.Entry<LocalDate, Integer> entry : calories.entrySet()) {
-                    String formattedDate = entry.getKey().format(DateTimeFormatter.ofPattern("MM/dd"));
-                    dataset.addValue(entry.getValue(), "Calories", formattedDate);
-                }
+                calories.entrySet().stream()
+                        .sorted(Map.Entry.comparingByKey())
+                        .forEach(entry -> {
+                            String formattedDate = entry.getKey().format(DateTimeFormatter.ofPattern("MM/dd"));
+                            dataset.addValue(entry.getValue(), "Calories", formattedDate);
+                        });
                 break;
 
             case "Sleep":
-                for (Map.Entry<Date, Integer> entry : sleep.entrySet()) {
-                    String formattedDate = new SimpleDateFormat("MM/dd").format(entry.getKey());
-                    dataset.addValue(entry.getValue(), "Sleep", formattedDate);
-                }
+                sleep.entrySet().stream()
+                        .sorted(Map.Entry.comparingByKey())
+                        .forEach(entry -> {
+                            String formattedDate = new SimpleDateFormat("MM/dd").format(entry.getKey());
+                            dataset.addValue(entry.getValue(), "Sleep", formattedDate);
+                        });
                 break;
 
             case "Workouts":
@@ -186,12 +192,13 @@ public class GoalsDisplayUI extends JPanel {
                                 Collectors.counting()
                         ));
 
-                for (Map.Entry<LocalDate, Long> entry : workoutCountMap.entrySet()) {
-                    String formattedDate = entry.getKey().format(DateTimeFormatter.ofPattern("MM/dd"));
-                    dataset.addValue(entry.getValue(), "Workouts", formattedDate);
-                }
+                workoutCountMap.entrySet().stream()
+                        .sorted(Map.Entry.comparingByKey())
+                        .forEach(entry -> {
+                            String formattedDate = entry.getKey().format(DateTimeFormatter.ofPattern("MM/dd"));
+                            dataset.addValue(entry.getValue(), "Workouts", formattedDate);
+                        });
                 break;
-
         }
 
         return dataset;
@@ -200,7 +207,7 @@ public class GoalsDisplayUI extends JPanel {
     public static void main(String[] args) {
         //MOCK DATA FOR TESTING
         User dummyUser = new User();
-        dummyUser.setId(1L); // must match test data
+        dummyUser.setId(1L);
         dummyUser.setUsername("testUser");
 
         UserStats stats = new UserStats();
