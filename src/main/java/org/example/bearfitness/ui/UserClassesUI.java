@@ -136,11 +136,12 @@ public class UserClassesUI extends JPanel {
 
     private void populateSubscribedClasses() {
         subscribedClassesModel.clear();
-        List<ExerciseClass> classes = user.getSubscribedPlans();
+        List<ExerciseClass> classes = user.getSubscribedClasses();
         for (ExerciseClass ec : classes) {
             subscribedClassesModel.addElement(ec.getName());
         }
     }
+
 
     private void populateSubscribedPlans() {
         subscribedPlansModel.clear();
@@ -178,7 +179,8 @@ public class UserClassesUI extends JPanel {
 
     private void subscribeToClass(String name) {
         if (name == null) return;
-        List<ExerciseClass> classes = dbService.findExerciseClassByName(name);
+        String actualClassName = name.split(" - Hosted by:")[0].trim();
+        List<ExerciseClass> classes = dbService.findExerciseClassByName(actualClassName);
         if (!classes.isEmpty()) {
             ExerciseClass selected = classes.get(0);
             boolean exists = user.getSubscribedPlans().stream().anyMatch(c -> c.getId().equals(selected.getId()));

@@ -63,7 +63,12 @@ public class AttendClassUI extends JPanel {
         tableModel.setRowCount(0);
         date = LocalDate.now();
         try {
-            subscribedClasses = dbService.getClassesOnDate(date);
+            // 1. Get the user's subscribed classes
+            subscribedClasses = user.getSubscribedPlans().stream()
+                    .filter(exerciseClass -> exerciseClass.getDate().equals(date))
+                    .toList(); // Java 16+; otherwise use .collect(Collectors.toList())
+
+            // 2. Display them
             for (ExerciseClass entry : subscribedClasses) {
                 tableModel.addRow(new Object[]{
                         entry.getName(),
@@ -71,10 +76,11 @@ public class AttendClassUI extends JPanel {
                 });
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Failed to load workout history.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Failed to load your classes.", "Error", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
+
 
     private void markAttendance() {
         int viewRow = table.getSelectedRow();
@@ -84,28 +90,36 @@ public class AttendClassUI extends JPanel {
         }
         String className = tableModel.getValueAt(viewRow, 0).toString();
 
-        ExerciseClass ck = null;
-        for (ExerciseClass exerciseClass : dbService.getClassesOnDate(date)) {
+        ExerciseClass selectedClass = null;
+        for (ExerciseClass exerciseClass : subscribedClasses) {
             if (exerciseClass.getName().equals(className)) {
-                ck = exerciseClass;
+                selectedClass = exerciseClass;
+                break;
             }
         }
 
-
-        WorkoutEntry entry = new WorkoutEntry(ck);
-
-        if(dbService.getUserEntries(user.getId()).contains(entry)){
-            JOptionPane.showMessageDialog(this, "You have already attended this class!", "Error", JOptionPane.ERROR_MESSAGE);
+        if (selectedClass == null) {
+            JOptionPane.showMessageDialog(this, "Selected class not found.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
         }
-        else {
+
+        WorkoutEntry entry = new WorkoutEntry(selectedClass);
+
+        if (dbService.getUserEntries(user.getId()).contains(entry)) {
+            JOptionPane.showMessageDialog(this, "You have already attended this class!", "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
             try {
                 dbService.createUserWorkoutEntry(user, entry);
                 JOptionPane.showMessageDialog(this, "Entry added successfully!");
+
+                parentUI.refresh();
+
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Failed to update entry in the database.", "Error", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
             }
         }
     }
+
 
 }
