@@ -50,26 +50,56 @@ class CreateExerciseUI extends JPanel {
   }
 
   private void addExerciseDialog(ActionEvent e) {
-    try {
-      int day = Integer.parseInt(JOptionPane.showInputDialog(this, "Enter Day (1-7):"));
-      int duration = Integer.parseInt(JOptionPane.showInputDialog(this, "Duration (minutes):"));
-      JComboBox<WorkoutEntry.ExerciseType> typeCombo = new JComboBox<>(WorkoutEntry.ExerciseType.values());
-      if (JOptionPane.showConfirmDialog(this, typeCombo, "Select Type", JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) return;
-      String desc = JOptionPane.showInputDialog(this, "Enter Description:");
-      WorkoutEntry entry = new WorkoutEntry(duration, (WorkoutEntry.ExerciseType) typeCombo.getSelectedItem(), 0, 0);
-      entry.setDescription(desc);
-      exercises.put(day, entry);
-      displayCurrentExercises();
-    } catch (Exception ex) {
-      JOptionPane.showMessageDialog(this, "Invalid input.");
+    int day = -1;
+    int duration = -1;
+
+    // Ask for Day (1-7), retry until valid
+    while (true) {
+      String input = JOptionPane.showInputDialog(this, "Enter Day (1-7):");
+      if (input == null) return; // User canceled
+      try {
+        day = Integer.parseInt(input);
+        if (day < 1 || day > 7) throw new NumberFormatException();
+        break;
+      } catch (NumberFormatException ex) {
+        JOptionPane.showMessageDialog(this, "Please enter a valid day between 1 and 7.");
+      }
     }
+
+    // Ask for Duration, retry until valid
+    while (true) {
+      String input = JOptionPane.showInputDialog(this, "Duration (minutes):");
+      if (input == null) return;
+      try {
+        duration = Integer.parseInt(input);
+        if (duration <= 0) throw new NumberFormatException();
+        break;
+      } catch (NumberFormatException ex) {
+        JOptionPane.showMessageDialog(this, "Please enter a positive number for duration.");
+      }
+    }
+
+    // Ask for Exercise Type
+    JComboBox<WorkoutEntry.ExerciseType> typeCombo = new JComboBox<>(WorkoutEntry.ExerciseType.values());
+    if (JOptionPane.showConfirmDialog(this, typeCombo, "Select Type", JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) return;
+
+    // Ask for Description
+    String desc = JOptionPane.showInputDialog(this, "Enter Description:");
+    if (desc == null) return;
+    WorkoutEntry entry = new WorkoutEntry(duration, (WorkoutEntry.ExerciseType) typeCombo.getSelectedItem(), 0, 0);
+    entry.setDescription(desc);
+    exercises.put(day, entry);
+    displayCurrentExercises();
+//    } catch (Exception ex) {
+//      JOptionPane.showMessageDialog(this, "Invalid input.");
+//    }
   }
 
   private void displayCurrentExercises() {
     StringBuilder builder = new StringBuilder("Current Exercises: ");
     for (int day : exercises.keySet()) {
       WorkoutEntry entry = exercises.get(day);
-      builder.append("Day ").append(day).append(": ")
+      builder.append('\n').append("Day ").append(day).append(": ")
               .append(entry.getExerciseType()).append(" - ")
               .append(entry.getDuration()).append(" min - ")
               .append(entry.getDescription()).append(" ");
@@ -90,6 +120,10 @@ class CreateExerciseUI extends JPanel {
       dbService.createExercisePlan(plan);
       displayCurrentExercises();
       planOutput.append(" --- Plan Saved ---  " + plan.toString());
+      Window window = SwingUtilities.getWindowAncestor(this);
+      if (window != null) {
+        window.dispose();
+      }
     } catch (Exception ex) {
       JOptionPane.showMessageDialog(this, "Please check inputs.");
     }

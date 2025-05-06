@@ -164,7 +164,7 @@ public class UserSettings extends JPanel {
         if (user.getUserType() == UserType.ADMIN) {
             JButton adminButton = new JButton("Admin");
             adminButton.addActionListener(e -> screenManager.showScreen(ScreenManager.Screen.ADMINISTRATION));
-            rGbc.gridy = 5;
+            rGbc.gridy = 6;
             rightPanel.add(adminButton, rGbc);
         }
 

@@ -6,6 +6,7 @@ import org.example.bearfitness.user.User;
 import java.time.LocalDate;
 
 @Entity
+@Table(name = "exercise_class")
 public class ExerciseClass {
     private String name;
     private LocalDate date;
@@ -40,14 +41,15 @@ public class ExerciseClass {
         this.sessionLength = sessionLength;
     }
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+
 
     public ExerciseClass() {}
 

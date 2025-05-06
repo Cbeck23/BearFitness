@@ -70,6 +70,12 @@ public class UserClassesUI extends JPanel {
         JButton searchButton = new JButton("Search Classes");
         searchButton.addActionListener(e -> performClassSearch());
         searchPanel.add(searchClassesField, BorderLayout.CENTER);
+        JButton clearButton = new JButton("Clear");
+        clearButton.addActionListener(e -> {
+            searchClassesField.setText("");
+            performClassSearch();
+        });
+        searchPanel.add(clearButton, BorderLayout.WEST);
         searchPanel.add(searchButton, BorderLayout.EAST);
 
         searchClassesResultModel = new DefaultListModel<>();
@@ -89,6 +95,7 @@ public class UserClassesUI extends JPanel {
         splitPane.setDividerLocation(400);
 
         panel.add(splitPane, BorderLayout.CENTER);
+        performClassSearch();
         return panel;
     }
 
@@ -115,6 +122,13 @@ public class UserClassesUI extends JPanel {
         searchPanel.add(searchPlansField, BorderLayout.CENTER);
         searchPanel.add(searchButton, BorderLayout.EAST);
 
+        JButton clearButton = new JButton("Clear");
+        clearButton.addActionListener(e -> {
+            searchPlansField.setText("");
+            performPlanSearch();
+        });
+        searchPanel.add(clearButton, BorderLayout.WEST);
+
         searchPlansResultModel = new DefaultListModel<>();
         JList<String> searchResultList = new JList<>(searchPlansResultModel);
         JScrollPane searchResultScrollPane = new JScrollPane(searchResultList);
@@ -132,6 +146,7 @@ public class UserClassesUI extends JPanel {
         splitPane.setDividerLocation(400);
 
         panel.add(splitPane, BorderLayout.CENTER);
+        performPlanSearch();
         return panel;
     }
 
@@ -154,26 +169,24 @@ public class UserClassesUI extends JPanel {
 
     private void performClassSearch() {
         searchClassesResultModel.clear();
-        String keyword = searchClassesField.getText().trim();
-        if (!keyword.isEmpty()) {
-            List<String> classes = dbService.getAllExerciseClassNamesWithTrainer();  //<-- NEW METHOD
-            for (String displayString : classes) {
-                if (displayString.toLowerCase().contains(keyword.toLowerCase())) {
-                    searchClassesResultModel.addElement(displayString);
-                }
+        String keyword = searchClassesField.getText().trim().toLowerCase();
+        List<String> allClasses = dbService.getAllExerciseClassNamesWithTrainer();
+
+        for (String className : allClasses) {
+            if (keyword.isEmpty() || className.toLowerCase().contains(keyword)) {
+                searchClassesResultModel.addElement(className);
             }
         }
     }
 
     private void performPlanSearch() {
         searchPlansResultModel.clear();
-        String keyword = searchPlansField.getText().trim();
-        if (!keyword.isEmpty()) {
-            List<String> plans = dbService.getAllExercisePlans();
-            for (String name : plans) {
-                if (name.toLowerCase().contains(keyword.toLowerCase())) {
-                    searchPlansResultModel.addElement(name);
-                }
+        String keyword = searchPlansField.getText().trim().toLowerCase();
+        List<String> allPlans = dbService.getAllExercisePlans();
+
+        for (String planName : allPlans) {
+            if (keyword.isEmpty() || planName.toLowerCase().contains(keyword)) {
+                searchPlansResultModel.addElement(planName);
             }
         }
     }
@@ -206,7 +219,7 @@ public class UserClassesUI extends JPanel {
             ExercisePlan selected = plans.get(0);
             boolean exists = user.getSubscribedPlans().stream().anyMatch(p -> p.getId().equals(selected.getId()));
             if (!exists) {
-                user.getSubscribedPlans().add(selected);
+                user.addPlan(selected);
                 dbService.updateUserData(user);
                 JOptionPane.showMessageDialog(this, "Successfully subscribed to plan: " + name);
                 populateSubscribedPlans();

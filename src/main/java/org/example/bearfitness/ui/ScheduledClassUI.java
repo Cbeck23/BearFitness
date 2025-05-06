@@ -34,9 +34,9 @@ public class ScheduledClassUI extends JPanel {
         datesButton = new MultiDatePicker();
         JButton savePlanButton = new JButton("Save Class Plan");
 
-        inputPanel.add(new JLabel("Plan Name:")); inputPanel.add(planNameField);
+        inputPanel.add(new JLabel("Class Name:")); inputPanel.add(planNameField);
         inputPanel.add(new JLabel("Fitness Level:")); inputPanel.add(fitnessLevelCombo);
-        inputPanel.add(new JLabel("Avg Session Length (min):")); inputPanel.add(sessionLengthField);
+        inputPanel.add(new JLabel("Session Length (min):")); inputPanel.add(sessionLengthField);
         inputPanel.add(new JLabel("Class Dates:")); inputPanel.add(datesButton);
         inputPanel.add(savePlanButton);
         add(inputPanel, BorderLayout.NORTH);
@@ -73,6 +73,11 @@ public class ScheduledClassUI extends JPanel {
             }
 
             planOutput.append("\n--- Class Saved ---\n" + plan + "\nDates:" + dateStr);
+
+            Window window = SwingUtilities.getWindowAncestor(this);
+            if (window != null) {
+                window.dispose();
+            }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Please check inputs.");
         }

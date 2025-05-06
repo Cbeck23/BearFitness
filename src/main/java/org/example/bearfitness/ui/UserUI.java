@@ -26,6 +26,7 @@ class UserUI extends JPanel {
         this.dbService = dbService;
         this.screenManager = screenManager;
         this.user = user;
+        Dimension defaultButtonSize = new Dimension(50, 30);
 
         setLayout(new BorderLayout());
 
@@ -48,11 +49,13 @@ class UserUI extends JPanel {
         // Right-aligned settings button panel
         JPanel rightButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         rightButtonPanel.add(settingsButton);
-        rightButtonPanel.add(viewClassesButton);
+        JPanel leftButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        leftButtonPanel.add(viewClassesButton);
 
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.add(centerTitlePanel, BorderLayout.CENTER);
         topPanel.add(rightButtonPanel, BorderLayout.EAST);
+        topPanel.add(leftButtonPanel, BorderLayout.WEST);
 
         add(topPanel, BorderLayout.NORTH);
 
@@ -105,9 +108,9 @@ class UserUI extends JPanel {
         gbc.gridy = 1;
         gbc.gridwidth = 2;
         gbc.gridx = 0;
-        gbc.weightx = 1.0;
+        gbc.weightx = 2;
         dataPanel.add(exerciseProgressBar, gbc);
-        ;
+        
 
         // Progress text under bar
         exProgressText = new JLabel(exThisWeek+" / " + weeklyExGoal + " sessions");
@@ -122,6 +125,9 @@ class UserUI extends JPanel {
         gbc.gridy = 1;
         gbc.gridx = 2;
         gbc.gridwidth = 1;
+        gbc.weightx = 0.7;
+        //gbc.fill = GridBagConstraints.NONE;
+        updateExGoalButton.setPreferredSize(defaultButtonSize);
         dataPanel.add(updateExGoalButton, gbc);
 
         updateExGoalButton.addActionListener(e->{
@@ -163,20 +169,23 @@ class UserUI extends JPanel {
         gbc.gridy = 4;
         gbc.gridwidth = 1;
         gbc.gridx = 0;
-        gbc.weightx = 1.0;
+        gbc.weightx = 2;
         dataPanel.add(calProgressBar, gbc);
 
         // "Log New Calories" button
         JButton logNewCaloriesButton = new JButton("Log New Calories");
         gbc.gridx = 1;
-        gbc.weightx = 0;
-
+        gbc.weightx = 0.7;
+        //gbc.fill = GridBagConstraints.NONE;
+        logNewCaloriesButton.setPreferredSize(defaultButtonSize);
         dataPanel.add(logNewCaloriesButton, gbc);
 
         // "Update Goal" button
         JButton updateGoalButton = new JButton("Update Goal");
         gbc.gridx = 2;
         gbc.gridwidth = 1;
+        gbc.weightx = 0.7;
+        updateGoalButton.setPreferredSize(logNewCaloriesButton.getPreferredSize());
         dataPanel.add(updateGoalButton, gbc);
 
         // Progress text under bar
@@ -239,21 +248,24 @@ class UserUI extends JPanel {
         gbc.gridy = 7;
         gbc.gridwidth = 1;
         gbc.gridx = 0;
-        gbc.weightx = 1.0;
+        gbc.weightx = 2;
         dataPanel.add(sleepProgressBar, gbc);
 
         // "Log New Sleep" button
         JButton logNewSleepButton = new JButton("Log New Sleep");
         gbc.gridx = 1;
-        gbc.weightx = 0;
-
+        gbc.weightx = 0.7;
+        //gbc.fill = GridBagConstraints.NONE;
+        logNewSleepButton.setPreferredSize(defaultButtonSize);
         dataPanel.add(logNewSleepButton, gbc);
 
         // "Update Goal" button
         JButton updateSleepGoalButton = new JButton("Update Goal");
         gbc.gridx = 2;
         gbc.gridwidth = 1;
-        gbc.weightx = 0;
+        gbc.weightx = 0.7;
+        //gbc.fill = GridBagConstraints.NONE;
+        updateSleepGoalButton.setPreferredSize(logNewCaloriesButton.getPreferredSize());
         dataPanel.add(updateSleepGoalButton, gbc);
 
         // Progress text under bar
@@ -307,25 +319,31 @@ class UserUI extends JPanel {
             mostRecentWeight.set(weightLog.get(mostRecentDate));
         }
 
+        gbc.weightx = 2;
         JLabel currentWeightLabel = new JLabel("Current Weight: " + mostRecentWeight + " lbs");
         currentWeightLabel.setFont(new Font("Sans Serif", Font.BOLD, 14));
         dataPanel.add(currentWeightLabel,gbc);
 
         JButton logNewWeightButton = new JButton("Log New Weight");
         gbc.gridx = 1;
-        gbc.weightx = 0;
+        gbc.gridwidth = 2;
+        //gbc.fill = GridBagConstraints.NONE;
+        logNewWeightButton.setPreferredSize(new Dimension(280,30));
         dataPanel.add(logNewWeightButton, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 10;
         gbc.gridwidth = 3;
+        gbc.weightx = 2;
         JLabel currentGoalLabel = new JLabel("Goal Weight: " + user.getGoals().getGoalWeight() + " lbs");
         currentGoalLabel.setFont(new Font("Sans Serif", Font.BOLD, 14));
         dataPanel.add(currentGoalLabel,gbc);
 
         JButton updateWeightGoalButton = new JButton("Update Goal Weight");
         gbc.gridx = 1;
-        gbc.weightx = 0;
+        gbc.gridwidth = 2;
+        //gbc.fill = GridBagConstraints.NONE;
+        updateWeightGoalButton.setPreferredSize(logNewWeightButton.getPreferredSize());
         dataPanel.add(updateWeightGoalButton, gbc);
 
         updateWeightGoalButton.addActionListener(e->{

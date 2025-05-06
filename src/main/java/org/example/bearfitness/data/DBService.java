@@ -198,9 +198,9 @@ public class DBService {
         return exercisePlanRepository.findAll().stream().map(ExercisePlan::getPlanName).collect(Collectors.toList());
     }
 
-    List<ExercisePlan> findExercisePlansByName(String planName) {
-        return exercisePlanRepository.findExercisePlanByPlanName(planName);
-    }
+//    List<ExercisePlan> findExercisePlansByName(String planName) {
+//        return exercisePlanRepository.findExercisePlanByPlanName(planName);
+//    }
 
     public List<String> getAllExerciseClassNames() {
         List<ExerciseClass> classes = classRepository.findAll();
@@ -211,6 +211,9 @@ public class DBService {
 
     public List<String> getAllExerciseClassNamesWithTrainer() {
         List<ExerciseClass> classes = classRepository.findAll();
+        System.out.println(classes.stream()
+                .map(c -> c.getName() + " - Hosted by: " + c.getUser().getUsername())
+                .collect(Collectors.toList()));
         return classes.stream()
                 .map(c -> c.getName() + " - Hosted by: " + c.getUser().getUsername())
                 .collect(Collectors.toList());

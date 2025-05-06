@@ -88,7 +88,7 @@ class TrainerUI extends JPanel {
       java.util.List<String> planNames = dbService.getAllPlans();
       StringBuilder builder = new StringBuilder();
       for (String name : planNames) {
-        builder.append("- ").append(name).append(" ");
+        builder.append('\n').append("- ").append(name).append(" ");
       }
       plansDisplay.setText(builder.toString());
     } catch (Exception ex) {

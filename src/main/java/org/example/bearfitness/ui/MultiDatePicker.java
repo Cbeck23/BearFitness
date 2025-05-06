@@ -39,6 +39,10 @@ public class MultiDatePicker extends JPanel {
         datePanel.add(yearCombo);
 
         add(datePanel, BorderLayout.NORTH);
+        LocalDate today = LocalDate.now();
+        dayCombo.setSelectedItem(String.valueOf(today.getDayOfMonth()));
+        monthCombo.setSelectedIndex(today.getMonthValue() - 1); // January = 0
+        yearCombo.setSelectedItem(String.valueOf(today.getYear()));
 
         // Button and text display
         addDateButton = new JButton("Add Date");
