@@ -109,18 +109,6 @@ public class GoalsDisplayUI extends JPanel {
         JFreeChart chart = createChart("Workout Duration Over Time", timeScale, "Minutes Worked Out", dataset);
         CategoryPlot plot = chart.getCategoryPlot();
 
-        //double workoutGoal = (double) user.getGoals().getWeeklyExercises() / 7;
-
-        //fix this hard code
-        ValueMarker workoutGoalLine = new ValueMarker(75);
-        workoutGoalLine.setPaint(Color.BLUE);
-        workoutGoalLine.setStroke(new BasicStroke(2.0f));
-        workoutGoalLine.setLabel("Goal");
-        workoutGoalLine.setLabelAnchor(RectangleAnchor.TOP_LEFT);
-        workoutGoalLine.setLabelTextAnchor(TextAnchor.BOTTOM_LEFT);
-
-        chart.getCategoryPlot().addRangeMarker(workoutGoalLine);
-
         LocalDate cutoffDate = switch (timeScale) {
             case "Week" -> LocalDate.now().minusDays(7);
             case "Month" -> LocalDate.now().minusDays(30);
