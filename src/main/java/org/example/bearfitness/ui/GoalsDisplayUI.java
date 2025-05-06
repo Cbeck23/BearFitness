@@ -109,7 +109,17 @@ public class GoalsDisplayUI extends JPanel {
         JFreeChart chart = createChart("Workout Duration Over Time", timeScale, "Minutes Worked Out", dataset);
         CategoryPlot plot = chart.getCategoryPlot();
 
-        int workoutGoal = user.getGoals().getWeeklyExercises();
+        //double workoutGoal = (double) user.getGoals().getWeeklyExercises() / 7;
+
+        //fix this hard code
+        ValueMarker workoutGoalLine = new ValueMarker(75);
+        workoutGoalLine.setPaint(Color.BLUE);
+        workoutGoalLine.setStroke(new BasicStroke(2.0f));
+        workoutGoalLine.setLabel("Goal");
+        workoutGoalLine.setLabelAnchor(RectangleAnchor.TOP_LEFT);
+        workoutGoalLine.setLabelTextAnchor(TextAnchor.BOTTOM_LEFT);
+
+        chart.getCategoryPlot().addRangeMarker(workoutGoalLine);
 
         LocalDate cutoffDate = switch (timeScale) {
             case "Week" -> LocalDate.now().minusDays(7);
@@ -154,7 +164,9 @@ public class GoalsDisplayUI extends JPanel {
 
         JFreeChart chart = createChart("Calories Over Time", timeScale, "Calories Consumed", dataset);
 
-        ValueMarker calGoalLine = new ValueMarker(user.getGoals().getGoalCalories());
+        double calGoal = (double) user.getGoals().getGoalCalories() / 7;
+
+        ValueMarker calGoalLine = new ValueMarker(calGoal);
         calGoalLine.setPaint(Color.BLUE);
         calGoalLine.setStroke(new BasicStroke(2.0f));
         calGoalLine.setLabel("Goal");
@@ -195,7 +207,9 @@ public class GoalsDisplayUI extends JPanel {
 
         JFreeChart chart = createChart("Sleep Over Time", timeScale, "Hours Slept", dataset);
 
-        ValueMarker sleepGoalLine = new ValueMarker(user.getGoals().getGoalSleep());
+        double sleepGoal = (double) user.getGoals().getGoalSleep() / 7;
+
+        ValueMarker sleepGoalLine = new ValueMarker(sleepGoal);
         sleepGoalLine.setPaint(Color.BLUE);
         sleepGoalLine.setStroke(new BasicStroke(2.0f));
         sleepGoalLine.setLabel("Goal");
