@@ -66,19 +66,4 @@ public class LoginUI extends JPanel {
     }
 
 
-//    private void userSignUp(ActionEvent e) {
-//        JOptionPane.showMessageDialog(this, "Redirecting to Create User Page...");
-//        SwingUtilities.getWindowAncestor(this).dispose();
-//        new ScreenManager(dbService).setVisible(true);
-//    }
-
-//    private boolean authenticateUser(String username, String password) {
-//        if(authenticateUser(username,password) != null){
-//            return true;
-//        };
-//    }
-
-//    public static void main(String[] args) {
-//        SwingUtilities.invokeLater(() -> new LoginUI(dbService).setVisible(true));
-//    }
 }

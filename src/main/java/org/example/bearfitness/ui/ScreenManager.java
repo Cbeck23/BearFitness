@@ -11,7 +11,6 @@ public class ScreenManager extends JFrame {
         LOGIN,
         SIGNUP,
         TRAINER,
-        USER,
         ADMIN,
         USER_HOME,
         ADD_WORKOUT,
@@ -25,9 +24,6 @@ public class ScreenManager extends JFrame {
     private final JPanel cards;
     private final DBService dbService;
 
-    private UserUI userHome;
-    private WorkoutHistoryUI workoutHistory;
-    private AddWorkoutUI addWorkout;
     private GoalsDisplayUI goalsDisplay;
     //private final User user;
 
@@ -70,7 +66,6 @@ public class ScreenManager extends JFrame {
                 cards.add(new UserUI(dbService, this, user), Screen.USER_HOME.name());
                 cards.add(new UserSettings(dbService, this, user).getPanel(), Screen.SETTINGS.name());
                 cards.add(new UserClassesUI(dbService, this, user), Screen.VIEW_CLASSES.name());
-                //cards.add(new GoalsDisplayUI(dbService, this, user), Screen.GOALS.name());
                 goalsDisplay = new GoalsDisplayUI(dbService, this, user);
                 cards.add(goalsDisplay, Screen.GOALS.name());
                 layout.show(cards, Screen.USER_HOME.name());
@@ -78,11 +73,13 @@ public class ScreenManager extends JFrame {
             case ADMIN -> {
                 cards.add(new LoginUI(dbService, this), Screen.LOGIN.name());
                 cards.add(new SignUpUI(dbService, this), Screen.SIGNUP.name());
-                cards.add(new UserUI(dbService, this, user), Screen.ADMIN.name());
+                cards.add(new UserUI(dbService, this, user), Screen.USER_HOME.name());
                 cards.add(new UserSettings(dbService, this, user).getPanel(), Screen.SETTINGS.name());
                 cards.add(new AdminManagementUI(dbService, this, user), Screen.ADMINISTRATION.name());
                 cards.add(new UserClassesUI(dbService, this, user), Screen.VIEW_CLASSES.name());
-                layout.show(cards, Screen.ADMIN.name());
+                goalsDisplay = new GoalsDisplayUI(dbService, this, user);
+                cards.add(goalsDisplay, Screen.GOALS.name());
+                layout.show(cards, Screen.USER_HOME.name());
             }
         }
 
