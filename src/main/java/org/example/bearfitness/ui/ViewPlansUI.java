@@ -25,7 +25,7 @@ public class ViewPlansUI extends JPanel {
     public ViewPlansUI(DBService dbService, ScreenManager screenManager, User user) {
         this.dbService = dbService;
         this.screenManager = screenManager;
-        this.user = user;
+        this.user = dbService.findUserByUsername(user.getUsername()).orElse(user);
 
         setLayout(new BorderLayout());
 
