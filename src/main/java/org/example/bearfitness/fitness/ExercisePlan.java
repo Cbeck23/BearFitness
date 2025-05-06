@@ -12,14 +12,14 @@ public class ExercisePlan {
 
   private String planName;
 
-  @ElementCollection
+  @ElementCollection(fetch = FetchType.EAGER)
   private List<String> requiredEquipment;
 
   private String recommendedFitnessLevel;
   private int averageSessionLength;
   private int frequencyPerWeek;
 
-  @ElementCollection
+  @ElementCollection(fetch = FetchType.EAGER)
   @CollectionTable(name = "exercise_plan_exercises", joinColumns = @JoinColumn(name = "plan_id"))
   @MapKeyColumn(name = "day_number")
   private Map<Integer, WorkoutEntry> exercises = new HashMap<>();
@@ -81,11 +81,11 @@ public class ExercisePlan {
   public String toString() {
     StringBuilder builder = new StringBuilder();
     builder.append("Plan Name: ").append(planName).append("\n")
-            .append("Required Equipment: ").append(requiredEquipment).append("\n")
-            .append("Recommended Fitness Level: ").append(recommendedFitnessLevel).append("\n")
-            .append("Average Session Length: ").append(averageSessionLength).append(" minutes\n")
-            .append("Frequency per Week: ").append(frequencyPerWeek).append(" days\n")
-            .append("Exercises:\n");
+            .append(" // Required Equipment: ").append(requiredEquipment).append("\n")
+            .append(" Recommended Fitness Level: ").append(recommendedFitnessLevel).append("\n")
+            .append(" Average Session Length: ").append(averageSessionLength).append(" minutes\n")
+            .append(" Frequency per Week: ").append(frequencyPerWeek).append(" days\n")
+            .append(" Exercises:\n");
 
     exercises.keySet().stream()
             .sorted()

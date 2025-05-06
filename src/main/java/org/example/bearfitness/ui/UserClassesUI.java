@@ -193,7 +193,7 @@ public class UserClassesUI extends JPanel {
 
     private void subscribeToClass(String name) {
         if (name == null) return;
-        String actualClassName = name.split(" - Hosted by:")[0].trim();
+        String actualClassName = name.split(" : ")[1].split(" - Hosted by")[0].trim();
         List<ExerciseClass> classes = dbService.findExerciseClassByName(actualClassName);
         if (!classes.isEmpty()) {
             ExerciseClass selected = classes.get(0);
@@ -212,23 +212,35 @@ public class UserClassesUI extends JPanel {
         }
     }
 
-    private void subscribeToPlan(String name) {
-        if (name == null) return;
-        List<ExercisePlan> plans = dbService.findExercisePlanByName(name);
+    private void subscribeToPlan(String planString) {
+        if (planString == null) return;
+
+        // Extract plan name from the formatted string
+        String planName;
+        try {
+            planName = planString.split("Plan Name:")[1].split("\n")[0].trim();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Failed to extract plan name from selected item.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        List<ExercisePlan> plans = dbService.findExercisePlanByName(planName);
         if (!plans.isEmpty()) {
             ExercisePlan selected = plans.get(0);
             boolean exists = user.getSubscribedPlans().stream().anyMatch(p -> p.getId().equals(selected.getId()));
             if (!exists) {
                 user.addPlan(selected);
                 dbService.updateUserData(user);
-                JOptionPane.showMessageDialog(this, "Successfully subscribed to plan: " + name);
+                JOptionPane.showMessageDialog(this, "Successfully subscribed to plan: " + planName);
                 populateSubscribedPlans();
             } else {
                 JOptionPane.showMessageDialog(this,
-                        "You are already subscribed to the plan \"" + name + "\".",
+                        "You are already subscribed to the plan \"" + planName + "\".",
                         "Duplicate Subscription",
                         JOptionPane.ERROR_MESSAGE);
             }
+        } else {
+            JOptionPane.showMessageDialog(this, "No matching plan found for \"" + planName + "\".", "Not Found", JOptionPane.ERROR_MESSAGE);
         }
     }
 
