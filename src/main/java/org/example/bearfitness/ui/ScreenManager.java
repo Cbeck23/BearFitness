@@ -11,12 +11,12 @@ public class ScreenManager extends JFrame {
         LOGIN,
         SIGNUP,
         TRAINER,
-        ADMIN,
         USER_HOME,
         ADD_WORKOUT,
         SETTINGS,
         ADMINISTRATION,
         VIEW_CLASSES,
+        VIEW_PLANS,
         GOALS
     }
 
@@ -65,6 +65,7 @@ public class ScreenManager extends JFrame {
                 cards.add(new SignUpUI(dbService, this), Screen.SIGNUP.name());
                 cards.add(new UserUI(dbService, this, user), Screen.USER_HOME.name());
                 cards.add(new UserSettings(dbService, this, user).getPanel(), Screen.SETTINGS.name());
+                cards.add(new ViewPlansUI(dbService, this, user), Screen.VIEW_PLANS.name());
                 cards.add(new UserClassesUI(dbService, this, user), Screen.VIEW_CLASSES.name());
                 goalsDisplay = new GoalsDisplayUI(dbService, this, user);
                 cards.add(goalsDisplay, Screen.GOALS.name());
@@ -75,6 +76,7 @@ public class ScreenManager extends JFrame {
                 cards.add(new SignUpUI(dbService, this), Screen.SIGNUP.name());
                 cards.add(new UserUI(dbService, this, user), Screen.USER_HOME.name());
                 cards.add(new UserSettings(dbService, this, user).getPanel(), Screen.SETTINGS.name());
+                cards.add(new ViewPlansUI(dbService, this, user), Screen.VIEW_PLANS.name());
                 cards.add(new AdminManagementUI(dbService, this, user), Screen.ADMINISTRATION.name());
                 cards.add(new UserClassesUI(dbService, this, user), Screen.VIEW_CLASSES.name());
                 goalsDisplay = new GoalsDisplayUI(dbService, this, user);
