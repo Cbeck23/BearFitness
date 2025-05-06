@@ -19,36 +19,6 @@ public class LoginUI extends JPanel {
     private JPasswordField passwordField;
     PasswordHash passwordHash = new PasswordHash();
 
-//    public LoginUI(DBService dbService, ScreenManager screenManager) {
-//        this.dbService = dbService;
-//        this.screenManager = screenManager;
-//        setLayout(new GridBagLayout());
-//
-//        JPanel inputPanel = new JPanel(new GridLayout(3, 2, 10, 10));
-//        inputPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-//
-//        inputPanel.add(new JLabel("Username:"));
-//        usernameField = new JTextField();
-//        inputPanel.add(usernameField);
-//
-//        inputPanel.add(new JLabel("Password:"));
-//        passwordField = new JPasswordField();
-//        inputPanel.add(passwordField);
-//
-//        JButton loginButton = new JButton("Login");
-//        loginButton.addActionListener(e -> userLogin());
-//        inputPanel.add(loginButton);
-//
-//        JButton signUpButton = new JButton("Sign Up" );
-//        signUpButton.addActionListener(e -> screenManager.showScreen(ScreenManager.Screen.SIGNUP));
-//        inputPanel.add(signUpButton);
-//
-//        add(inputPanel);
-//
-//        // Add alternate signup handler
-//        //signUpButton.addActionListener(this::userSignUp);
-//    }
-
     private void userLogin() {
         String username = usernameField.getText();
         String password = new String(passwordField.getPassword());
@@ -68,26 +38,37 @@ public class LoginUI extends JPanel {
     public LoginUI(DBService dbService, ScreenManager screenManager) {
         this.dbService = dbService;
         this.screenManager = screenManager;
-        setLayout(new GridBagLayout());
+        setLayout(new BorderLayout());
 
+        // === Center Wrapper Panel ===
+        JPanel centerWrapper = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.weightx = 1;
+        gbc.weighty = 1;
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.fill = GridBagConstraints.NONE;
 
-        // Image above login box
+        // === Vertical Panel: Image + Input Fields ===
+        JPanel verticalPanel = new JPanel();
+        verticalPanel.setLayout(new BoxLayout(verticalPanel, BoxLayout.Y_AXIS));
+
+        // Logo Image
         JLabel imageLabel = new JLabel();
         try {
-            ImageIcon originalIcon = new ImageIcon(getClass().getResource("/PlaygroundImage.jpg")); // Adjust path as needed
-            Image scaledImage = originalIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+            ImageIcon originalIcon = new ImageIcon(getClass().getResource("/PlaygroundImage.jpg"));
+            Image scaledImage = originalIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
             imageLabel.setIcon(new ImageIcon(scaledImage));
-            add(imageLabel, gbc);
+            imageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         } catch (Exception e) {
             System.err.println("Image not found or failed to load.");
         }
+        verticalPanel.add(imageLabel);
 
-        // Login form
-        gbc.gridy = 1;  // Move input panel below image
+        verticalPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Space between image and form
+
+        // Input Panel
         JPanel inputPanel = new JPanel(new GridLayout(3, 2, 10, 10));
         inputPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
@@ -107,8 +88,21 @@ public class LoginUI extends JPanel {
         signUpButton.addActionListener(e -> screenManager.showScreen(ScreenManager.Screen.SIGNUP));
         inputPanel.add(signUpButton);
 
-        add(inputPanel, gbc);
+        verticalPanel.add(inputPanel);
+
+        centerWrapper.add(verticalPanel, gbc);
+        add(centerWrapper, BorderLayout.CENTER);
+
+        // === Bottom Close Button ===
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JButton closeButton = new JButton("Close");
+        closeButton.addActionListener(e -> System.exit(0));
+        bottomPanel.add(closeButton);
+
+        add(bottomPanel, BorderLayout.SOUTH);
     }
+
+
 
 
 }
