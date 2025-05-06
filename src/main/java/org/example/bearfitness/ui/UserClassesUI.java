@@ -193,15 +193,31 @@ public class UserClassesUI extends JPanel {
 
     private void subscribeToClass(String name) {
         if (name == null) return;
-        String actualClassName = name.split(" : ")[1].split(" - Hosted by")[0].trim();
+
+        String actualClassName;
+        try {
+            actualClassName = name.split(" : ")[1].split(" - Hosted by")[0].trim();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Failed to extract class name from selected item.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         List<ExerciseClass> classes = dbService.findExerciseClassByName(actualClassName);
         if (!classes.isEmpty()) {
             ExerciseClass selected = classes.get(0);
-            boolean exists = user.getSubscribedClasses().stream().anyMatch(c -> c.getId().equals(selected.getId()));
+
+            // 🔥 Refresh user from DB first
+            User refreshedUser = dbService.findUserByUsername(user.getUsername()).orElse(user);
+
+            boolean exists = refreshedUser.getSubscribedClasses().stream()
+                    .anyMatch(c -> c.getId().equals(selected.getId()));
+
             if (!exists) {
-                user.addClass(selected);
-                dbService.updateUserData(user);
+                refreshedUser.addClass(selected);
+                dbService.updateUserData(refreshedUser);
                 JOptionPane.showMessageDialog(this, "Successfully subscribed to class: " + name);
+                // Update local reference
+                this.user = refreshedUser;
                 populateSubscribedClasses();
             } else {
                 JOptionPane.showMessageDialog(this,
@@ -209,13 +225,15 @@ public class UserClassesUI extends JPanel {
                         "Duplicate Subscription",
                         JOptionPane.ERROR_MESSAGE);
             }
+        } else {
+            JOptionPane.showMessageDialog(this, "No matching class found for \"" + name + "\".", "Not Found", JOptionPane.ERROR_MESSAGE);
         }
     }
+
 
     private void subscribeToPlan(String planString) {
         if (planString == null) return;
 
-        // Extract plan name from the formatted string
         String planName;
         try {
             planName = planString.split("Plan Name:")[1].split("\n")[0].trim();
@@ -227,11 +245,19 @@ public class UserClassesUI extends JPanel {
         List<ExercisePlan> plans = dbService.findExercisePlanByName(planName);
         if (!plans.isEmpty()) {
             ExercisePlan selected = plans.get(0);
-            boolean exists = user.getSubscribedPlans().stream().anyMatch(p -> p.getId().equals(selected.getId()));
+
+            // 🔥 Refresh the user from DB before checking subscription
+            User refreshedUser = dbService.findUserByUsername(user.getUsername()).orElse(user);
+
+            boolean exists = refreshedUser.getSubscribedPlans().stream()
+                    .anyMatch(p -> p.getId().equals(selected.getId()));
+
             if (!exists) {
-                user.addPlan(selected);
-                dbService.updateUserData(user);
+                refreshedUser.addPlan(selected);
+                dbService.updateUserData(refreshedUser);
                 JOptionPane.showMessageDialog(this, "Successfully subscribed to plan: " + planName);
+                // Update local reference too
+                this.user = refreshedUser;
                 populateSubscribedPlans();
             } else {
                 JOptionPane.showMessageDialog(this,
@@ -243,6 +269,7 @@ public class UserClassesUI extends JPanel {
             JOptionPane.showMessageDialog(this, "No matching plan found for \"" + planName + "\".", "Not Found", JOptionPane.ERROR_MESSAGE);
         }
     }
+
 
     private void unsubscribeFromClass(String name) {
         if (name == null) return;

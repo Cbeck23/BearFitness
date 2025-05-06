@@ -112,7 +112,22 @@ public class ScreenManager extends JFrame {
         if (screen == Screen.GOALS) {
             goalsDisplay.refreshCharts("Week");
         }
+        if (screen == Screen.VIEW_PLANS) {
+            Component c = findComponentByName(Screen.VIEW_PLANS.name());
+            if (c instanceof ViewPlansUI vp) {
+                vp.refresh(); // Refresh ViewPlansUI each time before showing
+            }
+        }
         layout.show(cards, screen.name());
+    }
+
+    private Component findComponentByName(String name) {
+        for (Component comp : cards.getComponents()) {
+            if (comp.getName() != null && comp.getName().equals(name)) {
+                return comp;
+            }
+        }
+        return null;
     }
 
 }

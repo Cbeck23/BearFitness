@@ -27,6 +27,7 @@ public class ViewPlansUI extends JPanel {
         this.screenManager = screenManager;
         this.user = dbService.findUserByUsername(user.getUsername()).orElse(user);
 
+        setName(ScreenManager.Screen.VIEW_PLANS.name());
         setLayout(new BorderLayout());
 
         // Top back button
@@ -131,4 +132,22 @@ public class ViewPlansUI extends JPanel {
         }
         return null;
     }
+
+    public void refresh() {
+        // Reload user from DB to get fresh subscribed plans
+        this.user = dbService.findUserByUsername(user.getUsername()).orElse(user);
+
+        // Clear and repopulate the plan list
+        DefaultListModel<String> model = (DefaultListModel<String>) planList.getModel();
+        model.clear();
+
+        for (ExercisePlan plan : user.getSubscribedPlans()) {
+            model.addElement(plan.getPlanName());
+        }
+
+        workoutDetailsPanel.removeAll();
+        workoutDetailsPanel.revalidate();
+        workoutDetailsPanel.repaint();
+    }
+
 }
