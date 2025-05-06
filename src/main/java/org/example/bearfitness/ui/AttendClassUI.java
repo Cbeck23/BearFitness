@@ -45,7 +45,10 @@ public class AttendClassUI extends JPanel {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         JButton attendButton = new JButton("Attend Class");
         attendButton.addActionListener(e -> markAttendance());
+        JButton refreshButton = new JButton("Refresh Classes");
+        refreshButton.addActionListener(e -> reload());
 
+        buttonPanel.add(refreshButton);
         buttonPanel.add(attendButton);
         add(buttonPanel, BorderLayout.SOUTH);
 
@@ -121,5 +124,9 @@ public class AttendClassUI extends JPanel {
         }
     }
 
+    public void reload() {
+        this.user = dbService.findUserByUsername(user.getUsername()).orElse(user);
+        loadUserSubscribedClasses();
+    }
 
 }
