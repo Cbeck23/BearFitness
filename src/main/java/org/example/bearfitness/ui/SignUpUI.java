@@ -2,7 +2,6 @@ package org.example.bearfitness.ui;
 
 import org.example.bearfitness.user.User;
 import org.example.bearfitness.data.DBService;
-import org.example.bearfitness.user.UserCreator;
 import org.example.bearfitness.user.UserType;
 import org.example.bearfitness.ui.ScreenManager;
 
