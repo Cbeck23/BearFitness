@@ -218,4 +218,9 @@ public class DBService {
                 .map(c -> c.getName() + " - Hosted by: " + c.getUser().getUsername())
                 .collect(Collectors.toList());
     }
+
+    public List<ExerciseClass> findClassesByTrainerID(long id) {
+        return classRepository.findByTrainerID(id);
+    }
+
 }

@@ -52,7 +52,8 @@ public class TraineesList extends JPanel {
         tableModel.setRowCount(0);
 
         try {
-            //userEntries = dbService.getAllUsers();
+            long trainerID = user.getId();
+
 
             for (User user : this.dbService.getAllUsers()) {
                 tableModel.addRow(new Object[]{
