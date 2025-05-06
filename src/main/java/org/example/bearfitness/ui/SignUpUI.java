@@ -43,7 +43,13 @@ public class SignUpUI extends JPanel {
         inputPanel.add(confirmPasswordField);
 
         inputPanel.add(new JLabel("User Type:"));
-        userTypeCombo = new JComboBox<>(UserType.values());
+        //userTypeCombo = new JComboBox<>(UserType.values());
+        userTypeCombo = new JComboBox<>();
+        for (UserType type : UserType.values()) {
+            if (type != UserType.ADMIN) {
+                userTypeCombo.addItem(type);
+            }
+        }
         inputPanel.add(userTypeCombo);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));

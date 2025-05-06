@@ -12,7 +12,7 @@ import java.awt.*;
 //import java.awt.event.ActionListener;
 import java.util.List;
 
-public class UserClassesUI extends JPanel {
+public class SearchForClassesAndPlansUI extends JPanel {
     private User user;
     private DBService dbService;
     private ScreenManager screenManager;
@@ -29,7 +29,7 @@ public class UserClassesUI extends JPanel {
     private JTextField searchPlansField;
     private JList<String> subscribedPlansList;
 
-    public UserClassesUI(DBService dbService, ScreenManager screenManager, User user) {
+    public SearchForClassesAndPlansUI(DBService dbService, ScreenManager screenManager, User user) {
         this.user = user;
         this.dbService = dbService;
         this.screenManager = screenManager;

@@ -19,21 +19,6 @@ public class LoginUI extends JPanel {
     private JPasswordField passwordField;
     PasswordHash passwordHash = new PasswordHash();
 
-    private void userLogin() {
-        String username = usernameField.getText();
-        String password = new String(passwordField.getPassword());
-
-        password = passwordHash.hashPassword(password);
-
-        if (dbService.authenticateUser(username, password) != null) {
-            JOptionPane.showMessageDialog(this, "Login successful!");
-            SwingUtilities.getWindowAncestor(this).dispose();
-            // FIX ME: Later route to correct UI based on user type
-            new ScreenManager(dbService, dbService.authenticateUser(username, password)).setVisible(true);
-        } else {
-            JOptionPane.showMessageDialog(this, "Invalid username or password.", "Login Failed", JOptionPane.ERROR_MESSAGE);
-        }
-    }
 
     public LoginUI(DBService dbService, ScreenManager screenManager) {
         this.dbService = dbService;
@@ -100,9 +85,39 @@ public class LoginUI extends JPanel {
         bottomPanel.add(closeButton);
 
         add(bottomPanel, BorderLayout.SOUTH);
+
+        // === Check for first user ===
+        checkAndHandleFirstUser();
     }
 
+    private void userLogin() {
+        String username = usernameField.getText();
+        String password = new String(passwordField.getPassword());
 
+        password = passwordHash.hashPassword(password);
+
+        if (dbService.authenticateUser(username, password) != null) {
+            JOptionPane.showMessageDialog(this, "Login successful!");
+            SwingUtilities.getWindowAncestor(this).dispose();
+            // FIX ME: Later route to correct UI based on user type
+            new ScreenManager(dbService, dbService.authenticateUser(username, password)).setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(this, "Invalid username or password.", "Login Failed", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void checkAndHandleFirstUser() {
+        if (dbService.getAllUsers().isEmpty()) {
+            SwingUtilities.invokeLater(() -> {
+                JFrame welcomeFrame = new JFrame("Welcome to BearFitness!");
+                welcomeFrame.setSize(400, 300);
+                welcomeFrame.setLocationRelativeTo(null);
+                welcomeFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // 🔥 Disable manual close
+                welcomeFrame.setContentPane(new WelcomeFirstAdminUI(dbService, welcomeFrame));
+                welcomeFrame.setVisible(true);
+            });
+        }
+    }
 
 
 }
