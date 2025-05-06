@@ -219,8 +219,5 @@ public class DBService {
                 .collect(Collectors.toList());
     }
 
-    public List<ExerciseClass> findClassesByTrainerID(long id) {
-        return classRepository.findByTrainerID(id);
-    }
 
 }

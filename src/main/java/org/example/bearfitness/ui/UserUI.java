@@ -55,6 +55,7 @@ class UserUI extends JPanel {
         rightButtonPanel.add(settingsButton);
         JPanel leftButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         leftButtonPanel.add(viewClassesButton);
+        leftButtonPanel.add(viewMyPlansButton);
 
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.add(centerTitlePanel, BorderLayout.CENTER);
