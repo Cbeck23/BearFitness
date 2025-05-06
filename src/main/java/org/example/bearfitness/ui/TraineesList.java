@@ -3,6 +3,7 @@ package org.example.bearfitness.ui;
 import org.example.bearfitness.data.DBService;
 import org.example.bearfitness.fitness.WorkoutEntry;
 import org.example.bearfitness.user.User;
+import org.example.bearfitness.user.UserType;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -56,10 +57,12 @@ public class TraineesList extends JPanel {
 
 
             for (User user : this.dbService.getAllUsers()) {
-                tableModel.addRow(new Object[]{
-                        user.getUsername(),
-                        user.getEmail(),
-                });
+                if(user.getUserType() == UserType.BASIC) {
+                    tableModel.addRow(new Object[]{
+                            user.getUsername(),
+                            user.getEmail(),
+                    });
+                }
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Failed to load trainees", "Error", JOptionPane.ERROR_MESSAGE);
