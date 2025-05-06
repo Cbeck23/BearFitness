@@ -76,7 +76,7 @@ public class AdminManagementUI extends JPanel {
             try {
                 dbService.createUser(
                         usernameField.getText(),
-                        PasswordHash.hashPassword(new String(passwordField.getPassword())),
+                        new String(passwordField.getPassword()),
                         emailField.getText(),
                         (UserType) userTypeCombo.getSelectedItem()
                 );
