@@ -35,6 +35,12 @@ public class GoalsDisplayUI extends JPanel {
 
     private List<WorkoutEntry> userEntries;
 
+    private ChartPanel progressChart;
+    private ChartPanel calChart;
+    private ChartPanel weightChart;
+    private ChartPanel sleepChart;
+    private JPanel chartContainer;
+
     public GoalsDisplayUI(DBService dbService, ScreenManager screenManager, User user) {
         this.dbService = dbService;
         this.user = user;
@@ -50,19 +56,9 @@ public class GoalsDisplayUI extends JPanel {
         add(titleLabel, BorderLayout.NORTH);
 
         CardLayout cardLayout = new CardLayout();
-        JPanel chartContainer = new JPanel(cardLayout);
+        chartContainer = new JPanel(cardLayout);
 
-        String defaultTime = "Week";
-
-        ChartPanel progressChart = new ChartPanel(createProgressChart(defaultTime));
-        ChartPanel calChart = new ChartPanel(createCalChart(defaultTime));
-        ChartPanel weightChart = new ChartPanel(createWeightChart(defaultTime));
-        ChartPanel sleepChart = new ChartPanel(createSleepChart(defaultTime));
-
-        chartContainer.add(progressChart, "Progress");
-        chartContainer.add(calChart, "Calories");
-        chartContainer.add(weightChart, "Weight");
-        chartContainer.add(sleepChart, "Sleep");
+        refreshCharts("Week");
 
         JPanel buttonPanel = new JPanel(new BorderLayout());
         JPanel leftButtons = new JPanel(new GridBagLayout());
@@ -85,14 +81,7 @@ public class GoalsDisplayUI extends JPanel {
         JComboBox<String> timePicker = new JComboBox<>(timeOptions);
         timePicker.addActionListener(e -> {
             String selectedTime = (String) timePicker.getSelectedItem();
-
-            progressChart.setChart(createProgressChart(selectedTime));
-            calChart.setChart(createCalChart(selectedTime));
-            weightChart.setChart(createWeightChart(selectedTime));
-            sleepChart.setChart(createSleepChart(selectedTime));
-
-            chartContainer.revalidate();
-            chartContainer.repaint();
+            refreshCharts(selectedTime);
         });
 
         leftButtons.add(timePicker, gbc);
@@ -111,7 +100,7 @@ public class GoalsDisplayUI extends JPanel {
     private JFreeChart createProgressChart(String timeScale) {
         DefaultCategoryDataset dataset = createCategoryDataset("Workouts", timeScale);
 
-        JFreeChart chart = createChart("Workout Progress Over Time", timeScale, "Workouts Completed", dataset);
+        JFreeChart chart = createChart("Workout Progress Over Time", timeScale, "Workouts Completed in Minutes", dataset);
 
         ValueMarker exerciseGoalLine = new ValueMarker(user.getGoals().getWeeklyExercises());
         exerciseGoalLine.setPaint(Color.BLUE);
@@ -270,4 +259,23 @@ public class GoalsDisplayUI extends JPanel {
 
         return dataset;
     }
+
+    public void refreshCharts(String timeScale) {
+        chartContainer.removeAll();
+
+        ChartPanel progressChart = new ChartPanel(createProgressChart(timeScale));
+        ChartPanel calChart = new ChartPanel(createCalChart(timeScale));
+        ChartPanel weightChart = new ChartPanel(createWeightChart(timeScale));
+        ChartPanel sleepChart = new ChartPanel(createSleepChart(timeScale));
+
+        chartContainer.add(progressChart, "Progress");
+        chartContainer.add(calChart, "Calories");
+        chartContainer.add(weightChart, "Weight");
+        chartContainer.add(sleepChart, "Sleep");
+
+        chartContainer.revalidate();
+        chartContainer.repaint();
+    }
+
+
 }
