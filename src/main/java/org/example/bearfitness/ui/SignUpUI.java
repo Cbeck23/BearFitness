@@ -78,6 +78,12 @@ public class SignUpUI extends JPanel {
             return;
         }
 
+        // 🔥 NEW: Check if username already exists
+        if (dbService.findUserByUsername(username).isPresent()) {
+            JOptionPane.showMessageDialog(this, "Username already taken. Please choose another.", "Username Taken", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         try {
             dbService.createUser(username, password, email, userType);
             JOptionPane.showMessageDialog(this, "Account created successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);

@@ -26,6 +26,7 @@ public class User {
     // === Personal Information ===
 
     /** Username for login/authentication. */
+    @Column(unique = true)
     protected String username;
 
     /** Password (should be stored hashed in production). */
@@ -41,25 +42,18 @@ public class User {
 
     /** User-specific health and fitness statistics. */
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    //@JoinColumn(name = "user_stats_id") // optional: customize the column name in DB
     private UserStats userStats = null;
 
     /** Fitness goals set by the user. */
     @Embedded
     private UserGoals goals;
 
-    /** Logs of workouts performed by the user. */
-//    @ElementCollection
-//    private List<WorkoutEntry> entryList = new ArrayList<>();
-
     /** Exercise classes the user is currently subscribed to. */
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<ExerciseClass> subscribedClasses;
 
     /** Exercise plans the user is currently subscribed to. */
-//    @Getter
-//    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-//    private List<ExercisePlan> exercisePlans;
+
     @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<ExercisePlan> subscribedPlans = new ArrayList<>();
 
@@ -194,13 +188,6 @@ public class User {
         }
         goals.setGoalSleep(newGoal);
     }
-//    public List<WorkoutEntry> getEntryList() {
-//        return entryList;
-//    }
-//
-//    public void setEntryList(List<WorkoutEntry> entryList) {
-//        this.entryList = entryList;
-//    }
 
 
     public List<ExercisePlan> getSubscribedPlans() {
@@ -215,8 +202,8 @@ public class User {
         return subscribedClasses;
     }
 
-    public void setSubscribedPlans(List<ExerciseClass> subscribedClasses) {
-        this.subscribedClasses = subscribedClasses;
+    public void setSubscribedPlans(List<ExercisePlan> subscribedPlans) {
+        this.subscribedPlans =  subscribedPlans;
     }
 
     // === Goal Management ===
