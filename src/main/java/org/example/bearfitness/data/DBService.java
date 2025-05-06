@@ -218,4 +218,9 @@ public class DBService {
                 .map(c -> c.getDate() + " : "+c.getName() + " - Hosted by " + c.getUser().getUsername() + " | Recommended Fitness Level: " + c.getFitnessLevel())
                 .collect(Collectors.toList());
     }
+
+    public List<ExerciseClass> findClassesByTrainerID(long id) {
+        return classRepository.findByTrainerID(id);
+    }
+
 }

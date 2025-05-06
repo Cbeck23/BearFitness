@@ -36,6 +36,10 @@ class UserUI extends JPanel {
         JButton viewClassesButton = new JButton("View/Search Classes");
         viewClassesButton.addActionListener(e -> screenManager.showScreen(ScreenManager.Screen.VIEW_CLASSES));
 
+        JButton viewMyPlansButton = new JButton("View My Plans");
+        viewMyPlansButton.addActionListener(e -> {screenManager.showScreen(ScreenManager.Screen.VIEW_PLANS, user);});
+
+
         JButton viewGoalsDisplayButton = new JButton("View Tracked Goals");
         viewGoalsDisplayButton.addActionListener(e -> screenManager.showScreen(ScreenManager.Screen.GOALS));
 

@@ -45,7 +45,7 @@ public class AdminManagementUI extends JPanel {
         addUserButton.addActionListener(e -> addUser());
         editUserButton.addActionListener(e -> editUser());
         deleteUserButton.addActionListener(e -> deleteUser());
-        backButton.addActionListener(e -> screenManager.showScreen(ScreenManager.Screen.ADMIN));
+        backButton.addActionListener(e -> screenManager.showScreen(ScreenManager.Screen.SETTINGS));
 
         populateUserTable();
     }
