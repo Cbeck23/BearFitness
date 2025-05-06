@@ -17,7 +17,8 @@ public class ScreenManager extends JFrame {
         ADD_WORKOUT,
         SETTINGS,
         ADMINISTRATION,
-        VIEW_CLASSES
+        VIEW_CLASSES,
+        GOALS
     }
 
     private final CardLayout layout;
@@ -27,6 +28,7 @@ public class ScreenManager extends JFrame {
     private UserUI userHome;
     private WorkoutHistoryUI workoutHistory;
     private AddWorkoutUI addWorkout;
+    private GoalsDisplayUI goalsDisplay;
     //private final User user;
 
     public ScreenManager(DBService dbService) {
@@ -68,6 +70,9 @@ public class ScreenManager extends JFrame {
                 cards.add(new UserUI(dbService, this, user), Screen.USER_HOME.name());
                 cards.add(new UserSettings(dbService, this, user).getPanel(), Screen.SETTINGS.name());
                 cards.add(new UserClassesUI(dbService, this, user), Screen.VIEW_CLASSES.name());
+                //cards.add(new GoalsDisplayUI(dbService, this, user), Screen.GOALS.name());
+                goalsDisplay = new GoalsDisplayUI(dbService, this, user);
+                cards.add(goalsDisplay, Screen.GOALS.name());
                 layout.show(cards, Screen.USER_HOME.name());
             }
             case ADMIN -> {
@@ -104,6 +109,9 @@ public class ScreenManager extends JFrame {
                 UserUI userUI = new UserUI(dbService, this, user);
                 cards.add(userUI, screen.name());
             }
+        }
+        if (screen == Screen.GOALS) {
+            goalsDisplay.refreshCharts("Week");
         }
         layout.show(cards, screen.name());
     }

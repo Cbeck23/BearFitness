@@ -35,8 +35,8 @@ class UserUI extends JPanel {
         JButton viewClassesButton = new JButton("View/Search Classes");
         viewClassesButton.addActionListener(e -> screenManager.showScreen(ScreenManager.Screen.VIEW_CLASSES));
 
-
-
+        JButton viewGoalsDisplayButton = new JButton("View Tracked Goals");
+        viewGoalsDisplayButton.addActionListener(e -> screenManager.showScreen(ScreenManager.Screen.GOALS));
 
         // Create the title label
         JLabel titleLabel = new JLabel("Welcome, " + user.getUsername() + "!", SwingConstants.CENTER);
@@ -351,6 +351,12 @@ class UserUI extends JPanel {
             refresh();
         });
 
+        //display goals button
+        gbc.gridx = 0;
+        gbc.gridy = 12;
+        gbc.gridwidth = 3;
+
+        dataPanel.add(viewGoalsDisplayButton, gbc);
 
         rightContent.add(dataPanel);
         //breakdown of time spent this month, total exercises logged, goal progress, etc.
