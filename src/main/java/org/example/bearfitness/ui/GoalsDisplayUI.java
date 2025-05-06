@@ -9,6 +9,7 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
+import org.jfree.chart.plot.CategoryMarker;
 import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.ValueMarker;
@@ -17,11 +18,17 @@ import org.jfree.chart.ui.TextAnchor;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.example.bearfitness.fitness.UserWorkoutEntry;
 
+import org.jfree.chart.plot.CategoryPlot;
+
+import org.jfree.chart.ui.RectangleAnchor;
+import org.jfree.chart.ui.TextAnchor;
+
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.time.LocalDate;
@@ -98,21 +105,45 @@ public class GoalsDisplayUI extends JPanel {
     }
 
     private JFreeChart createProgressChart(String timeScale) {
-        DefaultCategoryDataset dataset = createCategoryDataset("Workouts", timeScale);
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        JFreeChart chart = createChart("Workout Duration Over Time", timeScale, "Minutes Worked Out", dataset);
+        CategoryPlot plot = chart.getCategoryPlot();
 
-        JFreeChart chart = createChart("Workout Progress Over Time", timeScale, "Workouts Completed in Minutes", dataset);
+        int workoutGoal = user.getGoals().getWeeklyExercises();
 
-        ValueMarker exerciseGoalLine = new ValueMarker(user.getGoals().getWeeklyExercises());
-        exerciseGoalLine.setPaint(Color.BLUE);
-        exerciseGoalLine.setStroke(new BasicStroke(2.0f));
-        exerciseGoalLine.setLabel("Goal");
-        exerciseGoalLine.setLabelAnchor(RectangleAnchor.TOP_LEFT);
-        exerciseGoalLine.setLabelTextAnchor(TextAnchor.BOTTOM_LEFT);
+        LocalDate cutoffDate = switch (timeScale) {
+            case "Week" -> LocalDate.now().minusDays(7);
+            case "Month" -> LocalDate.now().minusDays(30);
+            case "Year" -> LocalDate.now().minusDays(365);
+            default -> LocalDate.MIN;
+        };
 
-        chart.getCategoryPlot().addRangeMarker(exerciseGoalLine);
+        Map<LocalDate, Integer> workoutDurationMap = userEntries.stream()
+                .filter(entry -> !entry.getDate().isBefore(cutoffDate))
+                .collect(Collectors.groupingBy(
+                        WorkoutEntry::getDate,
+                        TreeMap::new, // keep sorted by date
+                        Collectors.summingInt(WorkoutEntry::getDuration)
+                ));
 
-        NumberAxis yAxis = (NumberAxis) chart.getCategoryPlot().getRangeAxis();
-        yAxis.setRange(0, 250);
+        Iterator<Map.Entry<LocalDate, Integer>> iterator = workoutDurationMap.entrySet().iterator();
+
+        Timer timer = new Timer(150, null);
+        timer.addActionListener(e -> {
+            if (iterator.hasNext()) {
+                Map.Entry<LocalDate, Integer> entry = iterator.next();
+                String formattedDate = entry.getKey().format(DateTimeFormatter.ofPattern("MM/dd"));
+                int duration = entry.getValue();
+
+                dataset.addValue(duration, "Workout Duration", formattedDate);
+            } else {
+                timer.stop();
+            }
+        });
+        timer.start();
+
+        NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
+        yAxis.setRange(0, 120);
         yAxis.setTickUnit(new NumberTickUnit(10));
 
         return chart;
