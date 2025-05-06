@@ -11,5 +11,4 @@ import java.util.List;
 public interface ClassRepository extends JpaRepository<ExerciseClass, Long> {
     List<ExerciseClass> findByDate(LocalDate date);
     List<ExerciseClass> findExerciseClassByName(String name);
-    List<ExerciseClass> findByTrainerID(long id);
 }
