@@ -19,6 +19,7 @@ class CreateExerciseUI extends JPanel {
   private JTextField planNameField, equipmentField, sessionLengthField, frequencyField;
   private JComboBox fitnessLevelCombo;
   private JTextArea planOutput;
+  private ExercisePlan originalPlan = null;
 
   public CreateExerciseUI(DBService dbService) {
     this.dbService = dbService;
@@ -108,7 +109,23 @@ class CreateExerciseUI extends JPanel {
   }
 
   private void savePlan(ActionEvent e) {
-    try {
+    if (originalPlan != null) {
+      ExercisePlan updated = new ExercisePlan(
+              originalPlan.getPlanName(),
+              Arrays.asList(equipmentField.getText().split(",")),
+              ((FitnessLevel) fitnessLevelCombo.getSelectedItem()).getName(),
+              Integer.parseInt(sessionLengthField.getText()),
+              Integer.parseInt(frequencyField.getText()),
+              exercises
+      );
+      dbService.updateExercisePlan(updated);
+      JOptionPane.showMessageDialog(this, "Plan updated!");
+    } else {
+      List<String> existingNames = dbService.getAllPlans();
+      if (existingNames.contains(planNameField.getText())) {
+        JOptionPane.showMessageDialog(this, "A plan with this name already exists. Choose a different name.");
+        return;
+      }
       ExercisePlan plan = new ExercisePlan(
               planNameField.getText(),
               Arrays.asList(equipmentField.getText().split(",")),
@@ -118,18 +135,28 @@ class CreateExerciseUI extends JPanel {
               exercises
       );
       dbService.createExercisePlan(plan);
-      displayCurrentExercises();
-      planOutput.append(" --- Plan Saved ---  " + plan.toString());
-      Window window = SwingUtilities.getWindowAncestor(this);
-      if (window != null) {
-        window.dispose();
-      }
-    } catch (Exception ex) {
-      JOptionPane.showMessageDialog(this, "Please check inputs.");
+      JOptionPane.showMessageDialog(this, "New plan saved!");
+    }
+    Window window = SwingUtilities.getWindowAncestor(this);
+    if (window != null) {
+      window.dispose();
     }
   }
 
-//  public static void main(String[] args) {
-//    SwingUtilities.invokeLater(() -> new CreateExerciseUI().setVisible(true));
-//  }
+  public CreateExerciseUI(DBService dbService, ExercisePlan existingPlan) {
+    this(dbService);
+    this.originalPlan = existingPlan;
+
+    planNameField.setText(existingPlan.getPlanName());
+    planNameField.setEditable(false);
+
+    equipmentField.setText(String.join(",", existingPlan.getRequiredEquipment()));
+    fitnessLevelCombo.setSelectedItem(FitnessLevel.fromName(existingPlan.getRecommendedFitnessLevel()));
+    sessionLengthField.setText(String.valueOf(existingPlan.getAverageSessionLength()));
+    frequencyField.setText(String.valueOf(existingPlan.getFrequencyPerWeek()));
+    this.exercises = new HashMap<>(existingPlan.getExercises());
+
+    displayCurrentExercises();
+  }
+
 }

@@ -1,5 +1,6 @@
 package org.example.bearfitness.data;
 
+import jakarta.transaction.Transactional;
 import org.example.bearfitness.fitness.ExerciseClass;
 import org.example.bearfitness.fitness.ExercisePlan;
 import org.example.bearfitness.fitness.UserWorkoutEntry;
@@ -219,5 +220,45 @@ public class DBService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    public void deletePlanByName(String name) {
+        List<ExercisePlan> plans = exercisePlanRepository.findExercisePlanByPlanName(name);
+        for (ExercisePlan plan : plans) {
+            List<User> allUsers = db.findAll();
+            for (User user : allUsers) {
+                if (user.getSubscribedPlans().contains(plan)) {
+                    user.getSubscribedPlans().remove(plan);
+                    db.save(user);
+                }
+            }
+            exercisePlanRepository.delete(plan);
+        }
+    }
+    public ExercisePlan getPlanByName(String name) {
+        List<ExercisePlan> plans = exercisePlanRepository.findExercisePlanByPlanName(name);
+        if (!plans.isEmpty()) {
+            return plans.get(0);
+        }
+        return null;
+    }
+
+    public void updateExercisePlan(ExercisePlan updatedPlan) {
+        List<ExercisePlan> existing = exercisePlanRepository.findExercisePlanByPlanName(updatedPlan.getPlanName());
+        if (!existing.isEmpty()) {
+            ExercisePlan existingPlan = existing.get(0);
+
+            existingPlan.getRequiredEquipment().clear();
+            existingPlan.getRequiredEquipment().addAll(updatedPlan.getRequiredEquipment());
+
+            existingPlan.setRecommendedFitnessLevel(updatedPlan.getRecommendedFitnessLevel());
+            existingPlan.setAverageSessionLength(updatedPlan.getAverageSessionLength());
+            existingPlan.setFrequencyPerWeek(updatedPlan.getFrequencyPerWeek());
+
+            existingPlan.getExercises().clear();
+            existingPlan.getExercises().putAll(updatedPlan.getExercises());
+
+            exercisePlanRepository.save(existingPlan);
+        }
+    }
 
 }

@@ -84,6 +84,11 @@ public class AttendClassUI extends JPanel {
         }
     }
 
+    public void refresh() {
+        tableModel.setRowCount(0);  // Clear existing rows
+        loadUserSubscribedClasses();         // Reload from DB
+    }
+
 
     private void markAttendance() {
         int viewRow = table.getSelectedRow();

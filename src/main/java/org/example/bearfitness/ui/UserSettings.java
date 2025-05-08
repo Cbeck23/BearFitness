@@ -103,7 +103,8 @@ public class UserSettings extends JPanel {
         // If trainer, add music control
         if(user.getUserType() == UserType.TRAINER) {
             JPanel musicPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-            musicPanel.add(new JLabel("Music:"));
+            JLabel musicTitle = new JLabel("Music: ");
+            musicPanel.add(musicTitle);
             musicButton = new JButton("Select & Play");
             musicPanel.add(musicButton);
             statPanel.add(musicPanel);

@@ -28,4 +28,12 @@ public enum FitnessLevel {
         return level + " " + name;
     }
 
+    public static FitnessLevel fromName(String name) {
+        for (FitnessLevel level : values()) {
+            if (level.getName().equalsIgnoreCase(name)) {
+                return level;
+            }
+        }
+        return LEVEL_1; // Default
+    }
 }

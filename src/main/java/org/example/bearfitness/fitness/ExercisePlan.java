@@ -13,6 +13,7 @@ public class ExercisePlan {
   private String planName;
 
   @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "exercise_plan_required_equipment", joinColumns = @JoinColumn(name = "exercise_plan_id"))
   private List<String> requiredEquipment;
 
   private String recommendedFitnessLevel;

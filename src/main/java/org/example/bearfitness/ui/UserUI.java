@@ -501,6 +501,7 @@ class UserUI extends JPanel {
 
     public void refresh() {
         workoutHistoryUI.refresh();
+        attendClassUI.refresh();
         pieChartPanel.refreshChart();
         updateExerciseUI();
     }
